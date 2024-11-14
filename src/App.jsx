@@ -1,14 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './Components/Utils/AuthContext';
+import Sidebar from './Components/Sidebar';
 import LandingPage from './Components/LandingPage';
 import Dashboard from './Components/Dashboard';
 import TaskList from './Components/TaskList';
-import Sidebar from './Components/Sidebar';
+import TaskDetails from './Components/TaskDetails';
 import LoginPage from './Components/Auth/LoginPage';
 import RegisterPage from './Components/Auth/RegisterPage';
-import TaskForm from './Components/TaskForm/TaskForm';
-import TaskDetails from './Components/TaskDetails/TaskDetails';
-import { AuthProvider } from './Components/Utils/AuthContext';
+import TaskForm from './Components/TaskForm';
+
 
 const App = () => {
   return (

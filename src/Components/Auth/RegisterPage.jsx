@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../Utils/AuthContext'; // Import AuthContext
-import './authPage.css';
+
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(false); // Toggle between login and register form

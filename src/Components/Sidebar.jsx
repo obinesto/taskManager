@@ -1,8 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { FaSignOutAlt } from 'react-icons/fa'; // Use React Icons for Logout
-import './sidebar.css';
-import { AuthContext } from '../Utils/AuthContext'; // Import AuthContext
+import { AuthContext } from './Utils/AuthContext'; // Import AuthContext
 
 
 const Sidebar = () => {
