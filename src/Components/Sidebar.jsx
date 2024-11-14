@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { FaSignOutAlt } from 'react-icons/fa'; // Use React Icons for Logout
 import { AuthContext } from './Utils/AuthContext'; // Import AuthContext

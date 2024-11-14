@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './Components/Utils/AuthContext';
 import Sidebar from './Components/Sidebar';

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../Utils/AuthContext'; // Import AuthContext
@@ -57,7 +57,7 @@ const LoginPage = () => {
             required
           />
           <button type="submit">Login</button>
-          <p>Don't have an account? 
+          <p>Don&apos;t have an account? 
             <button type="button" onClick={() => setIsLogin(false)}>Register</button>
           </p>
         </form>
