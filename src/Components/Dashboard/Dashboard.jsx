@@ -11,6 +11,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <h1>Dashboard</h1>
+      <p>Welcome to your dashboard!</p>
       <div className="dashboard-chart">
         <PieChart width={400} height={400}>
           <Pie

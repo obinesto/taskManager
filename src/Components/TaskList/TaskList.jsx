@@ -27,6 +27,7 @@ const TaskList = () => {
   return (
     <div className="task-list-container">
       <h1>Tasks</h1>
+      <p>Here is your task list!</p>
       
       {/* Add New Task Button */}
       <Link to="/add-task">

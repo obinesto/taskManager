@@ -4,6 +4,8 @@ import LandingPage from './Components/LandingPage/LandingPage';
 import Dashboard from './Components/Dashboard/Dashboard';
 import TaskList from './Components/TaskList/TaskList';
 import Sidebar from './Components/Sidebar/Sidebar';
+import LoginPage from './Components/Auth/LoginPage';
+import RegisterPage from './Components/Auth/RegisterPage';
 
 const App = () => {
   return (
@@ -15,6 +17,8 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasklist" element={<TaskList />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </div>
       </div>

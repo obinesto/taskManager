@@ -1,48 +1,50 @@
 .landing-page-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
     text-align: center;
-    padding: 50px;
+    background-color: #f4f7fc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
-  h1 {
-    font-size: 36px;
+  .landing-page-container h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
   }
   
-  .form-toggle button {
-    margin: 10px;
-    padding: 10px;
-    background-color: #007bff;
+  .landing-page-container p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .cta-buttons a {
+    text-decoration: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
     color: white;
-    border: none;
-    cursor: pointer;
+    background-color: #4CAF50;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
   }
   
-  .form-toggle button.active {
+  .cta-buttons a:hover {
+    background-color: #45a049;
+  }
+  
+  .cta-buttons a:first-child {
+    background-color: #007bff;
+  }
+  
+  .cta-buttons a:first-child:hover {
     background-color: #0056b3;
   }
-  
-  .auth-form {
-    margin-top: 20px;
-  }
-  
-  .auth-form input {
-    padding: 10px;
-    margin: 10px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .auth-form button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .auth-form button:hover {
-    background-color: #218838;
-  }
-
   
