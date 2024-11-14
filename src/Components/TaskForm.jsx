@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import axios from '../../Services/taskService';
-import "./taskform.css"
+import axios from "./taskService"
 
 
 const TaskForm = () => {

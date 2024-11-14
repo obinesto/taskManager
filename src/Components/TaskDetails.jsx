@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../../Services/taskService';
-import "./taskdetails.css";
+import axios from "./taskService"
 
 const TaskDetails = () => {
   const { id } = useParams();

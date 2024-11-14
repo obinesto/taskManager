@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './sidebar.css';
 
 const Sidebar = () => {
   const isLoggedIn = localStorage.getItem('isLoggedIn'); // Check if user is logged in

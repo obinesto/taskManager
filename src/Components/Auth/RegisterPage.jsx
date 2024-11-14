@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom'; // Add this import
-import './authPage.css'; // Add styling for login page
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(false); // Toggle between login and register form
