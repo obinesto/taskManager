@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../Services/taskService';
-import "./taskdetails.css"
+import "./taskdetails.css";
 
 const TaskDetails = () => {
-  const { id } = useParams();  // Get the task ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,12 +21,12 @@ const TaskDetails = () => {
       }
     };
     fetchTask();
-  }, [id]);
+  }, [id]);  
 
   const handleUpdateStatus = async (newStatus) => {
     try {
       const response = await axios.patch(`/tasks/${id}`, { status: newStatus });
-      setTask(response.data);  // Update task with new status
+      setTask(response.data); // Update task with new status
     } catch (error) {
       console.error('Error updating status:', error);
     }
@@ -45,14 +45,14 @@ const TaskDetails = () => {
 
       <div className="task-details-actions">
         {task.executedBySelf ? (
-          // Workflow for self-assigned tasks
+          // Actions for self-assigned tasks
           task.status === 'In Progress' ? (
             <button onClick={() => handleUpdateStatus('Completed')}>Mark as Completed</button>
           ) : (
             <p>This task is already completed.</p>
           )
         ) : (
-          // Workflow for tasks assigned to another user
+          // Actions for tasks assigned to others
           <>
             {task.status === 'Pending' && (
               <>

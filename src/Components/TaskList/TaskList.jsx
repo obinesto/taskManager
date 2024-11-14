@@ -28,7 +28,7 @@ const TaskList = () => {
     <div className="task-list-container">
       <h1>Tasks</h1>
       <p>Here is your task list!</p>
-      
+
       {/* Add New Task Button */}
       <Link to="/add-task">
         <button className="add-task-button">Add New Task</button>
@@ -67,15 +67,24 @@ const TaskList = () => {
                   <button className="view-task-button">View</button>
                 </Link>
                 {/* Additional action buttons based on task status */}
-                {task.status === 'Pending' && (
+                {task.executedBySelf ? (
+                  task.status === 'In Progress' && (
+                    <button className="mark-completed-button">Mark as Completed</button>
+                  )
+                ) : (
                   <>
-                    <button className="accept-task-button">Accept</button>
-                    <button className="reject-task-button">Reject</button>
+                    {task.status === 'Pending' && (
+                      <>
+                        <button className="accept-task-button">Accept</button>
+                        <button className="reject-task-button">Reject</button>
+                      </>
+                    )}
+                    {task.status === 'In Progress' && (
+                      <button className="mark-completed-button">Mark as Completed</button>
+                    )}
                   </>
                 )}
-                {task.status === 'In Progress' && (
-                  <button className="mark-completed-button">Mark as Completed</button>
-                )}
+
               </td>
             </tr>
           ))}
