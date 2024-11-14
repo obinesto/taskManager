@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LandingPage from './Components/LandingPage/LandingPage';
-import Dashboard from './Components/Dashboard/Dashboard';
-import TaskList from './Components/TaskList/TaskList';
-import Sidebar from './Components/Sidebar/Sidebar';
+import LandingPage from './Components/LandingPage';
+import Dashboard from './Components/Dashboard';
+import TaskList from './Components/TaskList';
+import Sidebar from './Components/Sidebar';
 import LoginPage from './Components/Auth/LoginPage';
 import RegisterPage from './Components/Auth/RegisterPage';
 import TaskForm from './Components/TaskForm/TaskForm';

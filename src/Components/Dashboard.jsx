@@ -1,6 +1,5 @@
 import React from 'react';
 import { PieChart, Pie, Tooltip } from 'recharts';
-import './dashboard.css';
 
 const Dashboard = () => {
   const data = [

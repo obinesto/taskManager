@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../../Services/taskService';
+import axios from './taskService';
 import { Link } from 'react-router-dom';
-import "./tasklist.css";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
