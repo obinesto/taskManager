@@ -7,6 +7,7 @@ const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(false); // Toggle between login and register form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
   const handleFormSubmit = (e) => {
@@ -68,7 +69,7 @@ const LoginPage = () => {
           <input
             type="username"
             placeholder="Username"
-            value={email}
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
