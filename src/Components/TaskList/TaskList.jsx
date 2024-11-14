@@ -66,25 +66,6 @@ const TaskList = () => {
                 <Link to={`/task/${task._id}`}>
                   <button className="view-task-button">View</button>
                 </Link>
-                {/* Additional action buttons based on task status */}
-                {task.executedBySelf ? (
-                  task.status === 'In Progress' && (
-                    <button className="mark-completed-button">Mark as Completed</button>
-                  )
-                ) : (
-                  <>
-                    {task.status === 'Pending' && (
-                      <>
-                        <button className="accept-task-button">Accept</button>
-                        <button className="reject-task-button">Reject</button>
-                      </>
-                    )}
-                    {task.status === 'In Progress' && (
-                      <button className="mark-completed-button">Mark as Completed</button>
-                    )}
-                  </>
-                )}
-
               </td>
             </tr>
           ))}
