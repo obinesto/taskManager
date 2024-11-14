@@ -15,7 +15,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:10000/api/auth/login', { email, password });
+      const { data } = await axios.post('https://backendtaskmanager-8r4n.onrender.com/api/auth/login', { email, password });
       if (data.token) {
         login(data.token); // Call the login function from context
         navigate('/dashboard');
@@ -28,7 +28,7 @@ const LoginPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:10000/api/auth/register', { username, email, password });
+      const { data } = await axios.post('https://backendtaskmanager-8r4n.onrender.com/api/auth/register', { username, email, password });
       login(data.token); // Call the login function from context
       navigate('/dashboard');
     } catch (error) {
