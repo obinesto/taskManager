@@ -1,0 +1,48 @@
+.landing-page-container {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  h1 {
+    font-size: 36px;
+  }
+  
+  .form-toggle button {
+    margin: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .form-toggle button.active {
+    background-color: #0056b3;
+  }
+  
+  .auth-form {
+    margin-top: 20px;
+  }
+  
+  .auth-form input {
+    padding: 10px;
+    margin: 10px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .auth-form button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .auth-form button:hover {
+    background-color: #218838;
+  }
+
+  
