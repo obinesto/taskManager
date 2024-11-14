@@ -1,23 +1,36 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { FaSignOutAlt } from 'react-icons/fa'; // Use React Icons for Logout
 import './sidebar.css';
+import { AuthContext } from '../Utils/AuthContext'; // Import AuthContext
+
 
 const Sidebar = () => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn'); // Check if user is logged in
+  const { isAuthenticated, logout } = useContext(AuthContext); // Access the authentication state
+  const navigate = useNavigate(); // Get the navigate function from react-router
+
+
+  const handleLogout = () => {
+    logout(); // Call logout function from context
+    navigate('./'); // Redirect to login page after logout
+  };
 
   return (
     <div className="sidebar">
       <h2>Task Manager</h2>
       <ul>
-        {/* Show links only if user is logged in */}
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <>
             <li><Link to="/dashboard">Dashboard</Link></li>
             <li><Link to="/tasklist">Task List</Link></li>
+            <li>
+              <button onClick={handleLogout} className="logout-button">
+                <FaSignOutAlt /> Logout
+              </button>
+            </li>
           </>
         ) : (
-          // Show login/register options when not logged in
-          <li><Link to="/login">Login/Register</Link></li>
+          <li><Link to="/">Login/Register</Link></li>
         )}
       </ul>
     </div>

@@ -8,9 +8,11 @@ import LoginPage from './Components/Auth/LoginPage';
 import RegisterPage from './Components/Auth/RegisterPage';
 import TaskForm from './Components/TaskForm/TaskForm';
 import TaskDetails from './Components/TaskDetails/TaskDetails';
+import { AuthProvider } from './Components/Utils/AuthContext';
 
 const App = () => {
   return (
+    <AuthProvider>
     <Router>
       <div className="app-container">
         <Sidebar />
@@ -27,6 +29,7 @@ const App = () => {
         </div>
       </div>
     </Router>
+    </AuthProvider>
   );
 };
 

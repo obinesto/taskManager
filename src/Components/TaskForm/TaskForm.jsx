@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import axios from '../../Services/taskService';
+import { useNavigate } from 'react-router-dom';
 import "./taskform.css"
 
 
 const TaskForm = () => {
   const [task, setTask] = useState({ name: '', description: '', executedBySelf: true, assignedTo: '' });
+  const navigate = useNavigate(); // hook to programmatically navigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
     await axios.post('/tasks', task);
     setTask({ name: '', description: '', executedBySelf: true, assignedTo: '' });
+    navigate('/tasklist'); 
+  } catch (error) {
+    console.error('Error creating task:', error);
+  }
   };
 
   return (
