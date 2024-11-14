@@ -66,6 +66,13 @@ const LoginPage = () => {
         <form onSubmit={handleRegister} className="auth-form">
           <h3>Register</h3>
           <input
+            type="username"
+            placeholder="Username"
+            value={email}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
             type="email"
             placeholder="Email"
             value={email}
