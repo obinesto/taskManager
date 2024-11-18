@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from "./taskService"
+import axios from './taskService';
 
 const TaskDetails = () => {
   const { id } = useParams();
@@ -20,7 +20,7 @@ const TaskDetails = () => {
       }
     };
     fetchTask();
-  }, [id]);  
+  }, [id]);
 
   const handleUpdateStatus = async (newStatus) => {
     try {
@@ -31,43 +31,84 @@ const TaskDetails = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (!task) return <p>Task not found.</p>;
+  if (loading) return <p className="text-center">Loading...</p>;
+  if (!task) return <p className="text-center">Task not found.</p>;
 
   return (
-    <div className="task-details-container">
-      <h2>Task Details</h2>
-      <div className="task-details-item"><strong>Name:</strong> {task.name}</div>
-      <div className="task-details-item"><strong>Description:</strong> {task.description}</div>
-      <div className="task-details-item"><strong>Assigned To:</strong> {task.executedBySelf ? "Self" : task.assignedTo}</div>
-      <div className="task-details-item"><strong>Status:</strong> {task.status}</div>
+    <div className="task-details-container max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <h2 className="text-3xl font-semibold text-indigo-600 mb-4">Task Details</h2>
 
-      <div className="task-details-actions">
+      <div className="task-details-item mb-4">
+        <strong className="text-lg">Name:</strong> {task.name}
+      </div>
+      <div className="task-details-item mb-4">
+        <strong className="text-lg">Description:</strong> {task.description}
+      </div>
+      <div className="task-details-item mb-4">
+        <strong className="text-lg">Assigned To:</strong> {task.executedBySelf ? "Self" : task.assignedTo}
+      </div>
+      <div className="task-details-item mb-6">
+        <strong className="text-lg">Status:</strong> 
+        <span className={`px-3 py-1 rounded-full text-white 
+          ${task.status === 'Completed' ? 'bg-green-500' :
+          task.status === 'In Progress' ? 'bg-yellow-500' :
+          task.status === 'Pending' ? 'bg-blue-500' : 'bg-red-500'}`}
+        >
+          {task.status}
+        </span>
+      </div>
+
+      <div className="task-details-actions mb-6">
         {task.executedBySelf ? (
           // Actions for self-assigned tasks
           task.status === 'In Progress' ? (
-            <button onClick={() => handleUpdateStatus('Completed')}>Mark as Completed</button>
+            <button
+              onClick={() => handleUpdateStatus('Completed')}
+              className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 mb-4"
+            >
+              Mark as Completed
+            </button>
           ) : (
-            <p>This task is already completed.</p>
+            <p className="text-gray-500">This task is already completed.</p>
           )
         ) : (
           // Actions for tasks assigned to others
           <>
             {task.status === 'Pending' && (
               <>
-                <button className="accept-button" onClick={() => handleUpdateStatus('In Progress')}>Accept Task</button>
-                <button className="reject-button" onClick={() => handleUpdateStatus('Rejected')}>Reject Task</button>
+                <button
+                  onClick={() => handleUpdateStatus('In Progress')}
+                  className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 mr-4"
+                >
+                  Accept Task
+                </button>
+                <button
+                  onClick={() => handleUpdateStatus('Rejected')}
+                  className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700"
+                >
+                  Reject Task
+                </button>
               </>
             )}
             {task.status === 'In Progress' && (
-              <button className="complete-button" onClick={() => handleUpdateStatus('Completed')}>Mark as Completed</button>
+              <button
+                onClick={() => handleUpdateStatus('Completed')}
+                className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 mt-4"
+              >
+                Mark as Completed
+              </button>
             )}
-            {task.status === 'Rejected' && <p>This task was rejected.</p>}
-            {task.status === 'Completed' && <p>This task is completed.</p>}
+            {task.status === 'Rejected' && <p className="text-gray-500">This task was rejected.</p>}
+            {task.status === 'Completed' && <p className="text-gray-500">This task is completed.</p>}
           </>
         )}
 
-        <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 mt-6"
+        >
+          Back
+        </button>
       </div>
     </div>
   );

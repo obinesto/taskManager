@@ -14,9 +14,9 @@ const App = () => {
   return (
     <AuthProvider>
     <Router>
-      <div className="app-container">
+      <div className="flex min-h-screen bg-gray-100">
         <Sidebar />
-        <div className="content-container">
+        <div className="flex-1 bg-white p-6 overflow-y-auto">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/dashboard" element={<Dashboard />} />

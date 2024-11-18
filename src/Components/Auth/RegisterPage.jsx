@@ -3,17 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../Utils/AuthContext'; // Import AuthContext
 
-
-const LoginPage = () => {
+const RegisterPage = () => {
   const [isLogin, setIsLogin] = useState(false); // Toggle between login and register form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(''); // Error state
   const { login } = useContext(AuthContext); // Get the login function from context
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     try {
       const { data } = await axios.post('https://backendtaskmanager-8r4n.onrender.com/api/auth/login', { email, password });
       if (data.token) {
@@ -21,78 +24,120 @@ const LoginPage = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Login Error:', error.response ? error.response.data.message : error.message);
+      setError(error.response ? error.response.data.message : error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     try {
       const { data } = await axios.post('https://backendtaskmanager-8r4n.onrender.com/api/auth/register', { username, email, password });
       login(data.token); // Call the login function from context
       navigate('/dashboard');
     } catch (error) {
-      console.error('Register Error:', error.response.data.message);
+      setError(error.response ? error.response.data.message : error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-page-container">
-      <h1>Welcome to Task Manager</h1>
-      {isLogin ? (
-        <form onSubmit={handleLogin} className="auth-form">
-          <h3>Login</h3>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Login</button>
-          <p>Don&apos;t have an account? 
-            <button type="button" onClick={() => setIsLogin(false)}>Register</button>
-          </p>
-        </form>
-      ) : (
-        <form onSubmit={handleRegister} className="auth-form">
-          <h3>Register</h3>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Register</button>
-          <p>Already have an account? 
-            <button type="button" onClick={() => setIsLogin(true)}>Login</button>
-          </p>
-        </form>
-      )}
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-semibold text-center text-indigo-600 mb-4">Welcome to Task Manager</h1>
+        
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>} {/* Error message */}
+
+        {isLogin ? (
+          <form onSubmit={handleLogin} className="space-y-4">
+            <h3 className="text-xl font-semibold text-center">Login</h3>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ${loading && 'opacity-50 cursor-not-allowed'}`}
+            >
+              {loading ? 'Logging In...' : 'Login'}
+            </button>
+            <p className="text-center text-sm">
+              Don&apos;t have an account?{' '}
+              <button
+                type="button"
+                onClick={() => setIsLogin(false)}
+                className="text-indigo-600 hover:text-indigo-800"
+              >
+                Register
+              </button>
+            </p>
+          </form>
+        ) : (
+          <form onSubmit={handleRegister} className="space-y-4">
+            <h3 className="text-xl font-semibold text-center">Register</h3>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ${loading && 'opacity-50 cursor-not-allowed'}`}
+            >
+              {loading ? 'Registering...' : 'Register'}
+            </button>
+            <p className="text-center text-sm">
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => setIsLogin(true)}
+                className="text-indigo-600 hover:text-indigo-800"
+              >
+                Login
+              </button>
+            </p>
+          </form>
+        )}
+      </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
