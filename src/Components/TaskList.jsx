@@ -7,17 +7,62 @@ const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [user, setUser] = useState(null); // Store logged-in user details
+  const [users, setUsers] = useState([]); // Store list of users
+  const [loading, setLoading] = useState(false); // Loading state for preloader
   const tasksPerPage = 5;
 
+  // Fetch logged-in user details
   useEffect(() => {
-    const fetchTasks = async () => {
-      const response = await axios.get("/tasks", {
-        params: filter ? { status: filter } : {},
-      });
-      setTasks(response.data);
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('/auth/me'); // Endpoint to get logged-in user details
+        setUser(response.data);
+        console.log('User:', response.data); // Log user data
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
     };
-    fetchTasks();
-  }, [filter]);
+
+    fetchUser();
+  }, []); // This runs once when the component mounts
+
+  // Fetch all users (if necessary) for mapping assignedTo email to user name
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('/auth/users'); // Endpoint to get all users (if not already available)
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []); // Runs once to fetch all users
+
+  // Fetch tasks when the user is fetched and the filter changes
+  useEffect(() => {
+    if (user) {
+      const fetchTasks = async () => {
+        setLoading(true); // Set loading to true before making the request
+        try {
+          const response = await axios.get('/tasks', { params: filter ? { status: filter } : {} });
+          const filteredTasks = response.data.filter(
+            (task) =>
+              task.assignedTo === user?.email || task.assignedBy === user?.email
+          );
+          setTasks(filteredTasks);
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        } finally {
+          setLoading(false); // Set loading to false once the request is complete
+        }
+      };
+
+      fetchTasks();
+    }
+  }, [filter, user]); // This runs when filter or user changes
 
   // Pagination calculation
   const indexOfLastTask = currentPage * tasksPerPage;
@@ -26,9 +71,18 @@ const TaskList = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+   // Function to get the username based on email (assignedTo)
+   const getUserNameByEmail = (email) => {
+    if (users.length === 0) return 'Loading...'; // Fallback when users are not yet loaded
+    const foundUser = users.find((user) => user.email === email);
+    return foundUser ? foundUser.username : email; // Fallback to email if no user is found
+  };
+
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        {user && <h2>Welcome back, {user.username}!</h2>} {/* Display user name */}
         <h1 className="text-3xl font-bold text-indigo-700 mb-6">Task List</h1>
         <p className="text-lg text-gray-600 mb-4">
           Manage your tasks efficiently and stay organized.
@@ -70,6 +124,8 @@ const TaskList = () => {
                 <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
                   Task Name
                 </th>
+                <th>Description</th> {/* New Column for Description */}
+                <th>Assigned To</th> {/* New Column for Assigned To */}
                 <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
                   Status
                 </th>
@@ -84,17 +140,18 @@ const TaskList = () => {
                   <td className="py-4 px-6 text-sm text-gray-700">
                     {task.name}
                   </td>
+                  <td>{task.description}</td> {/* Display Description */}
+                  <td>{getUserNameByEmail(task.assignedTo)}</td> {/* Display Name from Email */}
                   <td className="py-4 px-6 text-sm">
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full text-white ${
-                        task.status === "Completed"
+                      className={`px-3 py-1 text-xs font-medium rounded-full text-white ${task.status === "Completed"
                           ? "bg-green-500"
                           : task.status === "In Progress"
-                          ? "bg-yellow-500"
-                          : task.status === "Rejected"
-                          ? "bg-red-500"
-                          : "bg-gray-400"
-                      }`}
+                            ? "bg-yellow-500"
+                            : task.status === "Rejected"
+                              ? "bg-red-500"
+                              : "bg-gray-400"
+                        }`}
                     >
                       {task.status}
                     </span>
@@ -121,11 +178,10 @@ const TaskList = () => {
                 key={index}
                 onClick={() => paginate(index + 1)}
                 disabled={currentPage === index + 1}
-                className={`py-2 px-4 mx-1 rounded-md ${
-                  currentPage === index + 1
+                className={`py-2 px-4 mx-1 rounded-md ${currentPage === index + 1
                     ? "bg-indigo-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                } transition duration-200`}
+                  } transition duration-200`}
               >
                 {index + 1}
               </button>
