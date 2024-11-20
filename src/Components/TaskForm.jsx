@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from './taskService';
 import { useNavigate } from 'react-router-dom';
 
-const TaskForm = () => {
+const TaskForm = ({notify}) => {
   const [task, setTask] = useState({ name: '', description: '', executedBySelf: true, assignedTo: '', assignedBy: '' });
   const [users, setUsers] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null); 
@@ -51,6 +51,7 @@ const TaskForm = () => {
 
     try {
       await axios.post('/tasks', task);
+      notify("Task created successfully");
       setTask({ name: '', description: '', executedBySelf: true, assignedTo: '' }); // Reset the form
       navigate('/tasklist');
     } catch (error) {

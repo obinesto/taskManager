@@ -16,11 +16,11 @@ const TaskList = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/auth/me'); // Endpoint to get logged-in user details
+        const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
         setUser(response.data);
-        console.log('User:', response.data); // Log user data
+        console.log("User:", response.data); // Log user data
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error("Error fetching user:", error);
       }
     };
 
@@ -31,10 +31,10 @@ const TaskList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/auth/users'); // Endpoint to get all users (if not already available)
+        const response = await axios.get("/auth/users"); // Endpoint to get all users (if not already available)
         setUsers(response.data);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
       }
     };
 
@@ -47,14 +47,16 @@ const TaskList = () => {
       const fetchTasks = async () => {
         setLoading(true); // Set loading to true before making the request
         try {
-          const response = await axios.get('/tasks', { params: filter ? { status: filter } : {} });
+          const response = await axios.get("/tasks", {
+            params: filter ? { status: filter } : {},
+          });
           const filteredTasks = response.data.filter(
             (task) =>
               task.assignedTo === user?.email || task.assignedBy === user?.email
           );
           setTasks(filteredTasks);
         } catch (error) {
-          console.error('Error fetching tasks:', error);
+          console.error("Error fetching tasks:", error);
         } finally {
           setLoading(false); // Set loading to false once the request is complete
         }
@@ -71,30 +73,35 @@ const TaskList = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-   // Function to get the username based on email (assignedTo)
-   const getUserNameByEmail = (email) => {
-    if (users.length === 0) return 'Loading...'; // Fallback when users are not yet loaded
+  // Function to get the username based on email (assignedTo)
+  const getUserNameByEmail = (email) => {
+    if (users.length === 0) return "Loading..."; // Fallback when users are not yet loaded
     const foundUser = users.find((user) => user.email === email);
     return foundUser ? foundUser.username : email; // Fallback to email if no user is found
   };
 
+  if (loading)
+    return (
+      <p className="flex flex-col justify-center items-center text-indigo-600 font-semibold text-3xl">
+        Loading...
+      </p>
+    );
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        {user && <h2>Welcome back, {user.username}!</h2>} {/* Display user name */}
+        {user && <h2>Welcome back, {user.username}!</h2>}{" "}
+        {/* Display user name */}
         <h1 className="text-3xl font-bold text-indigo-700 mb-6">Task List</h1>
         <p className="text-lg text-gray-600 mb-4">
           Manage your tasks efficiently and stay organized.
         </p>
-
         {/* Add New Task Button */}
         <Link to="/add-task">
           <button className="bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition duration-200 mb-6">
             Add New Task
           </button>
         </Link>
-
         {/* Filter Dropdown */}
         <div className="mb-6">
           <label
@@ -115,7 +122,6 @@ const TaskList = () => {
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-
         {/* Task List Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border-collapse">
@@ -141,17 +147,19 @@ const TaskList = () => {
                     {task.name}
                   </td>
                   <td>{task.description}</td> {/* Display Description */}
-                  <td>{getUserNameByEmail(task.assignedTo)}</td> {/* Display Name from Email */}
+                  <td>{getUserNameByEmail(task.assignedTo)}</td>{" "}
+                  {/* Display Name from Email */}
                   <td className="py-4 px-6 text-sm">
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full text-white ${task.status === "Completed"
+                      className={`px-3 py-1 text-xs font-medium rounded-full text-white ${
+                        task.status === "Completed"
                           ? "bg-green-500"
                           : task.status === "In Progress"
-                            ? "bg-yellow-500"
-                            : task.status === "Rejected"
-                              ? "bg-red-500"
-                              : "bg-gray-400"
-                        }`}
+                          ? "bg-yellow-500"
+                          : task.status === "Rejected"
+                          ? "bg-red-500"
+                          : "bg-gray-400"
+                      }`}
                     >
                       {task.status}
                     </span>
@@ -168,7 +176,6 @@ const TaskList = () => {
             </tbody>
           </table>
         </div>
-
         {/* Pagination */}
         <div className="flex justify-center items-center mt-8">
           {Array.from(
@@ -178,10 +185,11 @@ const TaskList = () => {
                 key={index}
                 onClick={() => paginate(index + 1)}
                 disabled={currentPage === index + 1}
-                className={`py-2 px-4 mx-1 rounded-md ${currentPage === index + 1
+                className={`py-2 px-4 mx-1 rounded-md ${
+                  currentPage === index + 1
                     ? "bg-indigo-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  } transition duration-200`}
+                } transition duration-200`}
               >
                 {index + 1}
               </button>

@@ -1,7 +1,8 @@
 import axios from 'axios';
+const baseApiUrl = import.meta.env.VITE_BASE_API_URL
 
 const instance = axios.create({
-  baseURL: 'https://backendtaskmanager-8r4n.onrender.com/api'
+  baseURL: baseApiUrl
 });
 
 // Automatically include the token in all requests

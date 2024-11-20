@@ -38,14 +38,18 @@ const Dashboard = () => {
     fetchTaskStats();
   }, []);
 
-  const data = [
+  const dataOne = [
     { name: "In Progress", value: taskStats.inProgress },
     { name: "Completed", value: taskStats.completed },
+  ];
+
+  const dataTwo = [
     { name: "Pending", value: taskStats.pending },
     { name: "Rejected", value: taskStats.rejected },
   ];
 
-  const COLORS = ["#2563eb", "#16a34a", "#ca8a04", "#dc2626"];
+  const colorsOne = ["#2563eb", "#16a34a"];
+  const colorsTwo = ["#ca8a04", "#dc2626"];
 
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
@@ -73,14 +77,11 @@ const Dashboard = () => {
     );
   };
 
-  if (loading)
-    return (
-      <p className="flex flex-col justify-center items-center text-indigo-600 font-semibold text-3xl">
-        Loading...
-      </p>
-    );
-
-  return (
+  return loading ? (
+    <p className="flex flex-col justify-center items-center text-indigo-600 font-semibold text-3xl">
+      Loading...
+    </p>
+  ) : (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-indigo-600 mb-4">Dashboard</h1>
@@ -93,26 +94,57 @@ const Dashboard = () => {
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             Task Overview
           </h2>
-          <PieChart width={400} height={400} className="bg-indigo-600">
-            <Pie
-              data={data}
-              cx={200}
-              cy={200}
-              labelLine={false}
-              label={renderCustomizedLabel}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
+          <div className="flex flex-col md:flex-row items-center mb-4 justify-between">
+            <PieChart
+              width={400}
+              height={400}
+              className="bg-slate-50 rounded-lg border-2 border-indigo-600 shadow-md"
             >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip/>
-          </PieChart>
+              <Pie
+                data={dataOne}
+                cx={200}
+                cy={200}
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {dataOne.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={colorsOne[index % colorsOne.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+
+            <PieChart
+              width={400}
+              height={400}
+              className="bg-slate-50 rounded-lg border-2 border-indigo-600 shadow-md"
+            >
+              <Pie
+                data={dataTwo}
+                cx={200}
+                cy={200}
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {dataTwo.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={colorsTwo[index % colorsTwo.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </div>
         </div>
 
         {/* Task Summary */}
