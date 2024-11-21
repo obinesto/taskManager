@@ -1,7 +1,7 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { AuthContext } from '../Utils/AuthContext';
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from "../Utils/AuthContext";
 
 const apiUrl = {
   login: import.meta.env.VITE_API_URL_LOGIN,
@@ -10,18 +10,18 @@ const apiUrl = {
 
 const AuthPage = ({ notify }) => {
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login } = useContext(AuthContext); // Access login function from AuthContext
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
     const apiEndpoint = isLogin ? apiUrl.login : apiUrl.register;
     const payload = isLogin
       ? { email, password }
@@ -31,15 +31,27 @@ const AuthPage = ({ notify }) => {
       const { data } = await axios.post(apiEndpoint, payload);
       if (data.token) {
         login(data.token); // Log in user
-        notify(isLogin ? 'Login successful' : 'Registration successful');
-        navigate('/dashboard');
+        notify(
+          isLogin ? "Login successful" : "Registration successful",
+          "success"
+        );
+        navigate("/dashboard");
       }
     } catch (error) {
-      setError(error.response ? error.response.data.message : error.message);
+      notify(isLogin ? "Login failed" : "Registration failed", "error");
+      setError(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const buttonText = loading
+    ? isLogin
+      ? "Logging In..."
+      : "Registering..."
+    : isLogin
+    ? "Login"
+    : "Register";
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -52,7 +64,7 @@ const AuthPage = ({ notify }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <h3 className="text-xl font-semibold text-center">
-            {isLogin ? 'Login' : 'Register'}
+            {isLogin ? "Login" : "Register"}
           </h3>
           {!isLogin && (
             <input
@@ -84,25 +96,20 @@ const AuthPage = ({ notify }) => {
             type="submit"
             disabled={loading}
             className={`w-full py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ${
-              loading && 'opacity-50 cursor-not-allowed'
+              loading && "opacity-50 cursor-not-allowed"
             }`}
           >
-            {loading
-              ? isLogin
-                ? 'Logging In...'
-                : 'Registering...'
-              : isLogin
-              ? 'Login'
-              : 'Register'}
+            {buttonText}
           </button>
           <p className="text-center text-sm">
-            {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
+              aria-pressed={!isLogin}
               className="text-indigo-600 hover:text-indigo-800"
             >
-              {isLogin ? 'Register' : 'Login'}
+              {isLogin ? "Register" : "Login"}
             </button>
           </p>
         </form>

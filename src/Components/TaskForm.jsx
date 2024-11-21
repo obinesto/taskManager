@@ -51,10 +51,11 @@ const TaskForm = ({notify}) => {
 
     try {
       await axios.post('/tasks', task);
-      notify("Task created successfully");
+      notify("Task created successfully", "success");
       setTask({ name: '', description: '', executedBySelf: true, assignedTo: '' }); // Reset the form
       navigate('/tasklist');
     } catch (error) {
+      notify("Error creating task", "error");
       setError('Error creating task. Please try again later.');
       console.error('Error creating task:', error);
     } finally {

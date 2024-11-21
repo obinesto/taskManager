@@ -11,7 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
-  const notify = (message) =>
+  const notify = (message, notificationType) =>
     toast(message, {
       position: "top-left",
       autoClose: 3000,
@@ -21,7 +21,7 @@ const App = () => {
       draggable: true,
       progress: undefined,
       theme: "dark",
-      type: "success",
+      type: notificationType
     });
   return (
     <AuthProvider>
@@ -36,15 +36,15 @@ const App = () => {
               <Route path="/task/:id" element={<TaskDetails />} />
               <Route
                 path="/login"
-                element={<AuthPage notify={(message) => notify(message)} />}
+                element={<AuthPage notify={(message, notificationType) => notify(message, notificationType)} />}
               />
               <Route
                 path="/register"
-                element={<AuthPage notify={(message) => notify(message)} />}
+                element={<AuthPage notify={(message, notificationType) => notify(message, notificationType)} />}
               />
               <Route
                 path="/add-task"
-                element={<TaskForm notify={(message) => notify(message)} />}
+                element={<TaskForm notify={(message, notificationType) => notify(message, notificationType)} />}
               />
             </Routes>
           </div>
