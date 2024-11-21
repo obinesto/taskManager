@@ -12,31 +12,60 @@ const Dashboard = () => {
     rejected: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null); // Store logged-in user details
+  const [tasks, setTasks] = useState([]);
 
+  // Fetch logged-in user details
   useEffect(() => {
-    const fetchTaskStats = async () => {
+    const fetchUser = async () => {
       try {
-        const response = await axios.get("/tasks");
-        const tasks = response.data;
+        const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
 
+    fetchUser();
+  }, []); // This runs once when the component mounts
+
+    // Fetch tasks when the user is fetched and the filter changes
+    useEffect(() => {
+      if (user) {
+        const fetchTasks = async () => {
+          setLoading(true); // Set loading to true before making the request
+          try {
+            const response = await axios.get("/tasks");
+            const filteredTasks = response.data.filter(
+              (task) =>
+                task.assignedTo === user?.email || task.assignedBy === user?.email
+            );
+            setTasks(filteredTasks);
+          } catch (error) {
+            console.error("Error fetching tasks:", error);
+          } finally {
+            setLoading(false); // Set loading to false once the request is complete
+          }
+        };
+  
+        fetchTasks();
+      }
+    }, [user]); // This runs when user changes
+
+    useEffect(() => {
+      const fetchTaskStats = () => {
         const stats = {
-          inProgress: tasks.filter((task) => task.status === "In Progress")
-            .length,
+          inProgress: tasks.filter((task) => task.status === "In Progress").length,
           completed: tasks.filter((task) => task.status === "Completed").length,
           pending: tasks.filter((task) => task.status === "Pending").length,
           rejected: tasks.filter((task) => task.status === "Rejected").length,
         };
-
         setTaskStats(stats);
-      } catch (error) {
-        console.error("Error fetching task stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTaskStats();
-  }, []);
+      };
+    
+      fetchTaskStats();
+    }, [tasks]); // Runs whenever 'tasks' changes
+    
 
   const dataOne = [
     { name: "In Progress", value: taskStats.inProgress },
