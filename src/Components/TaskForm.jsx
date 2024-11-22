@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import axios from './taskService';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +32,7 @@ const TaskForm = ({notify}) => {
     };
 
     fetchUsers();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     if (loggedInUser && task.executedBySelf) {

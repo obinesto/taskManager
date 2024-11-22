@@ -14,12 +14,6 @@ const LandingPage = () => {
           >
             Login
           </Link>
-          <Link
-            to="/register"
-            className="px-6 py-2 text-lg text-indigo-600 bg-transparent border-2 border-indigo-600 rounded-full hover:bg-indigo-600 hover:text-white transition duration-300"
-          >
-            Register
-          </Link>
         </div>
       </div>
     </div>

@@ -1,22 +1,50 @@
-import { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaSignOutAlt, FaTachometerAlt, FaTasks } from 'react-icons/fa';
-import { AuthContext } from './Utils/AuthContext';
+import { useContext,useState,useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaSignOutAlt, FaTachometerAlt, FaTasks } from "react-icons/fa";
+import { AuthContext } from "./Utils/AuthContext";
+import { MdAccountCircle } from "react-icons/md";
+import axios from "./taskService";
 
 const Sidebar = () => {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []); // This runs once when the component mounts
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <div className="w-64 bg-gradient-to-l from-indigo-900 to-blue-800 text-white p-6 flex flex-col justify-between shadow-lg">
+    <div className="w-48 bg-gradient-to-l from-indigo-900 to-blue-800 text-white p-6 flex flex-col justify-between shadow-lg">
+      {isAuthenticated ? (
+        <div className="flex flex-col items-center">
+          <MdAccountCircle className="md:size-10 sm:size-7" />
+          {user && <h2 className="capitalize">welcome {user.username}</h2>}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center">
+          <MdAccountCircle className="md:size-10 sm:size-7" />
+          <h2>Welcome Guest</h2>
+        </div>
+      )}
+
       {/* Sidebar Header */}
       <div>
-        <h2 className="text-3xl font-bold text-center mb-8">Task Manager</h2>
+        <h2 className="text-2xl font-bold text-center">Task Manager</h2>
 
         {/* Navigation Links */}
         <ul className="space-y-4">
@@ -56,7 +84,7 @@ const Sidebar = () => {
                 to="/"
                 className="flex items-center justify-center py-2 px-4 rounded bg-indigo-700 hover:bg-indigo-600 transition duration-200 ease-in-out"
               >
-                Login/Register
+                Login
               </Link>
             </li>
           )}
@@ -64,7 +92,7 @@ const Sidebar = () => {
       </div>
 
       {/* Sidebar Footer */}
-      <footer className="text-center text-sm text-gray-300 mt-6">
+      <footer className="text-center text-sm text-gray-300">
         © 2024 Task Manager. All rights reserved.
       </footer>
     </div>

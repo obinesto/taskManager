@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -45,23 +46,15 @@ const AuthPage = ({ notify }) => {
     }
   };
 
-  const buttonText = loading
-    ? isLogin
-      ? "Logging In..."
-      : "Registering..."
-    : isLogin
-    ? "Login"
-    : "Register";
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-semibold text-center text-indigo-600 mb-4">
           Welcome to Task Manager
         </h1>
-
+  
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
+  
         <form onSubmit={handleSubmit} className="space-y-4">
           <h3 className="text-xl font-semibold text-center">
             {isLogin ? "Login" : "Register"}
@@ -99,7 +92,13 @@ const AuthPage = ({ notify }) => {
               loading && "opacity-50 cursor-not-allowed"
             }`}
           >
-            {buttonText}
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              isLogin ? "Login" : "Register"
+            )}
           </button>
           <p className="text-center text-sm">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
@@ -115,7 +114,7 @@ const AuthPage = ({ notify }) => {
         </form>
       </div>
     </div>
-  );
+  );  
 };
 
 export default AuthPage;
