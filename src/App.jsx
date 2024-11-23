@@ -19,9 +19,12 @@ const App = () => {
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
-      progress: undefined,
       theme: "dark",
-      type: notificationType
+      type: notificationType,
+      style: {
+        fontFamily: "'Poppins', sans-serif", // Custom styling
+        borderRadius: "8px",
+      },
     });
   return (
     <AuthProvider>

@@ -124,14 +124,18 @@ const TaskList = () => {
         </div>
         {/* Task List Table */}
         <div className="overflow-x-auto">
-          <table className="min-w-full table-auto border-collapse">
+          <table className="table-auto w-full border-collapse border border-gray-200">
             <thead>
-              <tr className="bg-gray-100">
+              <tr className="bg-gray-100 border-b border-gray-300">
                 <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
                   Task Name
                 </th>
-                <th>Description</th> {/* New Column for Description */}
-                <th>Assigned To</th> {/* New Column for Assigned To */}
+                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
+                  Description
+                </th>
+                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
+                  Assigned To
+                </th>
                 <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
                   Status
                 </th>
@@ -142,13 +146,19 @@ const TaskList = () => {
             </thead>
             <tbody>
               {currentTasks.map((task) => (
-                <tr key={task._id} className="border-b hover:bg-gray-50">
+                <tr
+                  key={task._id}
+                  className="border-b border-gray-300 hover:bg-gray-50"
+                >
                   <td className="py-4 px-6 text-sm text-gray-700">
                     {task.name}
                   </td>
-                  <td>{task.description}</td> {/* Display Description */}
-                  <td>{getUserNameByEmail(task.assignedTo)}</td>{" "}
-                  {/* Display Name from Email */}
+                  <td className="py-4 px-6 text-sm text-gray-700">
+                    {task.description}
+                  </td>
+                  <td className="py-4 px-6 text-sm text-gray-700">
+                    {getUserNameByEmail(task.assignedTo)}
+                  </td>
                   <td className="py-4 px-6 text-sm">
                     <span
                       className={`px-3 py-1 text-xs font-medium rounded-full text-white ${

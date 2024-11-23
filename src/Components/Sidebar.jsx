@@ -29,74 +29,63 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-48 bg-gradient-to-l from-indigo-900 to-blue-800 text-white p-6 flex flex-col justify-between shadow-lg">
-      {isAuthenticated ? (
-        <div className="flex flex-col items-center">
-          <MdAccountCircle className="md:size-10 sm:size-7" />
-          {user && <h2 className="capitalize">welcome {user.username}</h2>}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center">
-          <MdAccountCircle className="md:size-10 sm:size-7" />
+    <div className="card w-64 bg-gradient-to-l from-indigo-900 to-blue-800 text-white shadow-lg p-6 rounded-none">
+      {/* User Info */}
+      <div className="flex flex-col items-center mb-16">
+        <MdAccountCircle className="text-4xl mb-2" />
+        {isAuthenticated ? (
+          <h2 className="capitalize">Welcome {user?.username}</h2>
+        ) : (
           <h2>Welcome Guest</h2>
-        </div>
-      )}
-
+        )}
+      </div>
+  
       {/* Sidebar Header */}
       <div>
-        <h2 className="text-2xl font-bold text-center">Task Manager</h2>
-
+        <h2 className="text-2xl font-bold text-center mb-10">Task Manager</h2>
+  
         {/* Navigation Links */}
-        <ul className="space-y-4">
+        <ul className="menu bg-transparent p-0 space-y-6">
           {isAuthenticated ? (
             <>
               <li>
-                <Link
-                  to="/dashboard"
-                  className="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 ease-in-out"
-                >
+                <Link to="/dashboard" className="btn btn-outline btn-primary w-full flex items-center">
                   <FaTachometerAlt className="mr-3" />
-                  <span>Dashboard</span>
+                  Dashboard
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/tasklist"
-                  className="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 ease-in-out"
-                >
+                <Link to="/tasklist" className="btn btn-outline btn-primary w-full flex items-center mb-64">
                   <FaTasks className="mr-3" />
-                  <span>Task List</span>
+                  Task List
                 </Link>
               </li>
               <li>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center py-2 px-4 rounded hover:bg-red-600 transition duration-200 ease-in-out"
+                  className="btn btn-error w-full flex items-center mb-64"
                 >
                   <FaSignOutAlt className="mr-3" />
-                  <span>Logout</span>
+                  Logout
                 </button>
               </li>
             </>
           ) : (
             <li>
-              <Link
-                to="/"
-                className="flex items-center justify-center py-2 px-4 rounded bg-indigo-700 hover:bg-indigo-600 transition duration-200 ease-in-out"
-              >
+              <Link to="/" className="btn btn-primary w-full flex justify-center mb-96">
                 Login
               </Link>
             </li>
           )}
         </ul>
       </div>
-
+  
       {/* Sidebar Footer */}
-      <footer className="text-center text-sm text-gray-300">
+      <footer className="text-center text-sm text-gray-300 mt-4">
         © 2024 Task Manager. All rights reserved.
       </footer>
     </div>
-  );
+  );  
 };
 
 export default Sidebar;
