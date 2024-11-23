@@ -27,8 +27,8 @@ const App = () => {
       },
     });
   return (
-    <Router>
-      <AuthProvider>
+    <AuthProvider>
+      <Router>
         <div className="flex min-h-screen bg-gray-100">
           <Sidebar />
           <div className="flex-1 bg-white p-6 overflow-y-auto">
@@ -71,8 +71,8 @@ const App = () => {
           </div>
           <ToastContainer />
         </div>
-      </AuthProvider>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 };
 

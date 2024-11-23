@@ -1,13 +1,11 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect, useRef, useCallback, } from 'react';
-import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const inactivityTimeout = useRef(null);
-  const navigate = useNavigate();
 
   const resetTimer = useCallback(() => {
     if (inactivityTimeout.current) {
@@ -53,19 +51,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = useCallback(() => {
-    try {
-      localStorage.removeItem('token');
-      setIsAuthenticated(false);
-      clearTimeout(inactivityTimeout.current);
-      removeActivityListeners();
-      if (window.location.pathname !== "/") {
-        navigate("/");
-      }
-    } catch (error) {
-      console.error("Failed to navigate after logout:", error);
-    }
-  }, [removeActivityListeners, navigate]);
-  
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    clearTimeout(inactivityTimeout.current);
+    removeActivityListeners();
+  }, [removeActivityListeners]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>

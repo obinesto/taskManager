@@ -1,4 +1,4 @@
-import { useContext,useState,useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaTachometerAlt, FaTasks } from "react-icons/fa";
 import { AuthContext } from "./Utils/AuthContext";
@@ -16,6 +16,9 @@ const Sidebar = () => {
         const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
         setUser(response.data);
       } catch (error) {
+        if (error.response.status === 401) {
+          logout();
+        }
         console.error("Error fetching user:", error);
       }
     };
@@ -39,23 +42,29 @@ const Sidebar = () => {
           <h2>Welcome Guest</h2>
         )}
       </div>
-  
+
       {/* Sidebar Header */}
       <div>
         <h2 className="text-2xl font-bold text-center mb-10">Task Manager</h2>
-  
+
         {/* Navigation Links */}
         <ul className="menu bg-transparent p-0 space-y-6">
           {isAuthenticated ? (
             <>
               <li>
-                <Link to="/dashboard" className="btn btn-outline btn-primary w-full flex items-center">
+                <Link
+                  to="/dashboard"
+                  className="btn btn-outline btn-primary w-full flex items-center"
+                >
                   <FaTachometerAlt className="mr-3" />
                   Dashboard
                 </Link>
               </li>
               <li>
-                <Link to="/tasklist" className="btn btn-outline btn-primary w-full flex items-center mb-64">
+                <Link
+                  to="/tasklist"
+                  className="btn btn-outline btn-primary w-full flex items-center mb-64"
+                >
                   <FaTasks className="mr-3" />
                   Task List
                 </Link>
@@ -72,20 +81,23 @@ const Sidebar = () => {
             </>
           ) : (
             <li>
-              <Link to="/" className="btn btn-primary w-full flex justify-center mb-96">
+              <Link
+                to="/"
+                className="btn btn-primary w-full flex justify-center mb-96"
+              >
                 Login
               </Link>
             </li>
           )}
         </ul>
       </div>
-  
+
       {/* Sidebar Footer */}
       <footer className="text-center text-sm text-gray-300 mt-4">
         © 2024 Task Manager. All rights reserved.
       </footer>
     </div>
-  );  
+  );
 };
 
 export default Sidebar;
