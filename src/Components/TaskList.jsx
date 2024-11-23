@@ -18,7 +18,6 @@ const TaskList = () => {
       try {
         const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
         setUser(response.data);
-        console.log("User:", response.data); // Log user data
       } catch (error) {
         console.error("Error fetching user:", error);
       }

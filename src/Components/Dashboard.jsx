@@ -3,6 +3,7 @@ import axios from "./taskService";
 import { Link } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [taskStats, setTaskStats] = useState({
@@ -12,60 +13,64 @@ const Dashboard = () => {
     rejected: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null); // Store logged-in user details
+  const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
 
-  // Fetch logged-in user details
+  
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
+        const response = await axios.get("/auth/me");
         setUser(response.data);
       } catch (error) {
+        if (error.response.status === 401) {
+          navigate("/login");
+        }
         console.error("Error fetching user:", error);
       }
     };
 
     fetchUser();
-  }, []); // This runs once when the component mounts
+  }, [navigate]);
 
-    // Fetch tasks when the user is fetched and the filter changes
-    useEffect(() => {
-      if (user) {
-        const fetchTasks = async () => {
-          setLoading(true); // Set loading to true before making the request
-          try {
-            const response = await axios.get("/tasks");
-            const filteredTasks = response.data.filter(
-              (task) =>
-                task.assignedTo === user?.email || task.assignedBy === user?.email
-            );
-            setTasks(filteredTasks);
-          } catch (error) {
-            console.error("Error fetching tasks:", error);
-          } finally {
-            setLoading(false); // Set loading to false once the request is complete
-          }
-        };
-  
-        fetchTasks();
-      }
-    }, [user]); // This runs when user changes
-
-    useEffect(() => {
-      const fetchTaskStats = () => {
-        const stats = {
-          inProgress: tasks.filter((task) => task.status === "In Progress").length,
-          completed: tasks.filter((task) => task.status === "Completed").length,
-          pending: tasks.filter((task) => task.status === "Pending").length,
-          rejected: tasks.filter((task) => task.status === "Rejected").length,
-        };
-        setTaskStats(stats);
+  // Fetch tasks when the user is fetched and the filter changes
+  useEffect(() => {
+    if (user) {
+      const fetchTasks = async () => {
+        setLoading(true); // Set loading to true before making the request
+        try {
+          const response = await axios.get("/tasks");
+          const filteredTasks = response.data.filter(
+            (task) =>
+              task.assignedTo === user?.email || task.assignedBy === user?.email
+          );
+          setTasks(filteredTasks);
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+        } finally {
+          setLoading(false); // Set loading to false once the request is complete
+        }
       };
-    
-      fetchTaskStats();
-    }, [tasks]); // Runs whenever 'tasks' changes
-    
+
+      fetchTasks();
+    }
+  }, [user]); // This runs when user changes
+
+  useEffect(() => {
+    const fetchTaskStats = () => {
+      const stats = {
+        inProgress: tasks.filter((task) => task.status === "In Progress")
+          .length,
+        completed: tasks.filter((task) => task.status === "Completed").length,
+        pending: tasks.filter((task) => task.status === "Pending").length,
+        rejected: tasks.filter((task) => task.status === "Rejected").length,
+      };
+      setTaskStats(stats);
+    };
+
+    fetchTaskStats();
+  }, [tasks]); // Runs whenever 'tasks' changes
 
   const dataOne = [
     { name: "In Progress", value: taskStats.inProgress },

@@ -8,6 +8,7 @@ const TaskDetails = () => {
   const navigate = useNavigate();
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -23,10 +24,26 @@ const TaskDetails = () => {
     fetchTask();
   }, [id]);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("/auth/me");
+        setUser(response.data);
+      } catch (error) {
+        if (error.response.status === 401) {
+          navigate("/login");
+        }
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, [navigate]);
+
   const handleUpdateStatus = async (newStatus) => {
     try {
       const response = await axios.patch(`/tasks/${id}`, { status: newStatus });
-      setTask(response.data); // Update task with new status
+      setTask(response.data);
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -55,15 +72,15 @@ const TaskDetails = () => {
         <strong className="text-lg">Status:</strong>
         <span
           className={`px-3 py-1 rounded-full text-white 
-          ${
-            task.status === "Completed"
-              ? "bg-green-500"
-              : task.status === "In Progress"
-              ? "bg-yellow-500"
-              : task.status === "Pending"
-              ? "bg-blue-500"
-              : "bg-red-500"
-          }`}
+            ${
+              task.status === "Completed"
+                ? "bg-green-500"
+                : task.status === "In Progress"
+                ? "bg-yellow-500"
+                : task.status === "Pending"
+                ? "bg-blue-500"
+                : "bg-red-500"
+            }`}
         >
           {task.status}
         </span>
@@ -85,36 +102,44 @@ const TaskDetails = () => {
         ) : (
           // Actions for tasks assigned to others
           <>
-            {task.status === "Pending" && (
+            {task.assignedTo === user.email ? (
               <>
-                <button
-                  onClick={() => handleUpdateStatus("In Progress")}
-                  className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 flex items-center"
-                >
-                  <FaCheck className="mr-2" /> Accept Task
-                </button>
+                {task.status === "Pending" && (
+                  <div className="flex flex-row items-center justify-between">
+                    <button
+                      onClick={() => handleUpdateStatus("In Progress")}
+                      className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 flex items-center"
+                    >
+                      <FaCheck className="mr-2" /> Accept Task
+                    </button>
 
-                <button
-                  onClick={() => handleUpdateStatus("Rejected")}
-                  className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 flex items-center"
-                >
-                  <FaTimes className="mr-2" /> Reject Task
-                </button>
+                    <button
+                      onClick={() => handleUpdateStatus("Rejected")}
+                      className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 flex items-center"
+                    >
+                      <FaTimes className="mr-2" /> Reject Task
+                    </button>
+                  </div>
+                )}
+                {task.status === "In Progress" && (
+                  <button
+                    onClick={() => handleUpdateStatus("Completed")}
+                    className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 flex items-center"
+                  >
+                    <FaCheck className="mr-2" /> Mark as Completed
+                  </button>
+                )}
+                {task.status === "Rejected" && (
+                  <p className="text-gray-500">This task was rejected.</p>
+                )}
+                {task.status === "Completed" && (
+                  <p className="text-gray-500">This task is completed.</p>
+                )}
               </>
-            )}
-            {task.status === "In Progress" && (
-              <button
-                onClick={() => handleUpdateStatus("Completed")}
-                className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 flex items-center"
-              >
-                <FaCheck className="mr-2" /> Mark as Completed
-              </button>
-            )}
-            {task.status === "Rejected" && (
-              <p className="text-gray-500">This task was rejected.</p>
-            )}
-            {task.status === "Completed" && (
-              <p className="text-gray-500">This task is completed.</p>
+            ) : (
+              <p className="text-gray-500">
+                You are not assigned to this task.
+              </p>
             )}
           </>
         )}
@@ -131,5 +156,3 @@ const TaskDetails = () => {
 };
 
 export default TaskDetails;
-
-
