@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "./taskService";
 import { Link } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -11,6 +12,7 @@ const TaskList = () => {
   const [users, setUsers] = useState([]); // Store list of users
   const [loading, setLoading] = useState(false); // Loading state for preloader
   const tasksPerPage = 5;
+  const navigate = useNavigate
 
   // Fetch logged-in user details
   useEffect(() => {
@@ -19,6 +21,9 @@ const TaskList = () => {
         const response = await axios.get("/auth/me"); // Endpoint to get logged-in user details
         setUser(response.data);
       } catch (error) {
+        if(error.response.status === 401){
+          navigate("/")
+        }
         console.error("Error fetching user:", error);
       }
     };
