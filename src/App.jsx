@@ -22,7 +22,7 @@ const App = () => {
       theme: "dark",
       type: notificationType,
       style: {
-        fontFamily: "'Poppins', sans-serif", // Custom styling
+        fontFamily: "'Poppins', sans-serif",
         borderRadius: "8px",
       },
     });
