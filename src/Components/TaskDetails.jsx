@@ -138,7 +138,7 @@ const TaskDetails = () => {
               </>
             ) : (
               <p className="text-gray-500">
-                You are not assigned to this task.
+                You can only monitor the progress of this task. <br>Progress: {task.status}</br>
               </p>
             )}
           </>
