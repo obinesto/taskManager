@@ -167,10 +167,10 @@ const TaskList = () => {
                         task.status === "Completed"
                           ? "bg-green-500 hover:bg-green-600 transition duration-200"
                           : task.status === "In Progress"
-                          ? "bg-yellow-500 hover:bg-yellow-600 transition duration-200"
+                          ? "bg-blue-500 hover:bg-yellow-600 transition duration-200"
                           : task.status === "Rejected"
                           ? "bg-red-500 hover:bg-red-600 transition duration-200"
-                          : "bg-gray-400 hover:bg-gray-500 transition duration-200"
+                          : "bg-yellow-500 hover:bg-gray-500 transition duration-200"
                       }`}
                     >
                       {task.status}

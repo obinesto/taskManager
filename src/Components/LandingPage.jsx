@@ -1,14 +1,17 @@
 import { Link } from "react-router-dom";
-import bgImage from "../assets/bg-2.jpg"
+import bgImage from "../assets/bg-2.jpg";
 
 const LandingPage = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 sm:px-6" style={{
-      backgroundImage: `url(${bgImage})`,
-      backgroundSize: "cover",
+    <div
+      className="flex items-center justify-center min-h-screen px-4 sm:px-6"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-    }}>
+      }}
+    >
       <div className="text-center max-w-md sm:max-w-lg px-6 py-8 bg-[#171718] rounded-lg shadow-lg opacity-95">
         <h1 className="text-2xl sm:text-4xl font-semibold text-[#764CE8] mb-4">
           Welcome to Task Manager
@@ -20,15 +23,9 @@ const LandingPage = () => {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             to="/login"
-            className="px-6 py-2 text-base sm:text-lg text-[#FBFCFA] bg-[#764CE8] rounded-full hover:bg-[#585596] transition duration-300"
+            className="flex items-center px-6 py-2 text-base sm:text-lg text-[#FBFCFA] bg-[#764CE8] rounded-full hover:bg-[#585596] transition duration-300 opacity-85"
           >
-            Login
-          </Link>
-          <Link
-            to="/register"
-            className="px-6 py-2 text-base sm:text-lg text-[#FBFCFA] bg-[#414449] rounded-full hover:bg-[#6A6A71] transition duration-300"
-          >
-            Register
+            <span className="px-3 py-1 bg-transparent text-2xl uppercase font-thin">Explore</span>
           </Link>
         </div>
       </div>

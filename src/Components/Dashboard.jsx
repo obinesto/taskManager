@@ -191,23 +191,23 @@ const Dashboard = () => {
   
         {/* Task Summary */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg920:grid-cols-4 gap-4 mb-8">
-          <div className="bg-[#E1E0ED] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-sm sm:text-lg font-semibold text-[#585596]">
+          <div className="p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300 bg-[#2563eb]">
+            <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
               In Progress
             </h3>
-            <p className="text-xl sm:text-2xl text-[#585596]">
+            <p className="text-xl sm:text-2xl text-[#FEFEFE]">
               {taskStats.inProgress}
             </p>
           </div>
-          <div className="bg-[#C9C9C9] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-sm sm:text-lg font-semibold text-[#252525]">
+          <div className="bg-[#16a34a] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
               Completed
             </h3>
-            <p className="text-xl sm:text-2xl text-[#252525]">
+            <p className="text-xl sm:text-2xl text-[#FEFEFE]">
               {taskStats.completed}
             </p>
           </div>
-          <div className="bg-[#6A6A71] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+          <div className="bg-[#ca8a04] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
             <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
               Pending
             </h3>
@@ -215,7 +215,7 @@ const Dashboard = () => {
               {taskStats.pending}
             </p>
           </div>
-          <div className="bg-[#171718] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+          <div className="bg-[#dc2626] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
             <h3 className="text-sm sm:text-lg font-semibold text-[#F8F8F9]">
               Rejected
             </h3>
