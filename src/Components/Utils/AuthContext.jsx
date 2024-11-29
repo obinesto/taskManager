@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     }
     inactivityTimeout.current = setTimeout(() => {
       logout();
-    }, 6 * 60 * 60 * 1000); // 12 hours
+    }, 6 * 60 * 60 * 1000); // 6 hours
   }, []);
 
   const setupActivityListeners = useCallback(() => {

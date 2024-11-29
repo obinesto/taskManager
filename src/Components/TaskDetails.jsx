@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "./taskService";
 import { FaCheck, FaTimes, FaArrowLeft } from "react-icons/fa";
+import bgImage from "../assets/bg-2.jpg";
 
 const TaskDetails = () => {
   const { id } = useParams();
@@ -53,103 +54,115 @@ const TaskDetails = () => {
   if (!task) return <p className="text-center">Task not found.</p>;
 
   return (
-    <div className="task-details-container max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-semibold text-indigo-600 mb-4">
-        Task Details
-      </h2>
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="max-w-4xlmx-auto p-4 sm:p-6 bg-[#0d0d1d58] rounded-lg shadow-xl opacity-95 ">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-[#764CE8] mb-4">
+          Task Details
+        </h2>
 
-      <div className="task-details-item mb-4">
-        <strong className="text-lg">Name:</strong> {task.name}
-      </div>
-      <div className="task-details-item mb-4">
-        <strong className="text-lg">Description:</strong> {task.description}
-      </div>
-      <div className="task-details-item mb-4">
-        <strong className="text-lg">Assigned To:</strong>{" "}
-        {task.executedBySelf ? "Self" : task.assignedTo}
-      </div>
-      <div className="task-details-item mb-6">
-        <strong className="text-lg">Status:</strong>
-        <span
-          className={`px-3 py-1 rounded-full text-white 
-            ${
-              task.status === "Completed"
-                ? "bg-green-500"
-                : task.status === "In Progress"
-                ? "bg-yellow-500"
-                : task.status === "Pending"
-                ? "bg-blue-500"
-                : "bg-red-500"
-            }`}
-        >
-          {task.status}
-        </span>
-      </div>
+        <div className="task-details-item mb-4">
+      <strong className="block text-lg sm:text-xl text-[#111010]">Name:</strong>
+      <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">{task.name}</span>
+        </div>
+        <div className="task-details-item mb-4">
+      <strong className="block text-lg sm:text-xl text-[#111010]">Description:</strong>
+      <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">{task.description}</span>
+        </div>
+        <div className="task-details-item mb-4">
+      <strong className="block text-lg sm:text-xl text-[#111010]">Assigned To:</strong>
+      <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">
+            {task.executedBySelf ? "Self" : task.assignedTo}
+          </span>
+        </div>
+        <div className="task-details-item mb-6">
+      <strong className="block text-lg sm:text-xl text-[#FEFEFE]">Status:</strong>
+          <span
+            className={`inline-block px-3 py-1 mt-1 rounded-full text-sm sm:text-base text-white 
+          ${
+            task.status === "Completed"
+              ? "bg-[#30A46C]"
+              : task.status === "In Progress"
+              ? "bg-[#D97706]"
+              : task.status === "Pending"
+              ? "bg-[#2563EB]"
+              : "bg-[#E45858]"
+          }`}
+          >
+            {task.status}
+          </span>
+        </div>
 
-      <div className="task-details-actions mb-6">
-        {task.executedBySelf ? (
-          // Actions for self-assigned tasks
-          task.status === "In Progress" ? (
-            <button
-              onClick={() => handleUpdateStatus("Completed")}
-              className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 flex items-center"
-            >
-              <FaCheck className="mr-2" /> Mark as Completed
-            </button>
-          ) : (
-            <p className="text-gray-500">This task is already completed.</p>
-          )
-        ) : (
-          // Actions for tasks assigned to others
-          <>
-            {task.assignedTo === user.email ? (
-              <>
-                {task.status === "Pending" && (
-                  <div className="flex flex-row items-center justify-between">
-                    <button
-                      onClick={() => handleUpdateStatus("In Progress")}
-                      className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 flex items-center"
-                    >
-                      <FaCheck className="mr-2" /> Accept Task
-                    </button>
-
-                    <button
-                      onClick={() => handleUpdateStatus("Rejected")}
-                      className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 flex items-center"
-                    >
-                      <FaTimes className="mr-2" /> Reject Task
-                    </button>
-                  </div>
-                )}
-                {task.status === "In Progress" && (
-                  <button
-                    onClick={() => handleUpdateStatus("Completed")}
-                    className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 flex items-center"
-                  >
-                    <FaCheck className="mr-2" /> Mark as Completed
-                  </button>
-                )}
-                {task.status === "Rejected" && (
-                  <p className="text-gray-500">This task was rejected.</p>
-                )}
-                {task.status === "Completed" && (
-                  <p className="text-gray-500">This task is completed.</p>
-                )}
-              </>
+        <div className="task-details-actions space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+          {task.executedBySelf ? (
+            task.status === "In Progress" ? (
+              <button
+                onClick={() => handleUpdateStatus("Completed")}
+                className="w-full sm:w-auto bg-[#30A46C] text-white py-2 px-4 rounded-md hover:bg-[#25805B] flex items-center justify-center"
+              >
+                <FaCheck className="mr-2" /> Mark as Completed
+              </button>
             ) : (
-              <p className="text-gray-500">
-                You can only monitor the progress of tasks assigned to other users. <br/> Task : {task.status}
-              </p>
-            )}
-          </>
-        )}
+          <p className="text-[#C9C9C9]">This task is already completed.</p>
+            )
+          ) : (
+            <>
+              {task.assignedTo === user.email ? (
+                <>
+                  {task.status === "Pending" && (
+                    <div className="space-y-4 sm:space-y-0 sm:flex sm:gap-4">
+                      <button
+                        onClick={() => handleUpdateStatus("In Progress")}
+                        className="w-full sm:w-auto bg-[#764CE8] text-white py-2 px-4 rounded-md hover:bg-[#6A6A71] flex items-center justify-center"
+                      >
+                        <FaCheck className="mr-2" /> Accept Task
+                      </button>
+                      <button
+                        onClick={() => handleUpdateStatus("Rejected")}
+                        className="w-full sm:w-auto bg-[#E45858] text-white py-2 px-4 rounded-md hover:bg-[#CC3E3E] flex items-center justify-center"
+                      >
+                        <FaTimes className="mr-2" /> Reject Task
+                      </button>
+                    </div>
+                  )}
+                  {task.status === "In Progress" && (
+                    <button
+                      onClick={() => handleUpdateStatus("Completed")}
+                      className="w-full sm:w-auto bg-[#30A46C] text-white py-2 px-4 rounded-md hover:bg-[#25805B] flex items-center justify-center"
+                    >
+                      <FaCheck className="mr-2" /> Mark as Completed
+                    </button>
+                  )}
+                  {task.status === "Rejected" && (
+                <p className="text-[#C9C9C9]">This task was rejected.</p>
+                  )}
+                  {task.status === "Completed" && (
+                <p className="text-[#C9C9C9]">This task is completed.</p>
+                  )}
+                </>
+              ) : (
+            <p className="text-[#C9C9C9]">
+              You can only monitor the progress of tasks assigned to other users.
+                  <br /> Task: {task.status}
+                </p>
+              )}
+            </>
+          )}
 
-        <button
-          onClick={() => navigate(-1)}
-          className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center mt-6"
-        >
-          <FaArrowLeft className="mr-2" /> Back
-        </button>
+          <button
+            onClick={() => navigate(-1)}
+            className="w-full sm:w-auto bg-[#252525] text-[#FEFEFE] py-2 px-4 rounded-md hover:bg-[#1A1A1A] flex items-center justify-center mt-6 sm:mt-0"
+          >
+            <FaArrowLeft className="mr-2" /> Back
+          </button>
+        </div>
       </div>
     </div>
   );

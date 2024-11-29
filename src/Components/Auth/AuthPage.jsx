@@ -3,6 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../Utils/AuthContext";
+import BgImage from "../../assets/bg-4.jpg";
 
 const apiUrl = {
   login: import.meta.env.VITE_API_URL_LOGIN,
@@ -10,7 +11,7 @@ const apiUrl = {
 };
 
 const AuthPage = ({ notify }) => {
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -31,7 +32,7 @@ const AuthPage = ({ notify }) => {
     try {
       const { data } = await axios.post(apiEndpoint, payload);
       if (data.token) {
-        login(data.token); // Log in user
+        login(data.token);
         notify(
           isLogin ? "Login successful" : "Registration successful",
           "success"
@@ -47,66 +48,120 @@ const AuthPage = ({ notify }) => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-semibold text-center text-indigo-600 mb-4">
+    <div
+      className="flex justify-center items-center min-h-screen  px-4"
+      style={{
+        backgroundImage: `url(${BgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      <div className="w-full max-w-md bg-[#414449] rounded-lg shadow-lg p-6 opacity-95">
+        <h1 className="text-2xl font-bold text-center text-[#FEFEFE] mb-6">
           Welcome to Task Manager
         </h1>
-  
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-  
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <h3 className="text-xl font-semibold text-center">
-            {isLogin ? "Login" : "Register"}
-          </h3>
+
+        {/* Error Message */}
+        {error && (
+          <p className="text-red-600 text-center mb-4 text-sm font-medium">
+            {error}
+          </p>
+        )}
+
+        {/* Authentication Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <h2 className="text-lg font-semibold text-center text-[#FEFEFE]">
+            {isLogin ? "Login to Your Account" : "Create an Account"}
+          </h2>
+
+          {/* Username Input (only for Registration) */}
           {!isLogin && (
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-[#C9C9C9] mb-1"
+              >
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                placeholder="Your Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="w-full p-3 border border-[#C9C9C9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#764CE8] text-sm bg-[#252525] text-[#FEFEFE]"
+              />
+            </div>
           )}
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+
+          {/* Email Input */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-[#C9C9C9] mb-1"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-3 border border-[#C9C9C9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#764CE8] text-sm bg-[#252525] text-[#FEFEFE]"
+            />
+          </div>
+
+          {/* Password Input */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-[#C9C9C9] mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-3 border border-[#C9C9C9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#764CE8] text-sm bg-[#252525] text-[#FEFEFE]"
+            />
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ${
-              loading && "opacity-50 cursor-not-allowed"
+            className={`w-full py-3 text-white rounded-md font-medium shadow-md transition ${
+              loading
+                ? "bg-[#585596] cursor-not-allowed"
+                : "bg-[#764CE8] hover:bg-[#585596]"
             }`}
           >
             {loading ? (
               <div className="flex justify-center items-center">
                 <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
               </div>
+            ) : isLogin ? (
+              "Login"
             ) : (
-              isLogin ? "Login" : "Register"
+              "Register"
             )}
           </button>
-          <p className="text-center text-sm">
+
+          {/* Toggle Between Login/Register */}
+          <p className="text-center text-sm text-[#C9C9C9]">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
               aria-pressed={!isLogin}
-              className="text-indigo-600 hover:text-indigo-800"
+              className="text-[#764CE8] hover:text-[#585596] underline font-medium"
             >
               {isLogin ? "Register" : "Login"}
             </button>
@@ -114,7 +169,7 @@ const AuthPage = ({ notify }) => {
         </form>
       </div>
     </div>
-  );  
+  );
 };
 
 export default AuthPage;

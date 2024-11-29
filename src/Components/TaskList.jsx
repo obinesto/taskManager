@@ -3,6 +3,7 @@ import axios from "./taskService";
 import { Link } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/bg-2.jpg"
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -86,23 +87,34 @@ const TaskList = () => {
 
   if (loading)
     return (
-      <p className="flex flex-col justify-center items-center text-indigo-600 font-semibold text-3xl">
+      <p className="flex justify-center items-center min-h-screen text-[#764CE8] font-semibold text-xl sm:text-3xl">
         Loading...
       </p>
     );
-
+  
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        {user && <h2>Welcome back, {user.username}!</h2>}{" "}
-        {/* Display user name */}
-        <h1 className="text-3xl font-bold text-indigo-700 mb-6">Task List</h1>
-        <p className="text-lg text-gray-600 mb-4">
+    <div className="min-h-screen py-6 px-4"
+    style={{
+      backgroundImage: `url(${bgImage})`,
+      backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+    }}>
+      <div className="max-w-6xl mx-auto bg-[#2B2B3D] p-4 sm:p-6 rounded-lg shadow-md opacity-95">
+        {user && (
+          <h2 className="text-lg sm:text-xl font-medium text-[#C9C9C9] mb-2">
+            Welcome back, {user.username}!
+          </h2>
+        )}
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#764CE8] mb-4">
+          Task List
+        </h1>
+        <p className="text-sm sm:text-lg text-[#D3D3D3] mb-4">
           Manage your tasks efficiently and stay organized.
         </p>
         {/* Add New Task Button */}
         <Link to="/add-task">
-          <button className="bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition duration-200 mb-6">
+          <button className="bg-[#764CE8] text-white py-2 px-4 sm:px-6 rounded-md hover:bg-[#5B3FBA] transition duration-200 mb-6 w-full sm:w-auto">
             Add New Task
           </button>
         </Link>
@@ -110,13 +122,13 @@ const TaskList = () => {
         <div className="mb-6">
           <label
             htmlFor="filter"
-            className="block text-gray-700 font-medium mb-2"
+            className="block text-sm sm:text-base text-[#C9C9C9] font-medium mb-2"
           >
             Filter by Status:
           </label>
           <select
             id="filter"
-            className="border-gray-300 rounded-md p-2 w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="border-[#4A4A63] bg-[#2B2B3D] text-[#FEFEFE] rounded-md p-2 w-full focus:ring-2 focus:ring-[#764CE8] focus:outline-none"
             onChange={(e) => setFilter(e.target.value)}
           >
             <option value="">All</option>
@@ -128,59 +140,45 @@ const TaskList = () => {
         </div>
         {/* Task List Table */}
         <div className="overflow-x-auto">
-          <table className="table-auto w-full border-collapse border border-gray-200">
+          <table className="table-auto w-full border-collapse border border-[#4A4A63] text-sm sm:text-base">
             <thead>
-              <tr className="bg-gray-100 border-b border-gray-300">
-                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
-                  Task Name
-                </th>
-                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
-                  Description
-                </th>
-                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
-                  Assigned To
-                </th>
-                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
-                  Status
-                </th>
-                <th className="py-4 px-6 text-left text-sm font-bold text-gray-700">
-                  Actions
-                </th>
+              <tr className="bg-[#2B2B3D] border-b border-[#4A4A63]">
+                <th className="py-2 px-4 text-left font-bold text-[#C9C9C9]">Task Name</th>
+                <th className="py-2 px-4 text-left font-bold text-[#C9C9C9]">Description</th>
+                <th className="py-2 px-4 text-left font-bold text-[#C9C9C9]">Assigned To</th>
+                <th className="py-2 px-4 text-center font-bold text-[#C9C9C9]">Status</th>
+                <th className="py-2 px-4 text-left font-bold text-[#C9C9C9]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentTasks.map((task) => (
                 <tr
                   key={task._id}
-                  className="border-b border-gray-300 hover:bg-gray-50"
+                  className="border-b border-[#4A4A63] hover:bg-[#2B2B3D]"
                 >
-                  <td className="py-4 px-6 text-sm text-gray-700">
-                    {task.name}
-                  </td>
-                  <td className="py-4 px-6 text-sm text-gray-700">
-                    {task.description}
-                  </td>
-                  <td className="py-4 px-6 text-sm text-gray-700">
+                  <td className="py-2 px-4 text-[#D3D3D3]">{task.name}</td>
+                  <td className="py-2 px-4 text-[#D3D3D3]">{task.description}</td>
+                  <td className="py-2 px-4 text-[#D3D3D3]">
                     {getUserNameByEmail(task.assignedTo)}
                   </td>
-                  <td className="py-4 px-6 text-sm">
+                  <td className="py-2 px-4">
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full text-white ${
+                      className={`px-2 py-1 rounded-full text-xs text-white flex flex-col items-center text-center ${
                         task.status === "Completed"
-                          ? "bg-green-500"
+                          ? "bg-green-500 hover:bg-green-600 transition duration-200"
                           : task.status === "In Progress"
-                          ? "bg-yellow-500"
+                          ? "bg-yellow-500 hover:bg-yellow-600 transition duration-200"
                           : task.status === "Rejected"
-                          ? "bg-red-500"
-                          : "bg-gray-400"
+                          ? "bg-red-500 hover:bg-red-600 transition duration-200"
+                          : "bg-gray-400 hover:bg-gray-500 transition duration-200"
                       }`}
                     >
                       {task.status}
                     </span>
                   </td>
-                  <td className="py-4 px-6 text-sm">
+                  <td className="py-2 px-4">
                     <Link to={`/task/${task._id}`}>
-                      <button className="bg-indigo-600 text-white py-1 px-4 rounded-md hover:bg-indigo-700 transition duration-200 flex items-center">
+                      <button className="bg-[#764CE8] text-white py-1 px-3 text-xs rounded-full hover:bg-[#5B3FBA] transition duration-200 flex items-center">
                         <FaEye className="mr-2" /> View
                       </button>
                     </Link>
@@ -191,7 +189,7 @@ const TaskList = () => {
           </table>
         </div>
         {/* Pagination */}
-        <div className="flex justify-center items-center mt-8">
+        <div className="flex justify-center items-center mt-6 space-x-2">
           {Array.from(
             { length: Math.ceil(tasks.length / tasksPerPage) },
             (_, index) => (
@@ -199,9 +197,9 @@ const TaskList = () => {
                 key={index}
                 onClick={() => paginate(index + 1)}
                 disabled={currentPage === index + 1}
-                className={`py-2 px-4 mx-1 rounded-md ${
+                className={`py-2 px-3 rounded-md ${
                   currentPage === index + 1
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-[#764CE8] text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 } transition duration-200`}
               >
@@ -212,7 +210,7 @@ const TaskList = () => {
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default TaskList;

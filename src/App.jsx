@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { AuthProvider } from "./Components/Utils/AuthContext";
 import Sidebar from "./Components/Sidebar";
 import LandingPage from "./Components/LandingPage";
@@ -13,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => {
   const notify = (message, notificationType) =>
     toast(message, {
-      position: "top-left",
+      position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -26,51 +31,44 @@ const App = () => {
         borderRadius: "8px",
       },
     });
+
+  const Layout = () => {
+    const location = useLocation();
+
+    const showSidebar = [
+      "/login",
+      "/register",
+      "/dashboard",
+      "/tasklist",
+      "/task/:id",
+      "/add-task",
+    ].some((path) =>
+      location.pathname.match(new RegExp(`^${path.replace(":id", "[^/]+")}$`))
+    );
+
+    return (
+      <div className="flex min-h-screen bg-[#252525]">
+        {showSidebar && <Sidebar />}
+        <main className="flex-1 p-6 overflow-y-auto">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/tasklist" element={<TaskList />} />
+            <Route path="/task/:id" element={<TaskDetails />} />
+            <Route path="/login" element={<AuthPage notify={notify} />} />
+            <Route path="/register" element={<AuthPage notify={notify} />} />
+            <Route path="/add-task" element={<TaskForm notify={notify} />} />
+          </Routes>
+        </main>
+      </div>
+    );
+  };
+
   return (
     <Router>
       <AuthProvider>
-        <div className="flex min-h-screen bg-gray-100">
-          <Sidebar />
-          <div className="flex-1 bg-white p-6 overflow-y-auto">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/tasklist" element={<TaskList />} />
-              <Route path="/task/:id" element={<TaskDetails />} />
-              <Route
-                path="/login"
-                element={
-                  <AuthPage
-                    notify={(message, notificationType) =>
-                      notify(message, notificationType)
-                    }
-                  />
-                }
-              />
-              <Route
-                path="/register"
-                element={
-                  <AuthPage
-                    notify={(message, notificationType) =>
-                      notify(message, notificationType)
-                    }
-                  />
-                }
-              />
-              <Route
-                path="/add-task"
-                element={
-                  <TaskForm
-                    notify={(message, notificationType) =>
-                      notify(message, notificationType)
-                    }
-                  />
-                }
-              />
-            </Routes>
-          </div>
-          <ToastContainer />
-        </div>
+        <Layout />
+        <ToastContainer />
       </AuthProvider>
     </Router>
   );

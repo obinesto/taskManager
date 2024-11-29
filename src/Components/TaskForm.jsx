@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from './taskService';
 import { useNavigate } from 'react-router-dom';
+import BgImage from "../assets/bg-4.jpg";
 
 const TaskForm = ({notify}) => {
   const [task, setTask] = useState({ name: '', description: '', executedBySelf: true, assignedTo: '', assignedBy: '' });
@@ -65,11 +66,18 @@ const TaskForm = ({notify}) => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="min-h-screen p-6 shadow-lg rounded-lg opacity-95"
+    style={{
+      backgroundImage: `url(${BgImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center"
+    }}>
       <form onSubmit={handleSubmit}>
-        <h2 className="text-2xl font-semibold text-center mb-6">Create Task</h2>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>} {/* Display error message if any */}
-        
+        <h2 className="text-2xl font-semibold text-center mb-6 text-[#764CE8] md:text-3xl">
+          Create Task
+        </h2>
+        {error && <p className="text-[#E45858] text-sm mb-4">{error}</p>} {/* Display error message if any */}
+  
         <input
           type="text"
           name="name"
@@ -77,59 +85,62 @@ const TaskForm = ({notify}) => {
           onChange={(e) => setTask({ ...task, name: e.target.value })}
           placeholder="Task Name"
           required
-          className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-full p-3 mb-4 border border-[#4A4A63] bg-[#2B2B3D] text-[#FEFEFE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#764CE8] placeholder-[#8888A6] md:p-4"
         />
-        
+  
         <textarea
           name="description"
           value={task.description}
           onChange={(e) => setTask({ ...task, description: e.target.value })}
           placeholder="Task Description"
-          className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-full p-3 mb-4 border border-[#4A4A63] bg-[#2B2B3D] text-[#FEFEFE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#764CE8] placeholder-[#8888A6] md:p-4"
         />
-        
+  
         <div className="flex items-center mb-4">
           <input
             type="checkbox"
             name="executedBySelf"
             checked={task.executedBySelf}
             onChange={(e) => setTask({ ...task, executedBySelf: e.target.checked })}
-            className="mr-2"
+            className="mr-2 h-4 w-4 text-[#764CE8] bg-[#2B2B3D] border border-[#4A4A63] focus:ring-[#764CE8]"
           />
-          <label className="text-sm text-gray-700">Executed by Self</label>
+          <label className="text-sm text-[#2B2B3D] md:text-base">Executed by Self</label>
         </div>
-        
+  
         {!task.executedBySelf && (
-         <select
-         className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-         value={task.assignedTo}
-         onChange={(e) => setTask({ ...task, assignedTo: e.target.value })}
-         placeholder="Assigned To"
-         required
-         >
-         <option value="" disabled>
-           Select a User
-         </option>
-         {users
-           .filter((user) => loggedInUser && user.email !== loggedInUser.email)
-           .map((user) => (
-             <option key={user._id} value={user.email}>
-               {user.username}
-             </option>
-           ))}
-         </select>
+          <select
+            className="w-full p-3 mb-4 border border-[#4A4A63] bg-[#2B2B3D] text-[#FEFEFE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#764CE8] placeholder-[#8888A6] md:p-4"
+            value={task.assignedTo}
+            onChange={(e) => setTask({ ...task, assignedTo: e.target.value })}
+            required
+          >
+            <option value="" disabled>
+              Select a User
+            </option>
+            {users
+              .filter((user) => loggedInUser && user.email !== loggedInUser.email)
+              .map((user) => (
+                <option key={user._id} value={user.email}>
+                  {user.username}
+                </option>
+              ))}
+          </select>
         )}
-        
+  
         <button
           type="submit"
           disabled={loading}
-          className={`w-full p-3 text-white rounded-lg mt-4 ${loading ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500'}`}
+          className={`w-full p-3 text-white rounded-lg mt-4 transition-colors duration-200 ${
+            loading
+              ? "bg-[#4A4A63] cursor-not-allowed"
+              : "bg-[#30A46C] hover:bg-[#25805B] focus:outline-none focus:ring-2 focus:ring-[#30A46C]"
+          } md:p-4`}
         >
-          {loading ? 'Creating Task...' : 'Create Task'}
+          {loading ? "Creating Task..." : "Create Task"}
         </button>
       </form>
     </div>
-  );
+  );  
 };
 
 export default TaskForm;

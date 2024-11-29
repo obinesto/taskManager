@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/bg-2.jpg"
 
 const Dashboard = () => {
   const [taskStats, setTaskStats] = useState({
@@ -112,35 +113,42 @@ const Dashboard = () => {
   };
 
   return loading ? (
-    <p className="flex flex-col justify-center items-center text-indigo-600 font-semibold text-3xl">
+    <p className="flex flex-col justify-center items-center text-[#764CE8] font-semibold text-3xl">
       Loading...
     </p>
   ) : (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-indigo-600 mb-4">Dashboard</h1>
-        <p className="text-lg text-gray-600 mb-6">
+    <div className="min-h-screen p-4 sm:p-6" style={{
+      backgroundImage: `url(${bgImage})`,
+      backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+    }}>
+      <div className="max-w-4xl mx-auto bg-[#FEFEFE] p-4 sm:p-6 rounded-lg shadow-lg border border-[#C2C1CC] opacity-95">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#764CE8] mb-4">
+          Dashboard
+        </h1>
+        <p className="text-base sm:text-lg text-[#6A6A71] mb-6">
           Stay updated with your task progress and manage your work efficiently.
         </p>
-
+  
         {/* Task Overview - Pie Chart */}
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#252525] mb-4">
             Task Overview
           </h2>
-          <div className="flex flex-col md:flex-row items-center mb-4 justify-between">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             <PieChart
-              width={400}
-              height={400}
-              className="bg-slate-50 rounded-lg border-2 border-indigo-600 shadow-md"
+              width={320}
+              height={320}
+              className="w-full bg-[#F8F8F9] rounded-lg border-2 border-[#764CE8] shadow-md"
             >
               <Pie
                 data={dataOne}
-                cx={200}
-                cy={200}
+                cx="50%"
+                cy="50%"
                 labelLine={false}
                 label={renderCustomizedLabel}
-                outerRadius={80}
+                outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -153,19 +161,19 @@ const Dashboard = () => {
               </Pie>
               <Tooltip />
             </PieChart>
-
+  
             <PieChart
-              width={400}
-              height={400}
-              className="bg-slate-50 rounded-lg border-2 border-indigo-600 shadow-md"
+              width={320}
+              height={320}
+              className="w-full bg-[#F8F8F9] rounded-lg border-2 border-[#764CE8] shadow-md"
             >
               <Pie
                 data={dataTwo}
-                cx={200}
-                cy={200}
+                cx="50%"
+                cy="50%"
                 labelLine={false}
                 label={renderCustomizedLabel}
-                outerRadius={80}
+                outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -180,36 +188,52 @@ const Dashboard = () => {
             </PieChart>
           </div>
         </div>
-
+  
         {/* Task Summary */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="bg-blue-100 p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-xl font-semibold text-blue-600">In Progress</h3>
-            <p className="text-2xl text-blue-600">{taskStats.inProgress}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg920:grid-cols-4 gap-4 mb-8">
+          <div className="bg-[#E1E0ED] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-sm sm:text-lg font-semibold text-[#585596]">
+              In Progress
+            </h3>
+            <p className="text-xl sm:text-2xl text-[#585596]">
+              {taskStats.inProgress}
+            </p>
           </div>
-          <div className="bg-green-100 p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-xl font-semibold text-green-600">Completed</h3>
-            <p className="text-2xl text-green-600">{taskStats.completed}</p>
+          <div className="bg-[#C9C9C9] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-sm sm:text-lg font-semibold text-[#252525]">
+              Completed
+            </h3>
+            <p className="text-xl sm:text-2xl text-[#252525]">
+              {taskStats.completed}
+            </p>
           </div>
-          <div className="bg-yellow-100 p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-xl font-semibold text-yellow-600">Pending</h3>
-            <p className="text-2xl text-yellow-600">{taskStats.pending}</p>
+          <div className="bg-[#6A6A71] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
+              Pending
+            </h3>
+            <p className="text-xl sm:text-2xl text-[#FEFEFE]">
+              {taskStats.pending}
+            </p>
           </div>
-          <div className="bg-red-100 p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-xl font-semibold text-red-600">Rejected</h3>
-            <p className="text-2xl text-red-600">{taskStats.rejected}</p>
+          <div className="bg-[#171718] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-sm sm:text-lg font-semibold text-[#F8F8F9]">
+              Rejected
+            </h3>
+            <p className="text-xl sm:text-2xl text-[#F8F8F9]">
+              {taskStats.rejected}
+            </p>
           </div>
         </div>
-
+  
         {/* Add New Task Button */}
         <Link to="/add-task">
-          <button className="bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 flex items-center">
+          <button className="bg-[#764CE8] text-white py-2 px-4 sm:px-6 rounded-md hover:bg-[#6A6A71] flex items-center mx-auto lg920:mx-0 transition duration-300">
             <FaPlus className="mr-2" /> Add New Task
           </button>
         </Link>
       </div>
     </div>
-  );
+  );  
 };
 
 export default Dashboard;
