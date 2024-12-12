@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import {BrowserRouter as Router,Route,Routes,useLocation} from "react-router-dom";
 import { AuthProvider } from "./Components/Utils/AuthContext";
 import Sidebar from "./Components/Sidebar";
 import LandingPage from "./Components/LandingPage";
