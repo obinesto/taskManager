@@ -137,7 +137,7 @@ const AuthPage = ({ notify }) => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 text-white rounded-md font-medium shadow-md transition ${
+            className={`w-full py-3 text-white rounded-md font-medium shadow-md transition duration-300 ${
               loading
                 ? "bg-[#585596] cursor-not-allowed"
                 : "bg-[#764CE8] hover:bg-[#585596]"
