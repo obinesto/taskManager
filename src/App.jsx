@@ -7,6 +7,7 @@ import TaskList from "./Components/TaskList";
 import TaskDetails from "./Components/TaskDetails";
 import AuthPage from "./Components/Auth/AuthPage";
 import TaskForm from "./Components/TaskForm";
+import NotFound from "./Components/NotFound"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -42,9 +43,9 @@ const App = () => {
     );
 
     return (
-      <div className="flex min-h-screen bg-[#252525]">
+      <div className="flex">
         {showSidebar && <Sidebar />}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="overflow-y-auto flex-1">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -53,6 +54,7 @@ const App = () => {
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />
+            <Route path="/*" element={<NotFound />}></Route>
           </Routes>
         </main>
       </div>

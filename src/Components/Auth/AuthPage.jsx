@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../Utils/AuthContext";
 import BgImage from "../../assets/bg-4.jpg";
+import { Mail, Lock, User } from 'lucide-react';
 
 const apiUrl = {
   login: import.meta.env.VITE_API_URL_LOGIN,
@@ -12,13 +12,19 @@ const apiUrl = {
 
 const AuthPage = ({ notify }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    username: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useContext(AuthContext); // Access login function from AuthContext
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +32,8 @@ const AuthPage = ({ notify }) => {
     setError("");
     const apiEndpoint = isLogin ? apiUrl.login : apiUrl.register;
     const payload = isLogin
-      ? { email, password }
-      : { username, email, password };
+      ? { email: formData.email, password: formData.password }
+      : formData;
 
     try {
       const { data } = await axios.post(apiEndpoint, payload);
@@ -49,98 +55,94 @@ const AuthPage = ({ notify }) => {
 
   return (
     <div
-      className="flex justify-center items-center min-h-screen  px-4"
+      className="flex justify-center items-center min-h-screen px-4 bg-gradient-to-b from-purple-950 to-gray-900"
       style={{
         backgroundImage: `url(${BgImage})`,
         backgroundSize: "cover",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
+        backgroundBlendMode: "overlay",
       }}
     >
-      <div className="w-full max-w-md bg-[#414449] rounded-lg shadow-lg p-6 opacity-95">
-        <h1 className="text-2xl font-bold text-center text-[#FEFEFE] mb-6">
-          Welcome to Task Manager
-        </h1>
-
-        {/* Error Message */}
-        {error && (
-          <p className="text-red-600 text-center mb-4 text-sm font-medium">
-            {error}
+      <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-lg p-8 space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-purple-300 mb-2">
+            TaskManager
+          </h1>
+          <p className="text-gray-400">
+            {isLogin ? "Welcome back!" : "Create your account"}
           </p>
+        </div>
+
+        {error && (
+          <div className="bg-red-900 text-red-300 p-3 rounded-md text-sm">
+            {error}
+          </div>
         )}
 
-        {/* Authentication Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <h2 className="text-lg font-semibold text-center text-[#FEFEFE]">
-            {isLogin ? "Login to Your Account" : "Create an Account"}
-          </h2>
-
-          {/* Username Input (only for Registration) */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-[#C9C9C9] mb-1"
-              >
+            <div className="space-y-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-300">
                 Username
               </label>
-              <input
-                id="username"
-                type="text"
-                placeholder="Your Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="w-full p-3 border border-[#C9C9C9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#764CE8] text-sm bg-[#252525] text-[#FEFEFE]"
-              />
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required={!isLogin}
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-100"
+                  placeholder="JohnDoe"
+                />
+              </div>
             </div>
           )}
-
-          {/* Email Input */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[#C9C9C9] mb-1"
-            >
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
               Email Address
             </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full p-3 border border-[#C9C9C9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#764CE8] text-sm bg-[#252525] text-[#FEFEFE]"
-            />
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-100"
+                placeholder="john@example.com"
+              />
+            </div>
           </div>
-
-          {/* Password Input */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-[#C9C9C9] mb-1"
-            >
+          <div className="space-y-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full p-3 border border-[#C9C9C9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#764CE8] text-sm bg-[#252525] text-[#FEFEFE]"
-            />
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-100"
+                placeholder="••••••••"
+              />
+            </div>
           </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 text-white rounded-md font-medium shadow-md transition duration-300 ${
+            className={`w-full py-3 text-white rounded-md font-medium transition duration-300 ${
               loading
-                ? "bg-[#585596] cursor-not-allowed"
-                : "bg-[#764CE8] hover:bg-[#585596]"
+                ? "bg-purple-700 cursor-not-allowed"
+                : "bg-purple-600 hover:bg-purple-700"
             }`}
           >
             {loading ? (
@@ -148,28 +150,29 @@ const AuthPage = ({ notify }) => {
                 <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
               </div>
             ) : isLogin ? (
-              "Login"
+              "Sign In"
             ) : (
-              "Register"
+              "Create Account"
             )}
           </button>
+        </form>
 
-          {/* Toggle Between Login/Register */}
-          <p className="text-center text-sm text-[#C9C9C9]">
+        <div className="text-center">
+          <p className="text-sm text-gray-400">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              aria-pressed={!isLogin}
-              className="text-[#764CE8] hover:text-[#585596] underline font-medium"
+              className="text-purple-400 hover:text-purple-300 font-medium"
             >
-              {isLogin ? "Register" : "Login"}
+              {isLogin ? "Sign up" : "Sign in"}
             </button>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
 export default AuthPage;
+

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-import axios from './taskService';
+import axios from './Utils/taskService';
 import { useNavigate } from 'react-router-dom';
 import BgImage from "../assets/bg-4.jpg";
 

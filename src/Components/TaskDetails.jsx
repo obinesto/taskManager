@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "./taskService";
+import axios from "./Utils/taskService";
 import { FaCheck, FaTimes, FaArrowLeft } from "react-icons/fa";
 import bgImage from "../assets/bg-2.jpg";
 
