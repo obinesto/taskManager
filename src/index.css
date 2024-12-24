@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   scroll-behavior: smooth;
 }
 
@@ -15,4 +15,17 @@ html {
 
 button {
   cursor: pointer;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  @apply w-16 h-16 border-4 border-purple-500 border-t-transparent border-solid rounded-full;
+  animation: spin 1s linear infinite;
 }

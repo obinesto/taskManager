@@ -1,50 +1,24 @@
-import { useContext, useState, useEffect } from "react";
+import { useState} from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "./Utils/AuthContext";
-import axios from "./Utils/taskService";
-import {LogOut, LayoutDashboard, CheckSquare, User, Menu, X, ChevronRight,} from "lucide-react";
+import { useUser} from "../hooks/useQueries";
+import {LogOut, LayoutDashboard, CheckSquare, User, Menu,X, ChevronRight,} from "lucide-react";
 
 const Sidebar = () => {
-  const [user, setUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, logout } = useContext(AuthContext);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get("/auth/me");
-        setUser(response.data);
-      } catch (error) {
-        if (error.response?.status === 401) {
-          navigate("/login");
-        }
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    if (isAuthenticated) {
-      fetchUser();
-    }
-  }, [isAuthenticated, navigate]);
-
+  const { data: user, isLoading} = useUser();
+  const isActive = (path) => location.pathname === path;
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("token");
     navigate("/");
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const isActive = (path) => location.pathname === path;
-
   return (
-    <>
+    <div className= {isLoading?`hidden` : `block`}>
       <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 p-2 bg-purple-600 text-white rounded-md shadow-lg lg:hidden hover:bg-purple-700 transition duration-300"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="fixed top-4 left-4 z-50 p-2 bg-purple-800 text-white rounded-md shadow-lg lg:hidden hover:bg-purple-700 transition duration-300"
         aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
       >
         {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -66,16 +40,14 @@ const Sidebar = () => {
                 <User className="w-5 md:w-8 h-10 text-purple-600" />
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-gray-200">
-                    {isAuthenticated
-                      ? `Welcome, ${user?.username}`
-                      : "Welcome, Guest"}
+                    {user ? `Welcome, ${user.username}` : "Welcome, Guest"}
                   </h3>
                 </div>
               </div>
             </div>
 
             <nav className="px-4 py-6 space-y-2">
-              {isAuthenticated ? (
+              {user ? (
                 <>
                   <Link
                     className={`flex items-center p-2 rounded-lg transition-colors duration-200 ${
@@ -103,7 +75,7 @@ const Sidebar = () => {
               ) : (
                 <Link
                   className="flex items-center p-2 rounded-lg text-gray-300 hover:bg-purple-700 hover:text-white transition-colors duration-300"
-                  to="/"
+                  to="/login"
                 >
                   <ChevronRight className="mr-2 w-5 md:w-8 h-10 text-purple-600" />
                   Login
@@ -112,7 +84,7 @@ const Sidebar = () => {
             </nav>
           </div>
 
-          {isAuthenticated && (
+          {user && (
             <div className="p-4 border-t border-gray-700">
               <button
                 onClick={handleLogout}
@@ -129,7 +101,7 @@ const Sidebar = () => {
           </footer>
         </div>
       </aside>
-    </>
+    </div>
   );
 };
 

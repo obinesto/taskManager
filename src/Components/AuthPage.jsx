@@ -1,14 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../Utils/AuthContext";
-import BgImage from "../../assets/bg-4.jpg";
+import { useSelector } from 'react-redux';
+import { useLogin, useRegister } from '../hooks/useQueries';
+import BgImage from "../assets/bg-4.jpg";
 import { Mail, Lock, User } from 'lucide-react';
-
-const apiUrl = {
-  login: import.meta.env.VITE_API_URL_LOGIN,
-  register: import.meta.env.VITE_API_URL_REGISTER,
-};
 
 const AuthPage = ({ notify }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,10 +12,17 @@ const AuthPage = ({ notify }) => {
     password: "",
     username: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { login } = useContext(AuthContext);
+  const [submitLoader, setSubmitLoader] = useState(false);
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const navigate = useNavigate();
+  const login = useLogin();
+  const register = useRegister();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,28 +30,24 @@ const AuthPage = ({ notify }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    const apiEndpoint = isLogin ? apiUrl.login : apiUrl.register;
+    setSubmitLoader(true);
+    const mutationFn = isLogin ? login : register;
     const payload = isLogin
       ? { email: formData.email, password: formData.password }
       : formData;
 
     try {
-      const { data } = await axios.post(apiEndpoint, payload);
-      if (data.token) {
-        login(data.token);
-        notify(
-          isLogin ? "Login successful" : "Registration successful",
-          "success"
-        );
-        navigate("/dashboard");
-      }
+      await mutationFn.mutateAsync(payload);
+      notify(
+        isLogin ? "Login successful" : "Registration successful",
+        "success"
+      );
+      navigate("/dashboard");
     } catch (error) {
+      console.error("Error:", error);
       notify(isLogin ? "Login failed" : "Registration failed", "error");
-      setError(error.response?.data?.message || error.message);
     } finally {
-      setLoading(false);
+      setSubmitLoader(false);
     }
   };
 
@@ -59,11 +57,12 @@ const AuthPage = ({ notify }) => {
       style={{
         backgroundImage: `url(${BgImage})`,
         backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
         backgroundBlendMode: "overlay",
       }}
     >
-      <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-lg p-8 space-y-8">
+      <div className="w-full max-w-md bg-gray-800 md:ml-32 rounded-lg shadow-lg p-8 space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-purple-300 mb-2">
             TaskManager
@@ -73,9 +72,9 @@ const AuthPage = ({ notify }) => {
           </p>
         </div>
 
-        {error && (
+        {(login.error || register.error) && (
           <div className="bg-red-900 text-red-300 p-3 rounded-md text-sm">
-            {error}
+            {login.error?.message || register.error?.message}
           </div>
         )}
 
@@ -138,14 +137,14 @@ const AuthPage = ({ notify }) => {
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitLoader || login.isLoading || register.isLoading} // Update 3
             className={`w-full py-3 text-white rounded-md font-medium transition duration-300 ${
-              loading
+              submitLoader || login.isLoading || register.isLoading // Update 3
                 ? "bg-purple-700 cursor-not-allowed"
                 : "bg-purple-600 hover:bg-purple-700"
             }`}
           >
-            {loading ? (
+            {submitLoader ? ( // Update 3
               <div className="flex justify-center items-center">
                 <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
               </div>

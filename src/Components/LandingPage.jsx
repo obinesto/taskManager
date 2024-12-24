@@ -50,7 +50,7 @@ const LandingPage = () => {
               Login
             </Link>
             <Link
-              to="/signup"
+              to="/register"
               className="rounded-md bg-gray-800 hover:bg-gray-700 px-2 py-2 text-purple-300 hover:text-purple-100 transition duration-300"
             >
               Sign Up

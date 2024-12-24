@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-import axios from './Utils/taskService';
+import axios from '../utils/taskService';
 import { useNavigate } from 'react-router-dom';
 import BgImage from "../assets/bg-4.jpg";
 
@@ -66,13 +66,13 @@ const TaskForm = ({notify}) => {
   };
 
   return (
-    <div className="min-h-screen p-6 shadow-lg rounded-lg opacity-95"
+    <div className="min-h-screen p-6 shadow-lg rounded-lg opacity-95 px-2 md:py-4 py-10"
     style={{
       backgroundImage: `url(${BgImage})`,
       backgroundSize: "cover",
-      backgroundPosition: "center"
+      backgroundPosition: "center",
     }}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='md:ml-72'>
         <h2 className="text-2xl font-semibold text-center mb-6 text-[#764CE8] md:text-3xl">
           Create Task
         </h2>
