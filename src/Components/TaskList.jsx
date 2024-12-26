@@ -12,9 +12,9 @@ const TaskList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 5;
 
-  const { data: user, isLoading: userLoading } = useUser();
-  const { data: tasks, isLoading: tasksLoading } = useTasks(filter);
-  const { data: users, isLoading: usersLoading } = useUsers();
+  const { data: user, isLoading: userLoading, error: userError } = useUser();
+  const { data: tasks, isLoading: tasksLoading, error: tasksError } = useTasks(filter);
+  const { data: users, isLoading: usersLoading, error: usersError } = useUsers();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -45,6 +45,27 @@ const TaskList = () => {
       <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
         <div className="spinner w-16 h-16 border-4 border-purple-500 border-t-transparent border-solid rounded-full animate-spin"></div>
         <p className="text-[#764CE8] font-semibold text-3xl">Loading...</p>
+      </div>
+    );
+  }
+
+  if (userError || usersError || tasksError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white p-6 rounded-lg shadow-lg flex justify-center items-center flex-col">
+          <p className="text-center text-xl font-semibold text-slate-900">
+            Oops! Something went wrong.
+          </p>
+          <p className="text-center text-slate-800 mt-4">
+            Error loading data. Kindly refresh the page or try again later.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
+          >
+            Refresh Page
+          </button>
+        </div>
       </div>
     );
   }
@@ -131,7 +152,7 @@ const TaskList = () => {
                   </td>
                   <td className="py-2 px-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs text-white flex flex-col items-center text-center ${
+                      className={`px-2 py-1 rounded-md md:rounded-full text-xs text-white flex flex-col items-center text-center ${
                         task.status === "Completed"
                           ? "bg-green-500 hover:bg-green-600 transition duration-200"
                           : task.status === "In Progress"
@@ -146,7 +167,7 @@ const TaskList = () => {
                   </td>
                   <td className="py-2 px-4">
                     <Link to={`/task/${task._id}`}>
-                      <button className="bg-[#764CE8] text-white py-1 px-3 text-xs rounded-full hover:bg-[#5B3FBA] transition duration-200 flex items-center">
+                      <button className="bg-[#764CE8] text-white py-1 px-3 text-xs rounded-md md:rounded-full hover:bg-[#5B3FBA] transition duration-200 flex items-center">
                         <FaEye className="mr-2" /> View
                       </button>
                     </Link>

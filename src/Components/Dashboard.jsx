@@ -76,7 +76,7 @@ const Dashboard = () => {
     </div>
   ) : (
     <div
-      className="min-h-screen p-4 sm:p-6"
+      className="min-h-screen px-2 md:py-4 py-10"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",

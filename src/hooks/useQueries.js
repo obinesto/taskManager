@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/taskService";
 import { useDispatch } from "react-redux";
-import { loginSuccess} from "../redux/actions/authActions";
+import { loginSuccess, logoutSuccess } from "../redux/actions/authActions";
 import {
   fetchTasksRequest,
   fetchTasksSuccess,
@@ -94,20 +94,28 @@ export const useUsers = () => {
 // Add a new task
 export const useAddTask = () => {
   const queryClient = useQueryClient();
-  return useMutation(
-    async (newTask) => {
-      const { data } = await axios.post("/tasks", newTask);
-      return data;
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["tasks"]);
-      },
-      onError: (error) => {
+  const dispatch = useDispatch();
+
+  return useMutation({
+    mutationFn: async (newTask) => {
+      dispatch(fetchTasksRequest());
+      try {
+        const { data } = await axios.post("/tasks", newTask);
+        dispatch(fetchTasksSuccess([data])); // Wrap in array to match existing action
+        return data;
+      } catch (error) {
         console.error("Error adding task:", error);
-      },
-    }
-  );
+        dispatch(fetchTasksFailure(error.message || "Failed to add task"));
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["tasks"]);
+    },
+    onError: (error) => {
+      console.error("Error adding task:", error);
+    },
+  });
 };
 
 // Update an existing task
@@ -195,4 +203,23 @@ export const useRegister = () => {
       console.error("Error registering:", error.message);
     },
   });
+};
+
+// User logout
+export const useLogout = () => {
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  return async () => {
+    const checkToken =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (checkToken) {
+      try {
+        dispatch(logoutSuccess());
+        queryClient.clear();
+        localStorage.removeItem("token");
+      } catch (error) {
+        console.error("Error logging out:", error);
+      }
+    }
+  };
 };

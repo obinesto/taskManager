@@ -59,7 +59,7 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasklist" element={<TaskList />} />
-            <Route path="/task/:id" element={<TaskDetails />} />
+            <Route path="/task/:id" element={<TaskDetails notify={notify} />} />
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />

@@ -1,21 +1,22 @@
-import { useState} from "react";
+import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useUser} from "../hooks/useQueries";
-import {LogOut, LayoutDashboard, CheckSquare, User, Menu,X, ChevronRight,} from "lucide-react";
+import { useUser, useLogout } from "../hooks/useQueries";
+import { LogOut, LayoutDashboard, CheckSquare, User, Menu, X, ChevronRight } from "lucide-react";
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: user, isLoading} = useUser();
   const isActive = (path) => location.pathname === path;
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+  const { data: user, isLoading } = useUser();
+  const logout = useLogout();
+  const handleLogout = async () => {
+      await logout();
+      navigate("/");
   };
 
   return (
-    <div className= {isLoading?`hidden` : `block`}>
+    <div className={isLoading ? `hidden` : `block`}>
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="fixed top-4 left-4 z-50 p-2 bg-purple-800 text-white rounded-md shadow-lg lg:hidden hover:bg-purple-700 transition duration-300"
