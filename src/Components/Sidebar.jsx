@@ -1,126 +1,108 @@
-import { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaSignOutAlt, FaTachometerAlt, FaTasks } from "react-icons/fa";
-import { AuthContext } from "./Utils/AuthContext";
-import { MdAccountCircle, MdDehaze, MdCancel } from "react-icons/md";
-import axios from "./taskService";
+import { useState} from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useUser} from "../hooks/useQueries";
+import {LogOut, LayoutDashboard, CheckSquare, User, Menu,X, ChevronRight,} from "lucide-react";
 
 const Sidebar = () => {
-  const [user, setUser] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useContext(AuthContext);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get("/auth/me");
-        setUser(response.data);
-      } catch (error) {
-        if (error.response?.status === 401) {
-          navigate("/login")
-        }
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
+  const location = useLocation();
+  const { data: user, isLoading} = useUser();
+  const isActive = (path) => location.pathname === path;
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("token");
     navigate("/");
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
-    <div>
+    <div className= {isLoading?`hidden` : `block`}>
       <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 bg-[#764CE8] text-white p-2 rounded-md shadow-lg lg920:hidden hover:bg-[#6A6A71] transition duration-300"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="fixed top-4 left-4 z-50 p-2 bg-purple-800 text-white rounded-md shadow-lg lg:hidden hover:bg-purple-700 transition duration-300"
+        aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
       >
-        {isSidebarOpen ? <MdCancel size={24} /> : <MdDehaze size={24} />}
+        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
-  
-      {/* Sidebar */}
-      <div
-        className={`fixed top-0 left-0 z-40 h-full w-64 bg-gradient-to-l from-[#171718] to-[#252525] text-[#F8F8F9] shadow-xl p-6 transition-transform duration-300 ${
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white shadow-xl transition-transform duration-300 ease-in-out transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg920:static lg920:translate-x-0 lg920:w-2/4 lg:w-full`}
+        } lg:translate-x-0`}
       >
-        {/* User Info */}
-        <div className="flex flex-col items-center mb-8 md:mb-12">
-          <MdAccountCircle className="text-4xl md:text-5xl mb-2 text-[#C9C9C9]" />
-          {isAuthenticated ? (
-            <h2 className="text-base md:text-lg capitalize text-[#FEFEFE]">
-              Welcome {user?.username}
-            </h2>
-          ) : (
-            <h2 className="text-base md:text-lg text-[#FEFEFE]">Welcome Guest</h2>
-          )}
-        </div>
-  
-        {/* Sidebar Header */}
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold text-center mb-6 md:mb-8 text-[#F8F8F9]">
-            Task Manager
-          </h2>
-  
-          {/* Navigation Links */}
-          <ul className="menu bg-transparent p-0 space-y-4">
-            {isAuthenticated ? (
-              <>
-                <li>
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-center h-20 bg-purple-800">
+            <h2 className="text-2xl font-bold">TaskManager</h2>
+          </div>
+
+          <div className="flex-grow overflow-y-auto">
+            <div className="px-4 py-6 border-b border-gray-700">
+              <div className="flex items-center mb-3">
+                <User className="w-5 md:w-8 h-10 text-purple-600" />
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-gray-200">
+                    {user ? `Welcome, ${user.username}` : "Welcome, Guest"}
+                  </h3>
+                </div>
+              </div>
+            </div>
+
+            <nav className="px-4 py-6 space-y-2">
+              {user ? (
+                <>
                   <Link
+                    className={`flex items-center p-2 rounded-lg transition-colors duration-200 ${
+                      isActive("/dashboard")
+                        ? "bg-purple-700 text-white"
+                        : "text-gray-300 hover:bg-purple-700 hover:text-white"
+                    }`}
                     to="/dashboard"
-                    className="btn bg-transparent text-[#764CE8] border border-[#764CE8] w-full flex items-center justify-center md:justify-start hover:bg-[#764CE8] hover:text-[#F8F8F9] transition duration-300"
                   >
-                    <FaTachometerAlt className="mr-2 md:mr-3" />
-                    <span className="text-sm md:text-base">Dashboard</span>
+                    <LayoutDashboard className="mr-2" />
+                    Dashboard
                   </Link>
-                </li>
-                <li>
                   <Link
+                    className={`flex items-center p-2 rounded-lg transition-colors duration-200 ${
+                      isActive("/tasklist")
+                        ? "bg-purple-700 text-white"
+                        : "text-gray-300 hover:bg-purple-700 hover:text-white"
+                    }`}
                     to="/tasklist"
-                    className="btn bg-transparent text-[#764CE8] border border-[#764CE8] w-full flex items-center justify-center md:justify-start hover:bg-[#764CE8] hover:text-[#F8F8F9] transition duration-300"
                   >
-                    <FaTasks className="mr-2 md:mr-3" />
-                    <span className="text-sm md:text-base">Task List</span>
+                    <CheckSquare className="mr-2" />
+                    Task List
                   </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    className="btn bg-transparent text-[#E45858] border border-[#E45858] w-full flex items-center justify-center md:justify-start hover:bg-[#E45858] hover:text-[#F8F8F9] transition duration-300"
-                  >
-                    <FaSignOutAlt className="mr-2 md:mr-3" />
-                    <span className="text-sm md:text-base">Logout</span>
-                  </button>
-                </li>
-              </>
-            ) : (
-              <li>
+                </>
+              ) : (
                 <Link
-                  to="/"
-                  className="btn bg-[#764CE8] text-[#F8F8F9] w-full flex justify-center hover:bg-[#6A6A71] transition duration-300"
+                  className="flex items-center p-2 rounded-lg text-gray-300 hover:bg-purple-700 hover:text-white transition-colors duration-300"
+                  to="/login"
                 >
-                  <span className="text-sm md:text-base">Login</span>
+                  <ChevronRight className="mr-2 w-5 md:w-8 h-10 text-purple-600" />
+                  Login
                 </Link>
-              </li>
-            )}
-          </ul>
+              )}
+            </nav>
+          </div>
+
+          {user && (
+            <div className="p-4 border-t border-gray-700">
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center w-full p-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
+              >
+                <LogOut className="w-5 h-5 mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
+
+          <footer className="p-4 text-center text-xs text-gray-400 border-t border-gray-700">
+            © {new Date().getFullYear()} TaskManager. All rights reserved.
+          </footer>
         </div>
-  
-        {/* Sidebar Footer */}
-        <footer className="text-center text-xs md:text-sm text-[#C9C9C9] mt-4">
-          © 2024 Task Manager. All rights reserved.
-        </footer>
-      </div>
+      </aside>
     </div>
-  );  
+  );
 };
 
 export default Sidebar;

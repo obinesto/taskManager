@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import "./Utils/wdyr.js"
 import './index.css'
 import App from './App.jsx'
 
