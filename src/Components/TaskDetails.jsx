@@ -1,11 +1,21 @@
+/* eslint-disable react/prop-types */
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useTasks, useUser, useUpdateTask } from "../hooks/useQueries";
 import { FaCheck, FaTimes, FaArrowLeft } from "react-icons/fa";
 import bgImage from "../assets/bg-2.jpg";
 
-const TaskDetails = () => {
-  const { id } = useParams();
+const TaskDetails = ({notify}) => {
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  const { id } = useParams();
 
   const { data: task, isLoading: taskLoading, error: taskError } = useTasks(id);
   const { data: user, isLoading: userLoading, error: userError } = useUser();
@@ -15,10 +25,12 @@ const TaskDetails = () => {
     try {
       await updateTaskMutation.mutateAsync({
         id,
-        updatedTask: { status: newStatus },
+        updatedTask: { status: newStatus }
       });
+      notify(`Task ${newStatus}`, "success");
     } catch (error) {
       console.error("Error updating status:", error);
+      notify("Error updating task status", "error");
     }
   };
 
@@ -29,9 +41,47 @@ const TaskDetails = () => {
         <p className="text-[#764CE8] font-semibold text-3xl">Loading...</p>
       </div>
     );
-  if (taskError || userError)
-    return <p className="text-center">Error loading data.</p>;
-  if (!task) return <p className="text-center">Task not found.</p>;
+    if (userError || taskError) {
+      return (
+        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-center text-xl font-semibold text-slate-900">
+              Oops! Something went wrong.
+            </p>
+            <p className="text-center text-slate-800 mt-4">
+              Error loading data. Kindly refresh the page or try again later.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-6 px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+    if (!task) {
+      return (
+        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex justify-center items-center flex-col">
+            <p className="text-center text-xl font-semibold text-slate-900">
+              Task not found
+            </p>
+            <p className="text-center text-slate-800 mt-4">
+              The task you&apos;re looking for could not be found or does not exist.
+            </p>
+            <button
+              onClick={() => window.history.back()}
+              className="mt-6 px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      );
+    }
+    
 
   return (
     <div
@@ -43,39 +93,35 @@ const TaskDetails = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="md:ml-72 max-w-6xl mx-auto p-4 sm:p-6 bg-purple-900 rounded-lg shadow-xl">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-[#764CE8] mb-4">
+      <div className="md:ml-72 max-w-6xl mx-auto p-4 sm:p-6 bg-purple-800 rounded-lg shadow-xl">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-4">
           Task Details
         </h2>
 
-        <div className="task-details-item mb-4">
-          <strong className="block text-lg sm:text-xl text-[#111010]">
-            Name:
-          </strong>
+        <div className="mb-6 flex items-center gap-2">
+          <strong className="text-lg sm:text-xl text-black">Name:</strong>
           <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">
             {task.name}
           </span>
         </div>
-        <div className="task-details-item mb-4">
-          <strong className="block text-lg sm:text-xl text-[#111010]">
+        <div className="mb-6 flex items-center gap-2">
+          <strong className="text-lg sm:text-xl text-black">
             Description:
           </strong>
-          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">
+          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8] capitalize">
             {task.description}
           </span>
         </div>
-        <div className="task-details-item mb-4">
-          <strong className="block text-lg sm:text-xl text-[#111010]">
+        <div className="mb-6 flex items-center gap-2">
+          <strong className="text-lg sm:text-xl text-black">
             Assigned To:
           </strong>
-          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">
+          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8] capitalize">
             {task.executedBySelf ? "Self" : task.assignedTo}
           </span>
         </div>
-        <div className="task-details-item mb-6">
-          <strong className="block text-lg sm:text-xl text-[#FEFEFE]">
-            Status:
-          </strong>
+        <div className="mb-6 flex items-center gap-2">
+          <strong className="text-lg sm:text-xl text-black">Status:</strong>
           <span
             className={`inline-block px-3 py-1 mt-1 rounded-full text-sm sm:text-base text-white 
           ${
@@ -151,7 +197,7 @@ const TaskDetails = () => {
 
           <button
             onClick={() => navigate(-1)}
-            className="w-full sm:w-auto bg-[#252525] text-[#FEFEFE] py-2 px-4 rounded-md hover:bg-[#1A1A1A] flex items-center justify-center mt-6 sm:mt-0"
+            className="w-full sm:w-auto bg-gray-900 text-[#FEFEFE] py-2 px-4 rounded-md hover:bg-[#1A1A1A] flex items-center justify-center mt-6 sm:mt-0"
           >
             <FaArrowLeft className="mr-2" /> Back
           </button>
