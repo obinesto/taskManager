@@ -19,10 +19,14 @@ const authReducer = (state = initialState, action) => {
         isAuthenticated: false,
         token: null,
       };
+    case 'persist/REHYDRATE':
+      return {
+        ...state,
+        ...action.payload?.auth,
+      };
     default:
       return state;
   }
 };
 
 export default authReducer;
-

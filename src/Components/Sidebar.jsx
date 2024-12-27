@@ -1,18 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUser, useLogout } from "../hooks/useQueries";
+import { useSelector } from "react-redux";
 import { LogOut, LayoutDashboard, CheckSquare, User, Menu, X, ChevronRight } from "lucide-react";
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data: user, isLoading } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
-  const { data: user, isLoading } = useUser();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
   const logout = useLogout();
   const handleLogout = async () => {
-      await logout();
-      navigate("/");
+    await logout();
+    navigate("/login");
   };
 
   return (
@@ -32,7 +41,9 @@ const Sidebar = () => {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-20 bg-purple-800">
-            <h2 className="text-2xl font-bold">TaskManager</h2>
+            <Link to="/">
+              <h2 className="text-2xl font-bold">TaskManager</h2>
+            </Link>
           </div>
 
           <div className="flex-grow overflow-y-auto">

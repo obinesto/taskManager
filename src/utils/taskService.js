@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { store } from '../redux/store';
+
 const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
 
 const instance = axios.create({
@@ -7,7 +9,7 @@ const instance = axios.create({
 
 // Automatically include the token in all requests
 instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token')|| store.getState().auth.token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
