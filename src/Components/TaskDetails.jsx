@@ -41,7 +41,7 @@ const TaskDetails = ({notify}) => {
 
   if (taskLoading || userLoading)
     return (
-      <div className="loader grid place-items-center min-h-screen">
+      <div className="loader flex justify-center items-center m-0 min-h-screen">
       <span className="block"></span>{" "}
       <svg className="absolute w-0 h-0">
         <defs>
@@ -119,22 +119,22 @@ const TaskDetails = ({notify}) => {
           Task Details
         </h2>
 
-        <div className="mb-6 flex items-center gap-2">
-          <strong className="text-lg sm:text-xl text-black">Name:</strong>
+        <div className="mb-6 md:flex items-center gap-2">
+          <strong className="block text-lg sm:text-xl text-black">Name:</strong>
           <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">
             {task.name}
           </span>
         </div>
-        <div className="mb-6 flex items-center gap-2">
-          <strong className="text-lg sm:text-xl text-black">
+        <div className="mb-6 md:flex items-center gap-2">
+          <strong className="block text-lg sm:text-xl text-black">
             Description:
           </strong>
           <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8] capitalize">
             {task.description}
           </span>
         </div>
-        <div className="mb-6 flex items-center gap-2">
-          <strong className="text-lg sm:text-xl text-black">
+        <div className="mb-6 md:flex items-center gap-2">
+          <strong className="block text-lg sm:text-xl text-black">
             Assigned To:
           </strong>
           <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8] capitalize">
@@ -207,10 +207,9 @@ const TaskDetails = ({notify}) => {
                   )}
                 </>
               ) : (
-                <p className="text-[#C9C9C9]">
-                  You can only monitor the progress of tasks assigned to other
-                  users.
-                  <br /> Task: {task.status}
+                <p className="w-full sm:w-auto bg-gray-900 text-gray-300 py-2 px-4 rounded-md hover:bg-[#1A1A1A] flex items-center justify-center mt-6 sm:mt-0">
+                  You can only monitor the progress of tasks assigned to other users.
+                  <br />
                 </p>
               )}
             </>

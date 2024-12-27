@@ -47,7 +47,7 @@ const TaskList = () => {
 
   if (userLoading || tasksLoading || usersLoading) {
     return (
-      <div className="loader grid place-items-center min-h-screen">
+      <div className="loader flex justify-center items-center m-0 min-h-screen">
       <span className="block"></span>{" "}
       <svg className="absolute w-0 h-0">
         <defs>
