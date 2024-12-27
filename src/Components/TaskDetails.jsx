@@ -10,10 +10,15 @@ const TaskDetails = ({notify}) => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
+    const checkToken = localStorage.getItem("tm-cd-token");
+    if (checkToken) {
+      return
+    } else {
+      if (!isAuthenticated) {
+        navigate("/login");
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [navigate, isAuthenticated]);
 
   const { id } = useParams();
 
@@ -36,10 +41,26 @@ const TaskDetails = ({notify}) => {
 
   if (taskLoading || userLoading)
     return (
-      <div className="flex flex-col justify-center items-center  min-h-screen bg-gray-100">
-        <div className="spinner w-16 h-16 border-4 border-purple-500 border-t-transparent border-solid rounded-full animate-spin"></div>
-        <p className="text-[#764CE8] font-semibold text-3xl">Loading...</p>
-      </div>
+      <div className="loader grid place-items-center min-h-screen">
+      <span className="block"></span>{" "}
+      <svg className="absolute w-0 h-0">
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="11"
+              result="blur"
+            />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
+              result="goo"
+            />
+          </filter>
+        </defs>
+      </svg>
+    </div>
     );
     if (userError || taskError) {
       return (

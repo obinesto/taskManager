@@ -1,29 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/taskService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, logoutSuccess } from "../redux/actions/authActions";
-import {
-  fetchTasksRequest,
-  fetchTasksSuccess,
-  fetchTasksFailure,
-  fetchUsersRequest,
-  fetchUsersSuccess,
-  fetchUsersFailure,
-} from "../redux/actions/taskActions";
+import { fetchTasksRequest, fetchTasksSuccess, fetchTasksFailure, fetchUsersRequest, fetchUsersSuccess, fetchUsersFailure} from "../redux/actions/taskActions";
 
 // Fetch the authenticated user
 export const useUser = () => {
+  const authState = useSelector((state) => state.auth);
   return useQuery({
     queryKey: ["user"],
     queryFn: async () => {
+      const token = localStorage.getItem("tm-cd-token") || authState.token;
+      if (!token) return null;
+
       try {
-        const checkToken = localStorage.getItem("token");
-        if (checkToken) {
-          const { data } = await axios.get("/auth/me");
-          return data;
-        }else{
-          return null
-        }
+        const { data } = await axios.get("/auth/me");
+        return data;
       } catch (error) {
         if (error.response) {
           console.error("Error response:", error.response.data);
@@ -40,6 +32,7 @@ export const useUser = () => {
     staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 };
+
 
 // Fetch tasks with optional filter
 export const useTasks = (filterOrId = "") => {
@@ -170,7 +163,7 @@ export const useLogin = () => {
     },
     onSuccess: (data) => {
       dispatch(loginSuccess(data.token));
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("tm-cd-token", data.token);
       queryClient.setQueryData(["user"], data.user);
     },
     onError: (error) => {
@@ -196,7 +189,7 @@ export const useRegister = () => {
     },
     onSuccess: (data) => {
       dispatch(loginSuccess(data.token));
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("tm-cd-token", data.token);
       queryClient.setQueryData(["user"], data.user);
     },
     onError: (error) => {
@@ -211,12 +204,12 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   return async () => {
     const checkToken =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      typeof window !== "undefined" ? localStorage.getItem("tm-cd-token") : null;
     if (checkToken) {
       try {
         dispatch(logoutSuccess());
         queryClient.clear();
-        localStorage.removeItem("token");
+        localStorage.removeItem("tm-cd-token");
       } catch (error) {
         console.error("Error logging out:", error);
       }

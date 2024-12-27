@@ -13,7 +13,7 @@ export const logoutSuccess = createAction(LOGOUT_SUCCESS);
 export const resetTimer = createAction(RESET_TIMER);
 
 export const logoutUser = () => (dispatch) => {
-  localStorage.removeItem('token');
+  localStorage.removeItem('tm-cd-token');
   dispatch(logoutSuccess());
 };
 
