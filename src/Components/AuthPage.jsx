@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
 import { useSelector } from 'react-redux';
 import { useLogin, useRegister } from '../hooks/useQueries';
 import BgImage from "../assets/bg-4.jpg";
@@ -65,9 +65,11 @@ const AuthPage = ({ notify }) => {
     >
       <div className="w-full max-w-md bg-gray-800 md:ml-32 rounded-lg shadow-lg p-8 space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-purple-300 mb-2">
-            TaskManager
-          </h1>
+          <Link to="/">
+            <h1 className="text-3xl font-bold text-purple-300 mb-2">
+              TaskManager
+            </h1>
+          </Link>
           <p className="text-gray-400">
             {isLogin ? "Welcome back!" : "Create your account"}
           </p>
@@ -82,11 +84,17 @@ const AuthPage = ({ notify }) => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-300"
+              >
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                <User
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  size={18}
+                />
                 <input
                   id="username"
                   name="username"
@@ -101,11 +109,17 @@ const AuthPage = ({ notify }) => {
             </div>
           )}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-300"
+            >
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              <Mail
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                size={18}
+              />
               <input
                 id="email"
                 name="email"
@@ -119,11 +133,17 @@ const AuthPage = ({ notify }) => {
             </div>
           </div>
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-300"
+            >
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              <Lock
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                size={18}
+              />
               <input
                 id="password"
                 name="password"
