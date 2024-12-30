@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { useTasks, useUsers, useUser } from "../hooks/useQueries";
+import { Loader } from "./Loader";
 import bgImage from "../assets/bg-2.jpg";
 
 const TaskList = () => {
@@ -46,28 +47,7 @@ const TaskList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (userLoading || tasksLoading || usersLoading) {
-    return (
-      <div className="loader flex justify-center items-center m-0 min-h-screen">
-      <span className="block"></span>{" "}
-      <svg className="absolute w-0 h-0">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="11"
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
-              result="goo"
-            />
-          </filter>
-        </defs>
-      </svg>
-    </div>
-    );
+    return <Loader />;
   }
 
   if (userError || usersError || tasksError) {

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useTasks, useUser, useUpdateTask } from "../hooks/useQueries";
 import { FaCheck, FaTimes, FaArrowLeft } from "react-icons/fa";
+import { Loader } from "./Loader";
 import bgImage from "../assets/bg-2.jpg";
 
 const TaskDetails = ({notify}) => {
@@ -39,29 +40,10 @@ const TaskDetails = ({notify}) => {
     }
   };
 
-  if (taskLoading || userLoading)
-    return (
-      <div className="loader flex justify-center items-center m-0 min-h-screen">
-      <span className="block"></span>{" "}
-      <svg className="absolute w-0 h-0">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="11"
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
-              result="goo"
-            />
-          </filter>
-        </defs>
-      </svg>
-    </div>
-    );
+  if (taskLoading || userLoading){
+    return <Loader />;
+  }
+    
     if (userError || taskError) {
       return (
         <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useAddTask, useUser, useUsers } from "../hooks/useQueries";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "./Loader";
 import BgImage from "../assets/bg-4.jpg";
 
 const TaskForm = ({ notify }) => {
@@ -61,28 +62,7 @@ const TaskForm = ({ notify }) => {
   };
 
   if (userLoading || usersLoading) {
-    return (
-      <div className="loader flex justify-center items-center m-0 min-h-screen">
-      <span className="block"></span>{" "}
-      <svg className="absolute w-0 h-0">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="11"
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
-              result="goo"
-            />
-          </filter>
-        </defs>
-      </svg>
-    </div>
-    );
+    return <Loader />;
   }
   if (userError || usersError) {
     return (
