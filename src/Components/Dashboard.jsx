@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { FaPlus } from "react-icons/fa";
 import { useUser, useTasks } from "../hooks/useQueries";
+import { Loader } from "./Loader";
 import bgImage from "../assets/bg-2.jpg";
 
 const Dashboard = () => {
@@ -75,26 +76,7 @@ const Dashboard = () => {
   );
 
   return userLoading || tasksLoading ? (
-    <div className="loader flex justify-center items-center m-0 min-h-screen">
-      <span className="block"></span>{" "}
-      <svg className="absolute w-0 h-0">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="11"
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
-              result="goo"
-            />
-          </filter>
-        </defs>
-      </svg>
-    </div>
+    <Loader />
   ) : (
     <div
       className="min-h-screen px-2 md:py-4 py-10"
