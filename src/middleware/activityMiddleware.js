@@ -8,7 +8,7 @@ const activityMiddleware = store => next => action => {
     clearTimeout(window.inactivityTimeout);
     window.inactivityTimeout = setTimeout(() => {
       store.dispatch(logoutUser());
-    }, 4 * 60 * 60 * 1000); // 4 hours
+    }, 6 * 60 * 60 * 1000); // 6 hours
 
     if (action.type !== resetTimer.type) {
       store.dispatch(resetTimer());
