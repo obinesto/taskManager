@@ -16,3 +16,11 @@ html {
 button {
   cursor: pointer;
 }
+
+.Toastify__toast-container{
+  @apply w-9/12 z-50 md:w-1/3 !important;
+}
+
+.Toastify__toast {
+  @apply text-sm md:text-lg p-0.5 md:p-2 !important;
+} 

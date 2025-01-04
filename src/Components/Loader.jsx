@@ -1,6 +1,6 @@
 export const Loader = () => {
   return (
-    <div className="loader flex justify-center items-center m-0 min-h-screen">
+    <div className="flex justify-center items-center m-0 min-h-screen">
       <span className="block"></span>
       <svg className="absolute w-0 h-0">
         <defs>

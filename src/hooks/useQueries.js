@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/taskService";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess, logoutSuccess } from "../redux/actions/authActions";
+import { registerSuccess, loginSuccess, logoutSuccess } from "../redux/actions/authActions";
 import { fetchTasksRequest, fetchTasksSuccess, fetchTasksFailure, fetchUsersRequest, fetchUsersSuccess, fetchUsersFailure} from "../redux/actions/taskActions";
 
 // Fetch the authenticated user
@@ -102,8 +102,8 @@ export const useAddTask = () => {
         throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["tasks"]);
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["tasks", data._id]);
     },
     onError: (error) => {
       console.error("Error adding task:", error);
@@ -129,7 +129,7 @@ export const useUpdateTask = () => {
         throw error;
       }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (variables) => {
       queryClient.invalidateQueries(["tasks", variables.id]);
     },
     onError: (error) => {
@@ -162,7 +162,7 @@ export const useLogin = () => {
       }
     },
     onSuccess: (data) => {
-      dispatch(loginSuccess(data.token));
+      dispatch(loginSuccess(data.token, data.user));
       localStorage.setItem("tm-cd-token", data.token);
       queryClient.setQueryData(["user"], data.user);
     },
@@ -183,20 +183,29 @@ export const useRegister = () => {
         const { data } = await axios.post("/auth/register", registerData);
         return data;
       } catch (error) {
-        console.error("Error registering:", error);
-        throw error;
+        if (error.response) {
+          const status = error.response.status;
+          const message = error.response.data.message;
+          if (status === 400 || message.includes("Email already exists")) {
+            throw new Error("This email is already registered. Please try a different email.");
+          }
+        } else if (error.request) {
+          throw new Error("Unable to connect to the server. Please try again later.");
+        } else {
+          throw new Error("An unexpected error occurred. Please try again.");
+        }
       }
     },
     onSuccess: (data) => {
-      dispatch(loginSuccess(data.token));
-      localStorage.setItem("tm-cd-token", data.token);
-      queryClient.setQueryData(["user"], data.user);
+      dispatch(registerSuccess(data.token, data.user));
+      queryClient.invalidateQueries(["user"]);
     },
     onError: (error) => {
       console.error("Error registering:", error.message);
     },
   });
 };
+
 
 // User logout
 export const useLogout = () => {
