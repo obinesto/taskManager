@@ -4,6 +4,15 @@ const activityMiddleware = store => next => action => {
   const result = next(action);
   const state = store.getState();
 
+  const now = new Date().getTime();
+  const expirationTime = state.auth.expirationTime;
+
+  // Check for token expiration
+  if (state.auth.isAuthenticated && now > expirationTime) {
+    store.dispatch(logoutUser());
+    return result;
+  }
+
   if (action.type === LOGIN_SUCCESS || (state.auth.isAuthenticated && action.type !== resetTimer.type)) {
     clearTimeout(window.inactivityTimeout);
     window.inactivityTimeout = setTimeout(() => {

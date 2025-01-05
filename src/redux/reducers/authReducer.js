@@ -18,6 +18,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         isAuthenticated: true,
         token: action.payload,
+        expirationTime: action.payload.expirationTime,
       };
     case LOGOUT_SUCCESS:
       return {
