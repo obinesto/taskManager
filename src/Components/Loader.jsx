@@ -7,7 +7,7 @@ export const Loader = () => {
           content: "";
           width: 2.5em;
           height: 2.5em;
-          background: #aa33ff;
+          background: radial-gradient(circle, #a733bb, #aa33ff);
           border-radius: 50%;
           position: absolute;
           transform: scale(0.5);
@@ -17,7 +17,7 @@ export const Loader = () => {
         .loader span {
           width: 1.25em;
           height: 1.25em;
-          background: #a733bb;
+          background: #aa33ff;
           border-radius: 50%;
           margin-right: 1.25em;
           position: relative;
@@ -29,7 +29,7 @@ export const Loader = () => {
           content: "";
           width: 1.25em;
           height: 1.25em;
-          background: #a733bb;
+          background: #aa33ff;
           border-radius: 50%;
           position: absolute;
           left: 2em;
