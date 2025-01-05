@@ -9,8 +9,11 @@ const Sidebar = () => {
   const { data: user, isLoading } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => new RegExp(`^${path.replace(":id", "[^/]+")}$`).test(location.pathname);
+  const isAnyActive = (paths) => paths.some((path) => isActive(path));
+
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -74,7 +77,7 @@ const Sidebar = () => {
                   </Link>
                   <Link
                     className={`flex items-center p-2 rounded-lg transition-colors duration-200 ${
-                      isActive("/tasklist")
+                      isAnyActive(["/tasklist", "/task/:id"])
                         ? "bg-purple-700 text-white"
                         : "text-gray-300 hover:bg-purple-700 hover:text-white"
                     }`}

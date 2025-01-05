@@ -1,25 +1,8 @@
 export const Loader = () => {
   return (
-    <div className="flex justify-center items-center m-0 min-h-screen">
+    <div className="loader flex justify-center items-center m-0 min-h-screen bg-slate-100">
       <span className="block"></span>
-      <svg className="absolute w-0 h-0">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
-              result="goo"
-            />
-          </filter>
-        </defs>
-      </svg>
       <style>{`
-        .loader {
-          filter: url("#goo");
-        }
-
         .loader:after {
           content: "";
           width: 2.5em;

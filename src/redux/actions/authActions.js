@@ -7,9 +7,12 @@ export const RESET_TIMER = 'RESET_TIMER';
 
 export const registerSuccess = createAction(REGISTER_SUCCESS);
 
-export const loginSuccess = createAction(LOGIN_SUCCESS, token => ({
-  payload: token,
-}));
+export const loginSuccess = createAction(LOGIN_SUCCESS, token => {
+  const expirationTime = new Date().getTime() + 7 * 24 * 60 * 60 * 1000; // 7 days
+  return {
+    payload: {token, expirationTime}
+  };
+});
 
 export const logoutSuccess = createAction(LOGOUT_SUCCESS);
 
