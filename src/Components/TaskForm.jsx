@@ -22,7 +22,7 @@ const TaskForm = ({ notify }) => {
   const { data: users, isLoading: usersLoading, error: usersError } = useUsers();
 
   useEffect(() => {
-    const checkToken = localStorage.getItem("tm-cd-token");
+    const checkToken = localStorage.getItem("token");
     if (checkToken) {
       return
     } else {

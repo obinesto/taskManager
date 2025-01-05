@@ -11,7 +11,7 @@ const TaskDetails = ({notify}) => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   useEffect(() => {
-    const checkToken = localStorage.getItem("tm-cd-token");
+    const checkToken = localStorage.getItem("token");
     if (checkToken) {
       return
     } else {
