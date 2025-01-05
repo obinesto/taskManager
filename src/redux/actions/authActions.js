@@ -20,7 +20,7 @@ export const resetTimer = createAction(RESET_TIMER);
 
 export const logoutUser = () => (dispatch) => {
   if (typeof localStorage !== 'undefined') {
-    localStorage.removeItem('tm-cd-token');
+    localStorage.removeItem('token');
   }
   dispatch(logoutSuccess());
 };
