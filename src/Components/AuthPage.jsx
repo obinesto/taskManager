@@ -1,10 +1,22 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
-import { useNavigate, Link} from "react-router-dom";
-import { useSelector } from 'react-redux';
-import { useLogin, useRegister } from '../hooks/useQueries';
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useLogin, useRegister } from "../hooks/useQueries";
+import { Mail, Lock, User, Loader } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Alert, AlertDescription } from "./ui/alert";
 import BgImage from "../assets/bg-4.jpg";
-import { Mail, Lock, User } from 'lucide-react';
 
 const AuthPage = ({ notify }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,7 +26,8 @@ const AuthPage = ({ notify }) => {
     username: "",
   });
   const [submitLoader, setSubmitLoader] = useState(false);
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const [errorMessage, setErrorMessage] = useState("");
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const login = useLogin();
   const register = useRegister();
@@ -25,6 +38,19 @@ const AuthPage = ({ notify }) => {
     }
   }, [isAuthenticated, navigate]);
 
+  const clearError = useCallback(() => {
+    const timer = setTimeout(() => {
+      setErrorMessage("");
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (errorMessage) {
+      clearError();
+    }
+  }, [errorMessage, clearError]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -32,6 +58,7 @@ const AuthPage = ({ notify }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoader(true);
+    setErrorMessage("");
     const mutationFn = isLogin ? login : register;
     const payload = isLogin
       ? { email: formData.email, password: formData.password }
@@ -46,6 +73,7 @@ const AuthPage = ({ notify }) => {
       navigate("/dashboard");
     } catch (error) {
       console.error("Error:", error);
+      setErrorMessage(error.message);
       notify(isLogin ? "Login failed" : "Registration failed", "error");
     } finally {
       setSubmitLoader(false);
@@ -53,146 +81,120 @@ const AuthPage = ({ notify }) => {
   };
 
   return (
-    <div
-      className="flex justify-center items-center min-h-screen px-4 bg-gradient-to-b from-purple-950 to-gray-900"
-      style={{
-        backgroundImage: `url(${BgImage})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundBlendMode: "overlay",
-      }}
-    >
-      <div className="w-full max-w-md bg-gray-800 md:ml-32 rounded-lg shadow-lg p-8 space-y-8">
-        <div className="text-center">
-          <Link to="/">
-            <h1 className="text-3xl font-bold text-purple-300 mb-2">
+    <div className="flex min-h-screen bg-background">
+      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="flex justify-center h-16 px-4">
+          <Link to="/" className="flex items-center gap-2 font-semibold">
+            <span className="text-4xl md:6xl hover:text-gray-200">
               TaskManager
-            </h1>
+            </span>
           </Link>
-          <p className="text-gray-400">
-            {isLogin ? "Welcome back!" : "Create your account"}
-          </p>
         </div>
-
-        {(login.error || register.error) && (
-          <div className="bg-red-900 text-red-300 p-3 rounded-md text-sm">
-            {login.error?.message || register.error?.message}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {!isLogin && (
-            <div className="space-y-2">
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-300"
-              >
-                Username
-              </label>
-              <div className="relative">
-                <User
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                  size={18}
-                />
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required={!isLogin}
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-100"
-                  placeholder="JohnDoe"
-                />
-              </div>
-            </div>
-          )}
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                size={18}
-              />
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-100"
-                placeholder="john@example.com"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <Lock
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                size={18}
-              />
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-100"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            disabled={submitLoader || login.isLoading || register.isLoading} // Update 3
-            className={`w-full py-3 text-white rounded-md font-medium transition duration-300 ${
-              submitLoader || login.isLoading || register.isLoading // Update 3
-                ? "bg-purple-700 cursor-not-allowed"
-                : "bg-purple-600 hover:bg-purple-700"
-            }`}
-          >
-            {submitLoader ? ( // Update 3
-              <div className="flex justify-center items-center">
-                <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
-              </div>
-            ) : isLogin ? (
-              "Sign In"
-            ) : (
-              "Create Account"
-            )}
-          </button>
-        </form>
-
-        <div className="text-center">
-          <p className="text-sm text-gray-400">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-purple-400 hover:text-purple-300 font-medium"
-            >
-              {isLogin ? "Sign up" : "Sign in"}
-            </button>
-          </p>
+        <div className="w-full max-w-sm mx-auto lg:w-96">
+          <Card>
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold tracking-tight">
+                {isLogin ? "Sign in to your account" : "Create an account"}
+              </CardTitle>
+              <CardDescription>
+                {isLogin
+                  ? "Enter your email below to login to your account"
+                  : "Enter your details below to create your account"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              {errorMessage && (
+                <Alert variant="destructive">
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required={!isLogin}
+                      value={formData.username}
+                      onChange={handleChange}
+                      placeholder="JohnDoe"
+                      icon={<User className="h-4 w-4 text-muted-foreground" />}
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="john@example.com"
+                    icon={<Mail className="h-4 w-4 text-muted-foreground" />}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    icon={<Lock className="h-4 w-4 text-muted-foreground" />}
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={
+                    submitLoader || login.isLoading || register.isLoading
+                  }
+                >
+                  {submitLoader ? (
+                    <div>
+                      <Loader className="h-4 w-4 text-primary-foreground animate-spin" />
+                    </div>
+                  ) : isLogin ? (
+                    "Sign In"
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+            <CardFooter>
+              <p className="text-sm text-muted-foreground">
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}{" "}
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {isLogin ? "Sign up" : "Sign in"}
+                </button>
+              </p>
+            </CardFooter>
+          </Card>
         </div>
+      </div>
+      <div className="hidden md:relative flex-1 my-auto w-0 lg:block">
+        <img
+          className="object-cover w-11/12 h-5/6 rounded-md"
+          src={BgImage}
+          alt="Background"
+        />
       </div>
     </div>
   );
 };
 
 export default AuthPage;
-

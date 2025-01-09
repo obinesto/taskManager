@@ -1,23 +1,24 @@
-/* eslint-disable react/prop-types */
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useTasks, useUser, useUpdateTask } from "../hooks/useQueries";
-import { FaCheck, FaTimes, FaArrowLeft } from "react-icons/fa";
 import { Loader } from "./Loader";
-import bgImage from "../assets/bg-2.jpg";
+import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Separator } from "./ui/separator";
+import { useToast } from "../hooks/use-toast";
 
-const TaskDetails = ({notify}) => {
+const TaskDetails = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  
   useEffect(() => {
     const checkToken = localStorage.getItem("token");
-    if (checkToken) {
-      return
-    } else {
-      if (!isAuthenticated) {
-        navigate("/login");
-      }
+    if (!checkToken && !isAuthenticated) {
+      navigate("/login");
     }
   }, [navigate, isAuthenticated]);
 
@@ -33,178 +34,187 @@ const TaskDetails = ({notify}) => {
         id,
         updatedTask: { status: newStatus }
       });
-      notify(`Task ${newStatus}`, "success");
+      toast({
+        title: "Status Updated",
+        description: `Task ${newStatus} successfully`,
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error updating status:", error);
-      notify("Error updating task status", "error");
+      toast({
+        title: "Error",
+        description: "Failed to update task status",
+        variant: "destructive",
+      });
     }
   };
 
-  if (taskLoading || userLoading){
+  if (taskLoading || userLoading) {
     return <Loader />;
   }
-    
-    if (userError || taskError) {
-      return (
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="text-center text-xl font-semibold text-slate-900">
-              Oops! Something went wrong.
+
+  if (userError || taskError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background/50">
+        <Card className="w-full max-w-lg">
+          <CardHeader>
+            <CardTitle>Error</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              Error loading data. Please refresh the page or try again later.
             </p>
-            <p className="text-center text-slate-800 mt-4">
-              Error loading data. Kindly refresh the page or try again later.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-6 px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
-            >
+            <Button onClick={() => window.location.reload()}>
               Refresh Page
-            </button>
-          </div>
-        </div>
-      );
-    }
-    if (!task) {
-      return (
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-          <div className="bg-white p-6 rounded-lg shadow-lg flex justify-center items-center flex-col">
-            <p className="text-center text-xl font-semibold text-slate-900">
-              Task not found
-            </p>
-            <p className="text-center text-slate-800 mt-4">
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!task) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background/50">
+        <Card className="w-full max-w-lg">
+          <CardHeader>
+            <CardTitle>Task Not Found</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
               The task you&apos;re looking for could not be found or does not exist.
             </p>
-            <button
-              onClick={() => window.history.back()}
-              className="mt-6 px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
-            >
-              Go Back
-            </button>
-          </div>
-        </div>
-      );
+            <Button variant="outline" onClick={() => navigate(-1)}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "success";
+      case "In Progress":
+        return "warning";
+      case "Pending":
+        return "default";
+      case "Rejected":
+        return "destructive";
+      default:
+        return "secondary";
     }
-    
+  };
 
   return (
-    <div
-      className="min-h-screen px-2 md:py-4 py-10"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="md:ml-72 max-w-6xl mx-auto p-4 sm:p-6 bg-purple-800 rounded-lg shadow-xl">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-4">
-          Task Details
-        </h2>
+    <div className="min-h-screen bg-background/50 p-4 md:p-8">
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">Task Details</CardTitle>
+            <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="grid gap-1">
+              <h3 className="font-medium">Name</h3>
+              <p className="text-sm text-muted-foreground">{task.name}</p>
+            </div>
+            <Separator />
+            
+            <div className="grid gap-1">
+              <h3 className="font-medium">Description</h3>
+              <p className="text-sm text-muted-foreground">{task.description}</p>
+            </div>
+            <Separator />
+            
+            <div className="grid gap-1">
+              <h3 className="font-medium">Assigned To</h3>
+              <p className="text-sm text-muted-foreground capitalize">
+                {task.executedBySelf ? "Self" : task.assignedTo}
+              </p>
+            </div>
+            <Separator />
+            
+            <div className="grid gap-1">
+              <h3 className="font-medium">Status</h3>
+              <Badge variant={getStatusColor(task.status)}>{task.status}</Badge>
+            </div>
+          </div>
 
-        <div className="mb-6 md:flex items-center gap-2">
-          <strong className="block text-lg sm:text-xl text-black">Name:</strong>
-          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8]">
-            {task.name}
-          </span>
-        </div>
-        <div className="mb-6 md:flex items-center gap-2">
-          <strong className="block text-lg sm:text-xl text-black">
-            Description:
-          </strong>
-          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8] capitalize">
-            {task.description}
-          </span>
-        </div>
-        <div className="mb-6 md:flex items-center gap-2">
-          <strong className="block text-lg sm:text-xl text-black">
-            Assigned To:
-          </strong>
-          <span className="text-[#C9C9C9] px-3 py-1 mt-1 rounded-md text-sm sm:text-base bg-[#764CE8] capitalize">
-            {task.executedBySelf ? "Self" : task.assignedTo}
-          </span>
-        </div>
-        <div className="mb-6 flex items-center gap-2">
-          <strong className="text-lg sm:text-xl text-black">Status:</strong>
-          <span
-            className={`inline-block px-3 py-1 mt-1 rounded-full text-sm sm:text-base text-white 
-          ${
-            task.status === "Completed"
-              ? "bg-[#30A46C]"
-              : task.status === "In Progress"
-              ? "bg-[#D97706]"
-              : task.status === "Pending"
-              ? "bg-[#2563EB]"
-              : "bg-[#E45858]"
-          }`}
-          >
-            {task.status}
-          </span>
-        </div>
-
-        <div className="task-details-actions space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
-          {task.executedBySelf ? (
-            task.status === "In Progress" ? (
-              <button
-                onClick={() => handleUpdateStatus("Completed")}
-                className="w-full sm:w-auto bg-[#30A46C] text-white py-2 px-4 rounded-md hover:bg-[#25805B] flex items-center justify-center"
-              >
-                <FaCheck className="mr-2" /> Mark as Completed
-              </button>
-            ) : (
-              <p className="text-[#C9C9C9]">This task is already completed.</p>
-            )
-          ) : (
-            <>
-              {task.assignedTo === user.email ? (
-                <>
-                  {task.status === "Pending" && (
-                    <div className="space-y-4 sm:space-y-0 sm:flex sm:gap-4">
-                      <button
-                        onClick={() => handleUpdateStatus("In Progress")}
-                        className="w-full sm:w-auto bg-[#764CE8] text-white py-2 px-4 rounded-md hover:bg-[#6A6A71] flex items-center justify-center"
-                      >
-                        <FaCheck className="mr-2" /> Accept Task
-                      </button>
-                      <button
-                        onClick={() => handleUpdateStatus("Rejected")}
-                        className="w-full sm:w-auto bg-[#E45858] text-white py-2 px-4 rounded-md hover:bg-[#CC3E3E] flex items-center justify-center"
-                      >
-                        <FaTimes className="mr-2" /> Reject Task
-                      </button>
-                    </div>
-                  )}
-                  {task.status === "In Progress" && (
-                    <button
-                      onClick={() => handleUpdateStatus("Completed")}
-                      className="w-full sm:w-auto bg-[#30A46C] text-white py-2 px-4 rounded-md hover:bg-[#25805B] flex items-center justify-center"
-                    >
-                      <FaCheck className="mr-2" /> Mark as Completed
-                    </button>
-                  )}
-                  {task.status === "Rejected" && (
-                    <p className="text-[#C9C9C9]">This task was rejected.</p>
-                  )}
-                  {task.status === "Completed" && (
-                    <p className="text-[#C9C9C9]">This task is completed.</p>
-                  )}
-                </>
+          <div className="space-y-4 pt-4">
+            {task.executedBySelf ? (
+              task.status === "In Progress" ? (
+                <Button
+                  className="w-full sm:w-auto"
+                  onClick={() => handleUpdateStatus("Completed")}
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" /> Mark as Completed
+                </Button>
               ) : (
-                <p className="w-full sm:w-auto bg-gray-900 text-gray-300 py-2 px-4 rounded-md hover:bg-[#1A1A1A] flex items-center justify-center mt-6 sm:mt-0">
-                  You can only monitor the progress of tasks assigned to other users.
-                  <br />
+                <p className="text-sm text-muted-foreground">
+                  This task is already completed.
                 </p>
-              )}
-            </>
-          )}
-
-          <button
-            onClick={() => navigate(-1)}
-            className="w-full sm:w-auto bg-gray-900 text-[#FEFEFE] py-2 px-4 rounded-md hover:bg-[#1A1A1A] flex items-center justify-center mt-6 sm:mt-0"
-          >
-            <FaArrowLeft className="mr-2" /> Back
-          </button>
-        </div>
-      </div>
+              )
+            ) : (
+              <>
+                {task.assignedTo === user.email ? (
+                  <>
+                    {task.status === "Pending" && (
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Button
+                          className="w-full sm:w-auto"
+                          onClick={() => handleUpdateStatus("In Progress")}
+                        >
+                          <CheckCircle className="mr-2 h-4 w-4" /> Accept Task
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          className="w-full sm:w-auto"
+                          onClick={() => handleUpdateStatus("Rejected")}
+                        >
+                          <XCircle className="mr-2 h-4 w-4" /> Reject Task
+                        </Button>
+                      </div>
+                    )}
+                    {task.status === "In Progress" && (
+                      <Button
+                        className="w-full sm:w-auto"
+                        onClick={() => handleUpdateStatus("Completed")}
+                      >
+                        <CheckCircle className="mr-2 h-4 w-4" /> Mark as Completed
+                      </Button>
+                    )}
+                    {task.status === "Rejected" && (
+                      <p className="text-sm text-muted-foreground">
+                        This task was rejected.
+                      </p>
+                    )}
+                    {task.status === "Completed" && (
+                      <p className="text-sm text-muted-foreground">
+                        This task is completed.
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <Card className="bg-secondary">
+                    <CardContent className="pt-6">
+                      <p className="text-sm text-muted-foreground">
+                        You can only monitor the progress of tasks assigned to other users.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
