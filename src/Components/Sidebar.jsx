@@ -1,8 +1,22 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUser, useLogout } from "../hooks/useQueries";
 import { useSelector } from "react-redux";
-import { LogOut, LayoutDashboard, CheckSquare, User, Menu, X, ChevronRight } from "lucide-react";
+import { LogOut, LayoutDashboard, CheckSquare, User, Menu } from 'lucide-react';
+import { cn } from "../lib/utils";
+import { Button } from "./ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "./ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,7 +27,6 @@ const Sidebar = () => {
   const isAnyActive = (paths) => paths.some((path) => isActive(path));
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -27,97 +40,101 @@ const Sidebar = () => {
     navigate("/login");
   };
 
-  return (
-    <div className={isLoading ? `hidden` : `block`}>
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed top-4 left-4 z-50 p-2 bg-purple-800 text-white rounded-md shadow-lg lg:hidden hover:bg-purple-700 transition duration-300"
-        aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-      >
-        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+  const NavItem = ({ href, icon: Icon, children, isActiveFunc = isActive }) => (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            to={href}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
+              isActiveFunc(href) && "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            <span>{children}</span>
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{children}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
 
-      <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white shadow-xl transition-transform duration-300 ease-in-out transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
-      >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-center h-20 bg-purple-800">
-            <Link to="/">
-              <h2 className="text-2xl font-bold">TaskManager</h2>
-            </Link>
-          </div>
-
-          <div className="flex-grow overflow-y-auto">
-            <div className="px-4 py-6 border-b border-gray-700">
-              <div className="flex items-center mb-3">
-                <User className="w-5 md:w-8 h-10 text-purple-600" />
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-gray-200">
-                    {user ? `Welcome, ${user.username}` : "Welcome, Guest"}
-                  </h3>
-                </div>
-              </div>
-            </div>
-
-            <nav className="px-4 py-6 space-y-2">
-              {user ? (
-                <>
-                  <Link
-                    className={`flex items-center p-2 rounded-lg transition-colors duration-200 ${
-                      isActive("/dashboard")
-                        ? "bg-purple-700 text-white"
-                        : "text-gray-300 hover:bg-purple-700 hover:text-white"
-                    }`}
-                    to="/dashboard"
-                  >
-                    <LayoutDashboard className="mr-2" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    className={`flex items-center p-2 rounded-lg transition-colors duration-200 ${
-                      isAnyActive(["/tasklist", "/task/:id"])
-                        ? "bg-purple-700 text-white"
-                        : "text-gray-300 hover:bg-purple-700 hover:text-white"
-                    }`}
-                    to="/tasklist"
-                  >
-                    <CheckSquare className="mr-2" />
-                    Task List
-                  </Link>
-                </>
-              ) : (
-                <Link
-                  className="flex items-center p-2 rounded-lg text-gray-300 hover:bg-purple-700 hover:text-white transition-colors duration-300"
-                  to="/login"
-                >
-                  <ChevronRight className="mr-2 w-5 md:w-8 h-10 text-purple-600" />
-                  Login
-                </Link>
-              )}
-            </nav>
-          </div>
-
-          {user && (
-            <div className="p-4 border-t border-gray-700">
-              <button
-                onClick={handleLogout}
-                className="flex items-center justify-center w-full p-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
-              >
-                <LogOut className="w-5 h-5 mr-2" />
-                Logout
-              </button>
-            </div>
-          )}
-
-          <footer className="p-4 text-center text-xs text-gray-400 border-t border-gray-700">
-            © {new Date().getFullYear()} TaskManager. All rights reserved.
-          </footer>
+  const SidebarContent = () => (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center h-16 px-4">
+        <Link to="/" className="flex items-center gap-2 font-semibold">
+          <span className="text-2xl">TaskManager</span>
+        </Link>
+      </div>
+      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2">
+          <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {user ? `Welcome, ${user.username}` : "Welcome, Guest"}
+          </p>
         </div>
-      </aside>
+      </div>
+      <div className="flex-1 overflow-auto py-2">
+        <nav className="grid items-start px-4 text-sm font-medium">
+          <NavItem href="/dashboard" icon={LayoutDashboard}>
+            Dashboard
+          </NavItem>
+          <NavItem 
+            href="/tasklist" 
+            icon={CheckSquare}
+            isActiveFunc={() => isAnyActive(["/tasklist", "/task/:id"])}
+          >
+            Task List
+          </NavItem>
+        </nav>
+      </div>
+      <div className="mt-auto p-4">
+        {user && (
+          <Button
+            variant="destructive"
+            className="w-full"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        )}
+      </div>
+      <footer className="p-4 text-center text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+        © {new Date().getFullYear()} TaskManager. All rights reserved.
+      </footer>
     </div>
+  );
+
+  if (isLoading) {
+    return null;
+  }
+
+  return (
+    <>
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <SheetTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="fixed top-4 left-4 z-40 lg:hidden"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[240px] sm:w-[300px] p-0">
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-gray-100/40 lg:block dark:bg-gray-800/20">
+        <SidebarContent />
+      </aside>
+    </>
   );
 };
 
 export default Sidebar;
+

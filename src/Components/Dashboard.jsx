@@ -1,23 +1,22 @@
-import { useMemo, useCallback, useEffect} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
-import { FaPlus } from "react-icons/fa";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from "recharts";
+import { Plus } from 'lucide-react';
 import { useUser, useTasks } from "../hooks/useQueries";
 import { Loader } from "./Loader";
-import bgImage from "../assets/bg-2.jpg";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Button } from "./ui/button";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  
   useEffect(() => {
     const checkToken = localStorage.getItem("token");
-    if (checkToken) {
-      return
-    } else {
-      if (!isAuthenticated) {
-        navigate("/login");
-      }
+    if (!checkToken && !isAuthenticated) {
+      navigate("/login");
     }
   }, [navigate, isAuthenticated]);
 
@@ -34,24 +33,29 @@ const Dashboard = () => {
     };
   }, [tasks]);
 
-  const dataOne = useMemo(
+  const pieChartData = useMemo(
     () => [
-      { name: "In Progress", value: taskStats.inProgress },
-      { name: "Completed", value: taskStats.completed },
+      { name: "In Progress", value: taskStats.inProgress, color: "#2563eb" },
+      { name: "Completed", value: taskStats.completed, color: "#16a34a" },
+      { name: "Pending", value: taskStats.pending, color: "#ca8a04" },
+      { name: "Rejected", value: taskStats.rejected, color: "#dc2626" },
     ],
-    [taskStats.inProgress, taskStats.completed]
+    [taskStats]
   );
 
-  const dataTwo = useMemo(
-    () => [
-      { name: "Pending", value: taskStats.pending },
-      { name: "Rejected", value: taskStats.rejected },
-    ],
-    [taskStats.pending, taskStats.rejected]
-  );
+  const barChartData = useMemo(() => {
+    if (!tasks) return [];
+    const last6Months = [...Array(6)].map((_, i) => {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      return d.toLocaleString('default', { month: 'short' });
+    }).reverse();
 
-  const colorsOne = ["#2563eb", "#16a34a"];
-  const colorsTwo = ["#ca8a04", "#dc2626"];
+    return last6Months.map(month => ({
+      name: month,
+      tasks: tasks.filter(task => new Date(task.createdAt).toLocaleString('default', { month: 'short' }) === month).length
+    }));
+  }, [tasks]);
 
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = useCallback(
@@ -67,6 +71,7 @@ const Dashboard = () => {
           fill="white"
           textAnchor={x > cx ? "start" : "end"}
           dominantBaseline="central"
+          className="text-sm"
         >
           {`${(percent * 100).toFixed(0)}%`}
         </text>
@@ -75,129 +80,94 @@ const Dashboard = () => {
     [RADIAN]
   );
 
-  return userLoading || tasksLoading ? (
-    <Loader />
-  ) : (
-    <div
-      className="min-h-screen px-2 md:py-4 py-10"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="max-w-4xl mx-auto bg-[#FEFEFE] p-4 sm:p-6 rounded-lg shadow-lg border border-[#C2C1CC] opacity-95">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#764CE8] mb-4">
-          Dashboard
-        </h1>
-        <p className="text-base sm:text-lg text-[#6A6A71] mb-6">
-          Stay updated with your task progress and manage your work efficiently.
-        </p>
+  if (userLoading || tasksLoading) {
+    return <Loader />;
+  }
 
-        {/* Task Overview - Pie Chart */}
-        <div className="mb-8">
-          <h2 className="text-xl sm:text-2xl font-semibold text-[#252525] mb-4">
-            Task Overview
-          </h2>
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-            <PieChart
-              width={320}
-              height={320}
-              className="w-full bg-[#F8F8F9] rounded-lg border-2 border-[#764CE8] shadow-md"
-            >
-              <Pie
-                data={dataOne}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {dataOne.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={colorsOne[index % colorsOne.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
+  return (
+    <div className="min-h-screen md:ml-72 mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-primary mb-6">Dashboard</h1>
+      <p className="text-lg text-muted-foreground mb-8">
+        Stay updated with your task progress and manage your work efficiently.
+      </p>
 
-            <PieChart
-              width={320}
-              height={320}
-              className="w-full bg-[#F8F8F9] rounded-lg border-2 border-[#764CE8] shadow-md"
-            >
-              <Pie
-                data={dataTwo}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {dataTwo.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={colorsTwo[index % colorsTwo.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="charts">Charts</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            {Object.entries(taskStats).map(([key, value]) => (
+              <Card key={key}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium capitalize">
+                    {key.replace(/([A-Z])/g, ' $1').trim()}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{value}</div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </div>
+        </TabsContent>
+        <TabsContent value="charts">
+          <div className="grid gap-6 md:grid-cols-2 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Task Distribution</CardTitle>
+                <CardDescription>Overview of your tasks by status</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={renderCustomizedLabel}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        {/* Task Summary */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg920:grid-cols-4 gap-4 mb-8">
-          <div className="p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300 bg-[#2563eb]">
-            <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
-              In Progress
-            </h3>
-            <p className="text-xl sm:text-2xl text-[#FEFEFE]">
-              {taskStats.inProgress}
-            </p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Task Creation Trend</CardTitle>
+                <CardDescription>Number of tasks created in the last 6 months</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={barChartData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="tasks" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
           </div>
-          <div className="bg-[#16a34a] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
-              Completed
-            </h3>
-            <p className="text-xl sm:text-2xl text-[#FEFEFE]">
-              {taskStats.completed}
-            </p>
-          </div>
-          <div className="bg-[#ca8a04] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-sm sm:text-lg font-semibold text-[#FEFEFE]">
-              Pending
-            </h3>
-            <p className="text-xl sm:text-2xl text-[#FEFEFE]">
-              {taskStats.pending}
-            </p>
-          </div>
-          <div className="bg-[#dc2626] p-4 rounded-lg text-center hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-sm sm:text-lg font-semibold text-[#F8F8F9]">
-              Rejected
-            </h3>
-            <p className="text-xl sm:text-2xl text-[#F8F8F9]">
-              {taskStats.rejected}
-            </p>
-          </div>
-        </div>
+        </TabsContent>
+      </Tabs>
 
-        {/* Add New Task Button */}
-        <Link to="/add-task">
-          <button className="bg-[#764CE8] text-white py-2 px-4 sm:px-6 rounded-md hover:bg-[#6A6A71] flex items-center mx-auto lg920:mx-0 transition duration-300">
-            <FaPlus className="mr-2" /> Add New Task
-          </button>
-        </Link>
-      </div>
+      <Button onClick={() => navigate("/add-task")} className="w-full md:w-auto">
+        <Plus className="mr-2 h-4 w-4" /> Add New Task
+      </Button>
     </div>
   );
 };
 
 export default Dashboard;
+

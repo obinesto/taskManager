@@ -1,9 +1,12 @@
+/* eslint-disable react/prop-types */
 import { useMemo } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { store, persistor } from "./redux/store";
+import { ThemeProvider } from "./Components/ThemeProvider";
+import { ModeToggle } from "./Components/ToggleMode";
 import Sidebar from "./Components/Sidebar";
 import LandingPage from "./Components/LandingPage";
 import Dashboard from "./Components/Dashboard";
@@ -13,11 +16,12 @@ import AuthPage from "./Components/AuthPage";
 import TaskForm from "./Components/TaskForm";
 import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
+import { Toaster } from "./components/ui/toaster";
 import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const App = ({Children}) => {
   const notify = (message, notificationType) =>
     toast(message, {
       position: "top-right",
@@ -74,8 +78,13 @@ const App = () => {
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
           <Router>
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <ModeToggle />
             <Layout />
+            <Toaster />
             <ToastContainer />
+            {Children}
+            </ThemeProvider>
           </Router>
         </QueryClientProvider>
       </PersistGate>
