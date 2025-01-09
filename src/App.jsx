@@ -16,7 +16,7 @@ import AuthPage from "./Components/AuthPage";
 import TaskForm from "./Components/TaskForm";
 import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
-import { Toaster } from "./Components/ui/Toaster";
+import { Toaster } from "./Components/ui/toaster";
 import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient();
