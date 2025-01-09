@@ -5,23 +5,23 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { store, persistor } from "./redux/store";
-import { ThemeProvider } from "./components/ThemeProvider";
-import { ModeToggle } from "./components/ToggleMode";
-import Sidebar from "./components/Sidebar";
-import LandingPage from "./components/LandingPage";
-import Dashboard from "./components/Dashboard";
-import TaskList from "./components/TaskList";
-import TaskDetails from "./components/TaskDetails";
-import AuthPage from "./components/AuthPage";
-import TaskForm from "./components/TaskForm";
-import NotFound from "./components/NotFound";
+import { ThemeProvider } from "./Components/ThemeProvider";
+import { ModeToggle } from "./Components/ToggleMode";
+import Sidebar from "./Components/Sidebar";
+import LandingPage from "./Components/LandingPage";
+import Dashboard from "./Components/Dashboard";
+import TaskList from "./Components/TaskList";
+import TaskDetails from "./Components/TaskDetails";
+import AuthPage from "./Components/AuthPage";
+import TaskForm from "./Components/TaskForm";
+import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
-import { Toaster } from "./components/ui/Toaster";
+import { Toaster } from "./Components/ui/Toaster";
 import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient();
 
-const App = ({Children}) => {
+const App = ({ children }) => {
   const notify = (message, notificationType) =>
     toast(message, {
       position: "top-right",
@@ -42,15 +42,8 @@ const App = ({Children}) => {
     const location = useLocation();
     const showSidebar = useMemo(
       () =>
-        [
-          "/dashboard",
-          "/tasklist",
-          "/task/:id",
-          "/add-task",
-        ].some((path) =>
-          location.pathname.match(
-            new RegExp(`^${path.replace(":id", "[^/]+")}$`)
-          )
+        ["/dashboard", "/tasklist", "/task/:id", "/add-task"].some((path) =>
+          location.pathname.match(new RegExp(`^${path.replace(":id", "[^/]+")}$`))
         ),
       [location.pathname]
     );
@@ -79,11 +72,11 @@ const App = ({Children}) => {
         <QueryClientProvider client={queryClient}>
           <Router>
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <ModeToggle />
-            <Layout />
-            <Toaster />
-            <ToastContainer />
-            {Children}
+              <ModeToggle />
+              <Layout />
+              <Toaster />
+              <ToastContainer />
+              {children}
             </ThemeProvider>
           </Router>
         </QueryClientProvider>
