@@ -27,7 +27,7 @@ const TaskDetails = () => {
   const { data: task, isLoading: taskLoading, error: taskError } = useTasks(id);
   const { data: user, isLoading: userLoading, error: userError } = useUser();
   const updateTaskMutation = useUpdateTask();
-
+  
   const handleUpdateStatus = async (newStatus) => {
     try {
       await updateTaskMutation.mutateAsync({
