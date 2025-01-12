@@ -105,7 +105,7 @@ const TaskForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background/50 p-4 md:p-8">
+    <div className="min-h-screen bg-background/50 mx-auto px-4 py-16 md:py-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">

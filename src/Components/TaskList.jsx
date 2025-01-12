@@ -108,7 +108,7 @@ const TaskList = () => {
   }
 
   return (
-    <div className="min-h-screen md:ml-72 mx-auto px-4 py-8">
+    <div className="min-h-screen md:ml-72 mx-auto px-4 py-16 md:py-8">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Task List</CardTitle>

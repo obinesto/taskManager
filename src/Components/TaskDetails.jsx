@@ -109,7 +109,7 @@ const TaskDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background/50 p-4 md:p-8">
+    <div className="min-h-screen bg-background/50 mx-auto px-4 py-16 md:py-8">
       <Card className="max-w-4xl mx-auto">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
