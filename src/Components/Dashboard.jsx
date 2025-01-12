@@ -140,12 +140,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen md:ml-72 mx-auto px-4 py-8 bg-background/50">
+    <div className="min-h-screen md:ml-72 mx-auto px-4 py-16 md:py-8 bg-background/50">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground mt-2">
-            Welcome back, {user?.email}
+            Welcome back, {user?.username}
           </p>
         </div>
         <Button onClick={() => navigate("/add-task")} size="sm" className="mt-4 md:mt-0">
