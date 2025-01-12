@@ -189,6 +189,7 @@ const TaskList = () => {
                 <PaginationPrevious
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
+                  className={"hidden sm:flex"}
                 />
               </PaginationItem>
               {tasks &&
@@ -212,6 +213,7 @@ const TaskList = () => {
                     currentPage ===
                     Math.ceil((tasks?.length || 0) / tasksPerPage)
                   }
+                  className={"hidden sm:flex"}
                 />
               </PaginationItem>
             </PaginationContent>
