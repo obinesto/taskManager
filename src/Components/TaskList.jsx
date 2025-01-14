@@ -35,14 +35,14 @@ const TaskList = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [filter, setFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 5;
+
   useEffect(() => {
     if (filter === "all") {
       setFilter("");
     }
   }, [filter]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 5;
 
   const { data: user, isLoading: userLoading, error: userError } = useUser();
   const {
@@ -71,12 +71,25 @@ const TaskList = () => {
     };
   }, [users]);
 
+  const filteredTasks = useMemo(() => {
+    if (!tasks || !user) return [];
+    
+    let filtered = tasks.filter(task => 
+      task.assignedTo === user.email || task.assignedBy === user.email
+    );
+    
+    if (filter) {
+      filtered = filtered.filter(task => task.status === filter);
+    }
+    
+    return filtered;
+  }, [tasks, user, filter]);
+
   const currentTasks = useMemo(() => {
-    if (!tasks) return [];
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-    return tasks.slice(indexOfFirstTask, indexOfLastTask);
-  }, [tasks, currentPage]);
+    return filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+  }, [filteredTasks, currentPage]);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -122,6 +135,7 @@ const TaskList = () => {
           <p className="text-muted-foreground mb-4">
             Manage your tasks efficiently and stay organized.
           </p>
+          
           <div className="flex justify-between items-center mb-6 gap-1 md:gap-0">
             <Button asChild>
               <Link to="/add-task">
@@ -141,6 +155,7 @@ const TaskList = () => {
               </SelectContent>
             </Select>
           </div>
+
           <Table>
             <TableHeader>
               <TableRow>
@@ -152,49 +167,60 @@ const TaskList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentTasks.map((task) => (
-                <TableRow key={task._id}>
-                  <TableCell>{task.name}</TableCell>
-                  <TableCell>{task.description}</TableCell>
-                  <TableCell>{getUserNameByEmail(task.assignedTo)}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        task.status === "Completed"
-                          ? "success"
-                          : task.status === "In Progress"
-                          ? "warning"
-                          : task.status === "Rejected"
-                          ? "destructive"
-                          : "secondary"
-                      }
-                    >
-                      {task.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button asChild variant="outline" size="sm">
-                      <Link to={`/task/${task._id}`}>
-                        <Eye className="mr-2 h-4 w-4" /> View
-                      </Link>
-                    </Button>
+              {currentTasks.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8">
+                    <p className="text-muted-foreground">No tasks found</p>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                currentTasks.map((task) => (
+                  <TableRow key={task._id}>
+                    <TableCell>{task.name}</TableCell>
+                    <TableCell>{task.description}</TableCell>
+                    <TableCell>{getUserNameByEmail(
+                      user.email === task.assignedTo ? "self" : task.assignedTo
+                    )}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          task.status === "Completed"
+                            ? "success"
+                            : task.status === "In Progress"
+                            ? "warning"
+                            : task.status === "Rejected"
+                            ? "destructive"
+                            : "secondary"
+                        }
+                      >
+                        {task.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button asChild variant="outline" size="sm">
+                        <Link to={`/task/${task._id}`}>
+                          <Eye className="mr-2 h-4 w-4" /> View
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
-          <Pagination className="mt-4">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={"hidden sm:flex"}
-                />
-              </PaginationItem>
-              {tasks &&
-                Array.from(
-                  { length: Math.ceil(tasks.length / tasksPerPage) },
+          
+          {currentTasks.length > 0 && (
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={"hidden sm:flex"}
+                  />
+                </PaginationItem>
+                {Array.from(
+                  { length: Math.ceil(filteredTasks.length / tasksPerPage) },
                   (_, index) => (
                     <PaginationItem key={index}>
                       <PaginationLink
@@ -206,18 +232,19 @@ const TaskList = () => {
                     </PaginationItem>
                   )
                 )}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={
-                    currentPage ===
-                    Math.ceil((tasks?.length || 0) / tasksPerPage)
-                  }
-                  className={"hidden sm:flex"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={
+                      currentPage ===
+                      Math.ceil(filteredTasks.length / tasksPerPage)
+                    }
+                    className={"hidden sm:flex"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </CardContent>
       </Card>
     </div>

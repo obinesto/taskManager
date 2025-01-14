@@ -162,7 +162,7 @@ const Dashboard = () => {
           <CardContent>
             <div className="text-2xl font-bold">{tasks?.length || 0}</div>
             <p className="text-xs text-muted-foreground">
-              across all statuses
+              across all users
             </p>
           </CardContent>
         </Card>
@@ -186,8 +186,8 @@ const Dashboard = () => {
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="overview">Task Overview</TabsTrigger>
-          <TabsTrigger value="charts">Analytics</TabsTrigger>
+          <TabsTrigger value="overview">User Task Overview</TabsTrigger>
+          <TabsTrigger value="charts">Users Analytics</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview">
@@ -253,7 +253,7 @@ const Dashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Task Distribution</CardTitle>
-                <CardDescription>Current status breakdown of all tasks</CardDescription>
+                <CardDescription>Current status breakdown of all tasks by all users</CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
                 <ResponsiveContainer width="100%" height={300}>
@@ -295,7 +295,7 @@ const Dashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Task Creation Trend</CardTitle>
-                <CardDescription>Task volume over the last 6 months</CardDescription>
+                <CardDescription>Task volume of all users over the last 6 months</CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
                 <ResponsiveContainer width="100%" height={300}>
