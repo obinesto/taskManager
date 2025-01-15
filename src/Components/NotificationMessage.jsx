@@ -5,7 +5,7 @@ const Notifications = ({ userEmail }) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/notifications/${userEmail}`)
+    axios.get(`/notifications/${userEmail}`)
       .then(response => setNotifications(response.data))
       .catch(error => console.error('Error fetching notifications:', error));
   }, [userEmail]);
