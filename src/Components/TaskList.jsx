@@ -135,7 +135,7 @@ const TaskList = () => {
           <p className="text-muted-foreground mb-4">
             Manage your tasks efficiently and stay organized.
           </p>
-          
+
           <div className="flex justify-between items-center mb-6 gap-1 md:gap-0">
             <Button asChild>
               <Link to="/add-task">
@@ -178,9 +178,15 @@ const TaskList = () => {
                   <TableRow key={task._id}>
                     <TableCell>{task.name}</TableCell>
                     <TableCell>{task.description}</TableCell>
-                    <TableCell>{getUserNameByEmail(
-                      user.email === task.assignedTo ? "self" : task.assignedTo
-                    )}</TableCell>
+                    <TableCell>
+                      {getUserNameByEmail(
+                        user.email === task.assignedBy
+                          ? "self"
+                          : user.email === task.assignedTo
+                          ? "you"
+                          : task.assignedTo
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge
                         variant={
@@ -208,7 +214,7 @@ const TaskList = () => {
               )}
             </TableBody>
           </Table>
-          
+
           {currentTasks.length > 0 && (
             <Pagination className="mt-4">
               <PaginationContent>
