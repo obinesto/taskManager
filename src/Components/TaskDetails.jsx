@@ -132,10 +132,18 @@ const TaskDetails = () => {
               <p className="text-sm text-muted-foreground">{task.description}</p>
             </div>
             <Separator />
+
+            <div className="grid gap-1">
+              <h3 className="font-medium">Assigned By</h3>
+              <p className="text-sm text-muted-foreground">
+                {task.assignedBy}
+              </p>
+            </div>
+            <Separator />
             
             <div className="grid gap-1">
               <h3 className="font-medium">Assigned To</h3>
-              <p className="text-sm text-muted-foreground capitalize">
+              <p className="text-sm text-muted-foreground">
                 {task.executedBySelf ? "Self" : task.assignedTo}
               </p>
             </div>
