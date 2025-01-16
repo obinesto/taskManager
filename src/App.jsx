@@ -14,6 +14,7 @@ import TaskList from "./Components/TaskList";
 import TaskDetails from "./Components/TaskDetails";
 import AuthPage from "./Components/AuthPage";
 import TaskForm from "./Components/TaskForm";
+import Notifications from "./Components/Notifications";
 import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
 import { Toaster } from "./Components/ui/toaster";
@@ -42,7 +43,7 @@ const App = ({ children }) => {
     const location = useLocation();
     const showSidebar = useMemo(
       () =>
-        ["/dashboard", "/tasklist", "/task/:id", "/add-task"].some((path) =>
+        ["/dashboard", "/tasklist", "/task/:id", "/add-task", "/notifications"].some((path) =>
           location.pathname.match(new RegExp(`^${path.replace(":id", "[^/]+")}$`))
         ),
       [location.pathname]
@@ -59,6 +60,7 @@ const App = ({ children }) => {
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </main>

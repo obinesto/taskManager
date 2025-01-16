@@ -8,12 +8,16 @@ import {
   FETCH_USER_REQUEST,
   FETCH_USER_SUCCESS,
   FETCH_USER_FAILURE,
-} from '../actions/taskActions';
+  FETCH_USER_NOTIFICATION_REQUEST,
+  FETCH_USER_NOTIFICATION_SUCCESS,
+  FETCH_USER_NOTIFICATION_FAILURE,
+} from "../actions/taskActions";
 
 const initialState = {
   user: null,
   tasks: [],
   users: [],
+  notifications: [],
   loading: false,
   error: null,
 };
@@ -23,20 +27,26 @@ const taskReducer = (state = initialState, action) => {
     case FETCH_TASKS_REQUEST:
       return { ...state, loading: true, error: null };
     case FETCH_USER_REQUEST:
-      return { ...state, loading: true, error: null };  
+      return { ...state, loading: true, error: null };
     case FETCH_USERS_REQUEST:
+      return { ...state, loading: true, error: null };
+    case FETCH_USER_NOTIFICATION_REQUEST:
       return { ...state, loading: true, error: null };
     case FETCH_TASKS_SUCCESS:
       return { ...state, loading: false, tasks: action.payload };
     case FETCH_USER_SUCCESS:
-      return { ...state, loading: false, user: action.payload };  
+      return { ...state, loading: false, user: action.payload };
     case FETCH_USERS_SUCCESS:
       return { ...state, loading: false, users: action.payload };
+    case FETCH_USER_NOTIFICATION_SUCCESS:
+      return { ...state, loading: false, notifications: action.payload };
     case FETCH_TASKS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case FETCH_USER_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case FETCH_USERS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    case FETCH_USER_NOTIFICATION_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;
@@ -44,4 +54,3 @@ const taskReducer = (state = initialState, action) => {
 };
 
 export default taskReducer;
-

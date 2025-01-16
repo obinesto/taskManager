@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   const { data: user, isLoading: userLoading } = useUser();
   const { data: tasks, isLoading: tasksLoading } = useTasks();
-
+  
   const taskStats = useMemo(() => {
     if (!tasks) return { inProgress: 0, completed: 0, pending: 0, rejected: 0 };
     return {

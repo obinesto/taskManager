@@ -12,6 +12,9 @@ import {
   fetchUserRequest,
   fetchUserSuccess,
   fetchUserFailure,
+  fetchUserNotificationRequest,
+  fetchUserNotificationSuccess,
+  fetchUserNotificationFailure
 } from "../redux/actions/taskActions";
 
 
@@ -201,7 +204,7 @@ export const useAddTask = () => {
       dispatch(fetchTasksRequest());
       try {
         const { data } = await axios.post("/tasks", newTask);
-        dispatch(fetchTasksSuccess([data])); // Wrap in array to match existing action
+        dispatch(fetchTasksSuccess([data]));
         return data;
       } catch (error) {
         console.error("Error adding task:", error);
@@ -228,7 +231,7 @@ export const useUpdateTask = () => {
       dispatch(fetchTasksRequest());
       try {
         const { data } = await axios.patch(`/tasks/${id}`, updatedTask);
-        dispatch(fetchTasksSuccess([data])); // Wrap in array to match existing action
+        dispatch(fetchTasksSuccess([data]));
         return data;
       } catch (error) {
         console.error("Error updating task:", error);
@@ -245,3 +248,57 @@ export const useUpdateTask = () => {
   });
 };
 
+// fetch user notification
+export const useFetchUserNotification = (userEmail) => {
+  const dispatch = useDispatch();
+  return useQuery({
+    queryKey: ["notifications", userEmail],
+    queryFn: async () => {
+      dispatch(fetchUserNotificationRequest());
+      try {
+        const { data } = await axios.get(`/notifications/${userEmail}`);
+        dispatch(fetchUserNotificationSuccess(data));
+        return data;
+      } catch (error) {
+        console.error("Error fetching user notification:", error);
+        dispatch(
+          fetchUserNotificationFailure(
+            error.message || "Failed to fetch user notification"
+          )
+        );
+        throw error;
+      }
+    },
+  });
+};
+
+// mark notification as read
+export const useMarkNotificationAsRead = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+
+  return useMutation({
+    mutationFn: async (notificationId) => {
+      dispatch(fetchUserNotificationRequest());
+      try {
+        const { data } = await axios.patch(`/notifications/${notificationId}`, {
+          isRead: true
+        });
+        dispatch(fetchUserNotificationSuccess(data));
+        return data;
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+        dispatch(fetchUserNotificationFailure(
+          error.message || "Failed to mark notification as read"
+        ));
+        throw error;
+      }
+    },
+    onSuccess: (variables) => {
+      queryClient.invalidateQueries(["notifications", variables.id])
+    },
+    onError: (error) => {
+      console.error("Error marking notification as read:", error);
+    },
+  });
+};

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUser, useLogout } from "../hooks/useQueries";
 import { useSelector } from "react-redux";
-import { LogOut, LayoutDashboard, CheckSquare, User, Menu } from 'lucide-react';
+import { LogOut, LayoutDashboard, CheckSquare, User, Menu, BellPlus } from 'lucide-react';
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
 import {
@@ -88,6 +88,9 @@ const Sidebar = () => {
             isActiveFunc={() => isAnyActive(["/tasklist", "/task/:id"])}
           >
             Task List
+          </NavItem>
+          <NavItem href="/notifications" icon={BellPlus}>
+            Notifications
           </NavItem>
         </nav>
       </div>

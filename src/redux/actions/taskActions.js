@@ -9,6 +9,9 @@ export const FETCH_USERS_FAILURE = 'FETCH_USERS_FAILURE';
 export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST';
 export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
 export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
+export const FETCH_USER_NOTIFICATION_REQUEST = 'FETCH_USER_NOTIFICATION_REQUEST';
+export const FETCH_USER_NOTIFICATION_SUCCESS = 'FETCH_USER_NOTIFICATION_SUCCESS';
+export const FETCH_USER_NOTIFICATION_FAILURE = 'FETCH_USER_NOTIFICATION_FAILURE';
 
 export const fetchTasksRequest = createAction(FETCH_TASKS_REQUEST);
 export const fetchTasksSuccess = createAction(FETCH_TASKS_SUCCESS);
@@ -19,3 +22,6 @@ export const fetchUsersFailure = createAction(FETCH_USERS_FAILURE);
 export const fetchUserRequest = createAction(FETCH_USER_REQUEST);
 export const fetchUserSuccess = createAction(FETCH_USER_SUCCESS);
 export const fetchUserFailure = createAction(FETCH_USER_FAILURE);
+export const fetchUserNotificationRequest = createAction(FETCH_USER_NOTIFICATION_REQUEST);
+export const fetchUserNotificationSuccess = createAction(FETCH_USER_NOTIFICATION_SUCCESS);
+export const fetchUserNotificationFailure = createAction(FETCH_USER_NOTIFICATION_FAILURE);

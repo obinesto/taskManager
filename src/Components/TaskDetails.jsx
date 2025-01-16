@@ -9,12 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { useToast } from "../hooks/use-toast";
+import { ToastAction } from "./ui/toast";
 
 const TaskDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  
+
   useEffect(() => {
     const checkToken = localStorage.getItem("token");
     if (!checkToken && !isAuthenticated) {
@@ -27,12 +28,12 @@ const TaskDetails = () => {
   const { data: task, isLoading: taskLoading, error: taskError } = useTasks(id);
   const { data: user, isLoading: userLoading, error: userError } = useUser();
   const updateTaskMutation = useUpdateTask();
-  
+
   const handleUpdateStatus = async (newStatus) => {
     try {
       await updateTaskMutation.mutateAsync({
         id,
-        updatedTask: { status: newStatus }
+        updatedTask: { status: newStatus },
       });
       toast({
         title: "Status Updated",
@@ -45,6 +46,7 @@ const TaskDetails = () => {
         title: "Error",
         description: "Failed to update task status",
         variant: "destructive",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
     }
   };
@@ -82,7 +84,8 @@ const TaskDetails = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              The task you&apos;re looking for could not be found or does not exist.
+              The task you&apos;re looking for could not be found or does not
+              exist.
             </p>
             <Button variant="outline" onClick={() => navigate(-1)}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
@@ -107,7 +110,41 @@ const TaskDetails = () => {
         return "secondary";
     }
   };
+  const formatDate = (dateString) => {
+    if (!dateString) return "Not available";
 
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "Invalid date";
+
+      const now = new Date();
+      const diffInHours = Math.abs(now - date) / 36e5;
+
+      if (diffInHours < 24) {
+        const hours = Math.floor(diffInHours);
+        if (hours === 0) {
+          const minutes = Math.floor((diffInHours * 60) % 60);
+          return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+        }
+        return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+      }
+
+      if (diffInHours < 48) {
+        return "Yesterday";
+      }
+
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Date formatting error:", error);
+      return "Invalid date";
+    }
+  };
   return (
     <div className="min-h-screen bg-background/50 mx-auto px-4 py-16 md:py-8">
       <Card className="max-w-4xl mx-auto">
@@ -126,21 +163,26 @@ const TaskDetails = () => {
               <p className="text-sm text-muted-foreground">{task.name}</p>
             </div>
             <Separator />
-            
             <div className="grid gap-1">
               <h3 className="font-medium">Description</h3>
-              <p className="text-sm text-muted-foreground">{task.description}</p>
-            </div>
-            <Separator />
-
-            <div className="grid gap-1">
-              <h3 className="font-medium">Assigned By</h3>
               <p className="text-sm text-muted-foreground">
-                {task.assignedBy}
+                {task.description}
               </p>
             </div>
             <Separator />
-            
+            <div className="grid gap-1">
+              <h3 className="font-medium">Time Created</h3>
+              <p className="text-sm text-muted-foreground">
+                {formatDate(task.createdAt)}
+              </p>
+            </div>
+            <Separator />
+            <div className="grid gap-1">
+              <h3 className="font-medium">Assigned By</h3>
+              <p className="text-sm text-muted-foreground">{task.assignedBy}</p>
+            </div>
+            <Separator />
+
             <div className="grid gap-1">
               <h3 className="font-medium">Assigned To</h3>
               <p className="text-sm text-muted-foreground">
@@ -148,7 +190,7 @@ const TaskDetails = () => {
               </p>
             </div>
             <Separator />
-            
+
             <div className="grid gap-1">
               <h3 className="font-medium">Status</h3>
               <Badge variant={getStatusColor(task.status)}>{task.status}</Badge>
@@ -195,7 +237,8 @@ const TaskDetails = () => {
                         className="w-full sm:w-auto"
                         onClick={() => handleUpdateStatus("Completed")}
                       >
-                        <CheckCircle className="mr-2 h-4 w-4" /> Mark as Completed
+                        <CheckCircle className="mr-2 h-4 w-4" /> Mark as
+                        Completed
                       </Button>
                     )}
                     {task.status === "Rejected" && (
@@ -213,7 +256,8 @@ const TaskDetails = () => {
                   <Card className="bg-secondary">
                     <CardContent className="pt-6">
                       <p className="text-sm text-muted-foreground">
-                        You can only monitor the progress of tasks assigned to other users.
+                        You can only monitor the progress of tasks assigned to
+                        other users.
                       </p>
                     </CardContent>
                   </Card>
