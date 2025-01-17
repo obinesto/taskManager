@@ -86,6 +86,84 @@ export const useRegister = () => {
   });
 };
 
+// Google Sign-in
+export const useGoogleLogin = () => {
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (credentialResponse) => {
+      try {
+        const { data } = await axios.post("/auth/google", {
+          credential: credentialResponse.credential,
+        });
+        return data;
+      } catch (error) {
+        if (error.response?.status === 404) {
+          console.error("API endpoint not found. Please check your backend routes.");
+          throw new Error("Google login service is not available. Please try again later.");
+        }
+        if (error.response) {
+          console.error("Google login error response:", error.response.data);
+          throw new Error(error.response.data.message || "Google login failed");
+        } else if (error.request) {
+          console.error("Google login error request:", error.request);
+          throw new Error("No response received from server");
+        } else {
+          console.error("Google login error:", error.message);
+          throw new Error("Error setting up the request");
+        }
+      }
+    },
+    onSuccess: (data) => {
+      dispatch(loginSuccess(data.token, data.user));
+      localStorage.setItem("token", data.token);
+      queryClient.setQueryData(["user"], data.user);
+    },
+    onError: (error) => {
+      console.error("Error logging in with Google:", error.message);
+    },
+  });
+};
+
+// Password Reset Request
+export const useResetPassword = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ email }) => {
+      const users = queryClient.getQueryData(['users']) || [];
+      const userExists = users.some(user => user.email === email);
+
+      if (!userExists) {
+        throw new Error("No account found with this email address.");
+      }
+      try {
+        const { data } = await axios.post("/auth/forgot-password", { email });
+        return data;
+      } catch (error) {
+        if (error.response) {
+          console.error("Password reset error response:", error.response.data);
+          throw new Error(error.response.data.message || "Password reset request failed");
+        } else if (error.request) {
+          console.error("Password reset error request:", error.request);
+          throw new Error("No response received from server");
+        } else {
+          console.error("Password reset error:", error.message);
+          throw new Error("Error setting up the request");
+        }
+      }
+    },
+    onSuccess: (data) => {
+      console.log("Password reset email sent successfully");
+    },
+    onError: (error) => {
+      console.error("Error sending password reset email:", error.message);
+    },
+  });
+};
+
+
 
 // User logout
 export const useLogout = () => {
