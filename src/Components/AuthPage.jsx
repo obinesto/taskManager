@@ -2,8 +2,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useLogin, useRegister } from "../hooks/useQueries";
-import { Mail, Lock, User, Loader } from "lucide-react";
+import { useLogin, useRegister, useGoogleLogin } from "../hooks/useQueries";
+import { Mail, Lock, User, Loader } from 'lucide-react';
+import { FcGoogle } from "react-icons/fc";
+import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -16,6 +18,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
+import { Separator } from "./ui/separator";
 import BgImage from "../assets/bg-4.jpg";
 
 const AuthPage = ({ notify }) => {
@@ -31,6 +34,7 @@ const AuthPage = ({ notify }) => {
   const navigate = useNavigate();
   const login = useLogin();
   const register = useRegister();
+  const googleLogin = useGoogleLogin();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -78,6 +82,24 @@ const AuthPage = ({ notify }) => {
     } finally {
       setSubmitLoader(false);
     }
+  };
+
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      await googleLogin.mutateAsync(credentialResponse);
+      notify("Google login successful", "success");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorMessage(error.message);
+      notify("Google login failed", "error");
+    }
+  };
+
+  const handleGoogleLoginError = () => {
+    console.error("Google login failed");
+    setErrorMessage("Google login failed. Please try again.");
+    notify("Google login failed", "error");
   };
 
   return (
@@ -138,7 +160,17 @@ const AuthPage = ({ notify }) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    {isLogin && (
+                      <Link
+                        to="/reset-password"
+                        className="text-sm font-medium text-primary hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    )}
+                  </div>
                   <Input
                     id="password"
                     name="password"
@@ -158,9 +190,7 @@ const AuthPage = ({ notify }) => {
                   }
                 >
                   {submitLoader ? (
-                    <div>
-                      <Loader className="h-4 w-4 text-primary-foreground animate-spin" />
-                    </div>
+                    <Loader className="h-4 w-4 animate-spin" />
                   ) : isLogin ? (
                     "Sign In"
                   ) : (
@@ -168,12 +198,46 @@ const AuthPage = ({ notify }) => {
                   )}
                 </Button>
               </form>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator className="w-full" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginError}
+                useOneTap
+              >
+                {({ onClick }) => (
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="w-full"
+                    onClick={onClick}
+                    disabled={googleLogin.isLoading}
+                  >
+                    {googleLogin.isLoading ? (
+                      <Loader className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <FcGoogle className="mr-2 h-4 w-4" />
+                        Sign in with Google
+                      </>
+                    )}
+                  </Button>
+                )}
+              </GoogleLogin>
             </CardContent>
             <CardFooter>
               <p className="text-sm text-muted-foreground">
-                {isLogin
-                  ? "Don't have an account?"
-                  : "Already have an account?"}{" "}
+                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
@@ -189,7 +253,7 @@ const AuthPage = ({ notify }) => {
       <div className="hidden md:relative flex-1 my-auto w-0 lg:block">
         <img
           className="object-cover w-11/12 h-5/6 rounded-md"
-          src={BgImage}
+          src={BgImage || "/placeholder.svg"}
           alt="Background"
         />
       </div>
@@ -198,3 +262,4 @@ const AuthPage = ({ notify }) => {
 };
 
 export default AuthPage;
+
