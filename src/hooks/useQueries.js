@@ -94,7 +94,7 @@ export const useGoogleLogin = () => {
   return useMutation({
     mutationFn: async (credentialResponse) => {
       try {
-        const { data } = await axios.post("/auth/google", {
+        const { data } = await axios.get("/auth/google", {
           credential: credentialResponse.credential,
         });
         return data;
