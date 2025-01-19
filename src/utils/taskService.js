@@ -22,7 +22,7 @@ instance.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-// Add a response interceptor to handle CORS-related errors
+// A response interceptor to handle CORS-related errors
 instance.interceptors.response.use(
   (response) => response,
   (error) => {

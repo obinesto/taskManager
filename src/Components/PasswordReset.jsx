@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
+import PasswordResetbgImg from "../assets/reset-password-bg-(3).png";
 
 const PasswordReset = ({ notify }) => {
   const [email, setEmail] = useState("");
@@ -51,7 +52,7 @@ const PasswordReset = ({ notify }) => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6">
+      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-center h-16 px-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <span className="text-4xl md:6xl hover:text-gray-200">
@@ -59,7 +60,7 @@ const PasswordReset = ({ notify }) => {
             </span>
           </Link>
         </div>
-        <div className="w-full max-w-sm mx-auto">
+        <div className="w-full max-w-sm mx-auto lg:w-96">
           <Card>
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold tracking-tight">
@@ -119,6 +120,13 @@ const PasswordReset = ({ notify }) => {
             </CardFooter>
           </Card>
         </div>
+      </div>
+      <div className="hidden md:block flex-1 my-auto">
+        <img
+          className="object-cover w-11/12 h-5/6 rounded-md"
+          src={PasswordResetbgImg}
+          alt="Background"
+        />
       </div>
     </div>
   );
