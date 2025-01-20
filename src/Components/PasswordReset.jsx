@@ -72,7 +72,8 @@ const PasswordReset = ({ notify }) => {
                 Reset Password
               </CardTitle>
               <CardDescription>
-                Enter your email address and we&apos;ll send you a link to reset your password
+                Forgot your password? <br />
+                Enter your email address and we&apos;ll send you a link to help you reset your password
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
