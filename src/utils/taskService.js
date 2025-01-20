@@ -5,7 +5,7 @@ const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
 
 const instance = axios.create({
   baseURL: baseApiUrl,
-  withCredentials: true, // Important for CORS
+  withCredentials: false, // Important for CORS
   headers: {
     'Content-Type': 'application/json',
   },
