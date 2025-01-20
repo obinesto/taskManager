@@ -60,7 +60,7 @@ const App = ({ children }) => {
             <Route path="/task/:id" element={<TaskDetails notify={notify} />} />
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
-            <Route path="/forgot-password" element={<PasswordReset notify={notify} />} />
+            <Route path="/reset-password" element={<PasswordReset notify={notify} />} />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/*" element={<NotFound />} />

@@ -3,8 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useLogin, useRegister, useGoogleLogin } from "../hooks/useQueries";
-import { Mail, Lock, User, Loader } from 'lucide-react';
-import { FcGoogle } from "react-icons/fc";
+import { Mail, Lock, User, Loader } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -214,30 +213,15 @@ const AuthPage = ({ notify }) => {
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
                 useOneTap
+                className={"w-full"}
               >
-                {({ onClick }) => (
-                  <Button
-                    variant="outline"
-                    type="button"
-                    className="w-full"
-                    onClick={onClick}
-                    disabled={googleLogin.isLoading}
-                  >
-                    {googleLogin.isLoading ? (
-                      <Loader className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <FcGoogle className="mr-2 h-4 w-4" />
-                        Sign in with Google
-                      </>
-                    )}
-                  </Button>
-                )}
               </GoogleLogin>
             </CardContent>
             <CardFooter>
               <p className="text-sm text-muted-foreground">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}{" "}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
@@ -250,10 +234,10 @@ const AuthPage = ({ notify }) => {
           </Card>
         </div>
       </div>
-      <div className="hidden md:relative flex-1 my-auto w-0 lg:block">
+      <div className="hidden md:block flex-1 my-auto">
         <img
           className="object-cover w-11/12 h-5/6 rounded-md"
-          src={BgImage || "/placeholder.svg"}
+          src={BgImage}
           alt="Background"
         />
       </div>
@@ -262,4 +246,3 @@ const AuthPage = ({ notify }) => {
 };
 
 export default AuthPage;
-
