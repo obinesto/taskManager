@@ -45,7 +45,7 @@ const App = ({ children }) => {
     const showSidebar = useMemo(
       () =>
         ["/dashboard", "/tasklist", "/task/:id", "/add-task", "/notifications"].some((path) =>
-          location.pathname.match(new RegExp(`^${path.replace((":id", "token"),"[^/]+")}$`))
+          location.pathname.match(new RegExp(`^${path.replace((":id", ":token"),"[^/]+")}$`))
         ),
       [location.pathname]
     );
