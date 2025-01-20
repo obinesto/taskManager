@@ -213,6 +213,7 @@ const AuthPage = ({ notify }) => {
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
                 useOneTap
+                className={"w-full"}
               >
               </GoogleLogin>
             </CardContent>

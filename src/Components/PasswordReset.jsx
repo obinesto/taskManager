@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useResetPassword, useUsers } from "../hooks/useQueries";
+import { useResetPassword } from "../hooks/useQueries";
 import { Mail, Loader } from 'lucide-react';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -19,26 +19,29 @@ import PasswordResetbgImg from "../assets/reset-password-bg-(3).png";
 
 const PasswordReset = ({ notify }) => {
   const [email, setEmail] = useState("");
+  const [submitLoader, setSubmitLoader] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const resetPassword = useResetPassword();
-  const { data: users, isLoading: usersLoading } = useUsers();
+
+
+  const clearError = useCallback(() => {
+    const timer = setTimeout(() => {
+      setErrorMessage("");
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (errorMessage) {
+      clearError();
+    }
+  }, [errorMessage, clearError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoader(true);
     setErrorMessage("");
-    
-    if (usersLoading) {
-      setErrorMessage("Please wait while we load user data.");
-      return;
-    }
-
-    const userExists = users.some(user => user.email === email);
-    if (!userExists) {
-      setErrorMessage("No account found with this email address.");
-      return;
-    }
-
     try {
       await resetPassword.mutateAsync({ email });
       setSuccess(true);
@@ -47,6 +50,8 @@ const PasswordReset = ({ notify }) => {
       console.error("Error:", error);
       setErrorMessage(error.message);
       notify("Failed to send reset email", "error");
+    }finally {
+      setSubmitLoader(false);
     }
   };
 
@@ -99,9 +104,9 @@ const PasswordReset = ({ notify }) => {
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={resetPassword.isLoading || usersLoading}
+                    disabled={resetPassword.isLoading || submitLoader}
                   >
-                    {resetPassword.isLoading ? (
+                    {submitLoader?(
                       <Loader className="h-4 w-4 animate-spin" />
                     ) : (
                       "Send Reset Link"
