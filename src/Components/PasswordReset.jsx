@@ -208,7 +208,7 @@ const PasswordReset = ({ notify }) => {
       <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-center h-16 px-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <span className="text-4xl md:6xl hover:text-gray-200">
+            <span className="text-4xl md:6xl hover:text-gray-700">
               TaskManager
             </span>
           </Link>
