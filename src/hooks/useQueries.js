@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/taskService";
 import { useDispatch, useSelector } from "react-redux";
-import { registerSuccess, loginSuccess, logoutSuccess } from "../redux/actions/authActions";
+import {
+  registerSuccess,
+  loginSuccess,
+  logoutSuccess,
+} from "../redux/actions/authActions";
 import {
   fetchTasksRequest,
   fetchTasksSuccess,
@@ -14,9 +18,8 @@ import {
   fetchUserFailure,
   fetchUserNotificationRequest,
   fetchUserNotificationSuccess,
-  fetchUserNotificationFailure
+  fetchUserNotificationFailure,
 } from "../redux/actions/taskActions";
-
 
 // User login
 export const useLogin = () => {
@@ -67,10 +70,14 @@ export const useRegister = () => {
           const status = error.response.status;
           const message = error.response.data.message;
           if (status === 400 || message.includes("Email already exists")) {
-            throw new Error("This email is already registered. Please try a different email.");
+            throw new Error(
+              "This email is already registered. Please try a different email."
+            );
           }
         } else if (error.request) {
-          throw new Error("Unable to connect to the server. Please try again later.");
+          throw new Error(
+            "Unable to connect to the server. Please try again later."
+          );
         } else {
           throw new Error("An unexpected error occurred. Please try again.");
         }
@@ -94,14 +101,18 @@ export const useGoogleLogin = () => {
   return useMutation({
     mutationFn: async (credentialResponse) => {
       try {
-        const { data } = await axios.post("/auth/google", {
-          credential: credentialResponse.credential,
+        const { data } = await axios.post("/v1/google", {
+          credential:credentialResponse.credential
         });
         return data;
       } catch (error) {
         if (error.response?.status === 404) {
-          console.error("API endpoint not found. Please check your backend routes.");
-          throw new Error("Google login service is not available. Please try again later.");
+          console.error(
+            "API endpoint not found. Please check your backend routes."
+          );
+          throw new Error(
+            "Google login service is not available. Please try again later."
+          );
         }
         if (error.response) {
           console.error("Google login error response:", error.response.data);
@@ -128,23 +139,17 @@ export const useGoogleLogin = () => {
 
 // Password Reset Request
 export const useResetPassword = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ email }) => {
-      const users = queryClient.getQueryData(['users']) || [];
-      const userExists = users.some(user => user.email === email);
-
-      if (!userExists) {
-        throw new Error("No account found with this email address.");
-      }
       try {
         const { data } = await axios.post("/auth/forgot-password", { email });
         return data;
       } catch (error) {
         if (error.response) {
           console.error("Password reset error response:", error.response.data);
-          throw new Error(error.response.data.message || "Password reset request failed");
+          throw new Error(
+            error.response.data.message || "Password reset request failed"
+          );
         } else if (error.request) {
           console.error("Password reset error request:", error.request);
           throw new Error("No response received from server");
@@ -154,7 +159,7 @@ export const useResetPassword = () => {
         }
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       console.log("Password reset email sent successfully");
     },
     onError: (error) => {
@@ -162,8 +167,6 @@ export const useResetPassword = () => {
     },
   });
 };
-
-
 
 // User logout
 export const useLogout = () => {
@@ -202,7 +205,10 @@ export const useUser = () => {
         return data;
       } catch (error) {
         if (error.response) {
-          if (error.response.message === "Unauthorized" || error.response.message === "Invalid token") {
+          if (
+            error.response.message === "Unauthorized" ||
+            error.response.message === "Invalid token"
+          ) {
             dispatch(logoutSuccess());
           } else {
             console.error("Error response:", error.response.data);
@@ -250,7 +256,10 @@ export const useTasks = (filterOrId = "") => {
     queryFn: async () => {
       dispatch(fetchTasksRequest());
       try {
-        if (typeof filterOrId === 'string' && filterOrId.match(/^[0-9a-fA-F]{24}$/)) {
+        if (
+          typeof filterOrId === "string" &&
+          filterOrId.match(/^[0-9a-fA-F]{24}$/)
+        ) {
           // If filterOrId is a valid MongoDB ObjectId, fetch a single task
           const { data } = await axios.get(`/tasks/${filterOrId}`);
           dispatch(fetchTasksSuccess([data])); // Wrap in array to match existing action
@@ -360,20 +369,22 @@ export const useMarkNotificationAsRead = () => {
       dispatch(fetchUserNotificationRequest());
       try {
         const { data } = await axios.patch(`/notifications/${notificationId}`, {
-          isRead: true
+          isRead: true,
         });
         dispatch(fetchUserNotificationSuccess(data));
         return data;
       } catch (error) {
         console.error("Error marking notification as read:", error);
-        dispatch(fetchUserNotificationFailure(
-          error.message || "Failed to mark notification as read"
-        ));
+        dispatch(
+          fetchUserNotificationFailure(
+            error.message || "Failed to mark notification as read"
+          )
+        );
         throw error;
       }
     },
     onSuccess: (variables) => {
-      queryClient.invalidateQueries(["notifications", variables.id])
+      queryClient.invalidateQueries(["notifications", variables.id]);
     },
     onError: (error) => {
       console.error("Error marking notification as read:", error);

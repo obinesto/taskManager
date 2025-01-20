@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useResetPassword, useUsers } from "../hooks/useQueries";
+import { useResetPassword } from "../hooks/useQueries";
 import { Mail, Loader } from 'lucide-react';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -15,29 +15,33 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
+import PasswordResetbgImg from "../assets/reset-password-bg-(3).png";
 
 const PasswordReset = ({ notify }) => {
   const [email, setEmail] = useState("");
+  const [submitLoader, setSubmitLoader] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const resetPassword = useResetPassword();
-  const { data: users, isLoading: usersLoading } = useUsers();
+
+
+  const clearError = useCallback(() => {
+    const timer = setTimeout(() => {
+      setErrorMessage("");
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (errorMessage) {
+      clearError();
+    }
+  }, [errorMessage, clearError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoader(true);
     setErrorMessage("");
-    
-    if (usersLoading) {
-      setErrorMessage("Please wait while we load user data.");
-      return;
-    }
-
-    const userExists = users.some(user => user.email === email);
-    if (!userExists) {
-      setErrorMessage("No account found with this email address.");
-      return;
-    }
-
     try {
       await resetPassword.mutateAsync({ email });
       setSuccess(true);
@@ -46,12 +50,14 @@ const PasswordReset = ({ notify }) => {
       console.error("Error:", error);
       setErrorMessage(error.message);
       notify("Failed to send reset email", "error");
+    }finally {
+      setSubmitLoader(false);
     }
   };
 
   return (
     <div className="flex min-h-screen bg-background">
-      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6">
+      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-center h-16 px-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <span className="text-4xl md:6xl hover:text-gray-200">
@@ -59,7 +65,7 @@ const PasswordReset = ({ notify }) => {
             </span>
           </Link>
         </div>
-        <div className="w-full max-w-sm mx-auto">
+        <div className="w-full max-w-sm mx-auto lg:w-96">
           <Card>
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold tracking-tight">
@@ -98,9 +104,9 @@ const PasswordReset = ({ notify }) => {
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={resetPassword.isLoading || usersLoading}
+                    disabled={resetPassword.isLoading || submitLoader}
                   >
-                    {resetPassword.isLoading ? (
+                    {submitLoader?(
                       <Loader className="h-4 w-4 animate-spin" />
                     ) : (
                       "Send Reset Link"
@@ -119,6 +125,13 @@ const PasswordReset = ({ notify }) => {
             </CardFooter>
           </Card>
         </div>
+      </div>
+      <div className="hidden md:block flex-1 my-auto">
+        <img
+          className="object-cover w-11/12 h-5/6 rounded-md"
+          src={PasswordResetbgImg}
+          alt="Background"
+        />
       </div>
     </div>
   );
