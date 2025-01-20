@@ -86,7 +86,7 @@ const TaskForm = () => {
 
   if (userError || usersError) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background/50">
+      <div className="flex items-center justify-center min-h-screen md:ml-72 mx-auto px-4 py-16 md:py-8 bg-background/50">
         <Card className="w-full max-w-lg">
           <CardHeader>
             <CardTitle>Error</CardTitle>
