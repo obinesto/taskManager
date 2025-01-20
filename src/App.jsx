@@ -45,7 +45,7 @@ const App = ({ children }) => {
     const showSidebar = useMemo(
       () =>
         ["/dashboard", "/tasklist", "/task/:id", "/add-task", "/notifications"].some((path) =>
-          location.pathname.match(new RegExp(`^${path.replace(":id", "[^/]+")}$`))
+          location.pathname.match(new RegExp(`^${path.replace((":id", ":token"),"[^/]+")}$`))
         ),
       [location.pathname]
     );
@@ -61,6 +61,7 @@ const App = ({ children }) => {
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
             <Route path="/reset-password" element={<PasswordReset notify={notify} />} />
+            <Route path="/reset-password/:token" element={<PasswordReset notify={notify} />} />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/*" element={<NotFound />} />

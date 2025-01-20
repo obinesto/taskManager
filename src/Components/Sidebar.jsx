@@ -66,7 +66,7 @@ const Sidebar = () => {
     <div className="flex h-full flex-col">
       <div className="flex items-center h-16 px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold">
-          <span className="text-2xl">TaskManager</span>
+          <span className="text-2xl hover:text-gray-700">TaskManager</span>
         </Link>
       </div>
       <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
