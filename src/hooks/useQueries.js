@@ -168,6 +168,35 @@ export const useResetPassword = () => {
   });
 };
 
+// Update password with reset token
+export const useUpdatePassword = () => {
+  return useMutation({
+    mutationFn: async ({ token, password }) => {
+      try {
+        const { data } = await axios.post(`/auth/reset-password/${token}`, { password });
+        return data;
+      } catch (error) {
+        if (error.response) {
+          console.error("Password update error response:", error.response.data);
+          throw new Error(error.response.data.message || "Failed to update password");
+        } else if (error.request) {
+          console.error("Password update error request:", error.request);
+          throw new Error("No response received from server");
+        } else {
+          console.error("Password update error:", error.message);
+          throw new Error("Error setting up the request");
+        }
+      }
+    },
+    onSuccess: () => {
+      console.log("Password updated successfully");
+    },
+    onError: (error) => {
+      console.error("Error updating password:", error.message);
+    },
+  });
+};
+
 // User logout
 export const useLogout = () => {
   const dispatch = useDispatch();

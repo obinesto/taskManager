@@ -148,7 +148,7 @@ const TaskList = () => {
 
   if (userError || usersError || tasksError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+      <div className="flex flex-col items-center justify-center min-h-screen md:ml-72 mx-auto px-4 py-16 md:py-8 bg-background">
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-xl font-semibold">
