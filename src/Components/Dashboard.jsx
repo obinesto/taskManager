@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Plus, Clock, CheckCircle2, AlertCircle, XCircle, Activity } from 'lucide-react';
 import { useUser, useTasks } from "../hooks/useQueries";
-import { Loader } from "./Loader";
+import { Loader } from "./loaders/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Button } from "./ui/button";

@@ -137,6 +137,64 @@ export const useGoogleLogin = () => {
   });
 };
 
+// Verify email with token
+export const useVerifyEmail = () => {
+  return useMutation({
+    mutationFn: async (token) => {
+      try {
+        const { data } = await axios.post(`/auth/verify/${token}`);
+        return data;
+      } catch (error) {
+        if (error.response) {
+          console.error("Email verification error response:", error.response.data);
+          throw new Error(error.response.data.message || "Email verification failed");
+        } else if (error.request) {
+          console.error("Email verification error request:", error.request);
+          throw new Error("No response received from server");
+        } else {
+          console.error("Email verification error:", error.message);
+          throw new Error("Error setting up the request");
+        }
+      }
+    },
+    onSuccess: () => {
+      console.log("Email verified successfully");
+    },
+    onError: (error) => {
+      console.error("Error verifying email:", error.message);
+    },
+  });
+};
+
+// Resend verification email
+export const useResendVerification = () => {
+  return useMutation({
+    mutationFn: async ({ email }) => {
+      try {
+        const { data } = await axios.post("/auth/resend-verification", { email });
+        return data;
+      } catch (error) {
+        if (error.response) {
+          console.error("Resend verification error response:", error.response.data);
+          throw new Error(error.response.data.message || "Failed to resend verification email");
+        } else if (error.request) {
+          console.error("Resend verification error request:", error.request);
+          throw new Error("No response received from server");
+        } else {
+          console.error("Resend verification error:", error.message);
+          throw new Error("Error setting up the request");
+        }
+      }
+    },
+    onSuccess: () => {
+      console.log("Verification email resent successfully");
+    },
+    onError: (error) => {
+      console.error("Error resending verification email:", error.message);
+    },
+  });
+};
+
 // Password Reset Request
 export const useResetPassword = () => {
   return useMutation({

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, Plus } from "lucide-react";
 import { useTasks, useUsers, useUser } from "../hooks/useQueries";
-import { Loader } from "./Loader";
+import { Loader } from "./loaders/Loader";
 import { Button } from "./ui/button";
 import {
   Select,

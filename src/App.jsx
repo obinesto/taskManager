@@ -13,6 +13,7 @@ import Dashboard from "./Components/Dashboard";
 import TaskList from "./Components/TaskList";
 import TaskDetails from "./Components/TaskDetails";
 import AuthPage from "./Components/AuthPage";
+import EmailVerification from "./Components/EmailVerification";
 import PasswordReset from "./Components/PasswordReset";
 import TaskForm from "./Components/TaskForm";
 import Notifications from "./Components/Notifications";
@@ -60,6 +61,8 @@ const App = ({ children }) => {
             <Route path="/task/:id" element={<TaskDetails notify={notify} />} />
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
+            <Route path="/verify" element={<EmailVerification notify={notify} />} />
+            <Route path="/verify/:token" element={<EmailVerification notify={notify} />} />
             <Route path="/reset-password" element={<PasswordReset notify={notify} />} />
             <Route path="/reset-password/:token" element={<PasswordReset notify={notify} />} />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />
