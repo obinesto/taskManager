@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Camera, Loader2, User } from "lucide-react";
-import { PinturaEditor } from '@pqina/react-pintura';
-import { getEditorDefaults } from '@pqina/pintura';
-import '@pqina/pintura/pintura.css';
+import { PinturaEditor } from "@pqina/react-pintura";
+import { getEditorDefaults } from "@pqina/pintura";
+import "@pqina/pintura/pintura.css";
 import { useUser, useUpdateProfile } from "../hooks/useQueries";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -25,12 +26,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { useToast } from "../hooks/use-toast";
 import { Loader } from "./loaders/Loader";
 
-const ProfileSettings = () => {
+const ProfileSettings = ({ notify }) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [formData, setFormData] = useState({
     username: "",
@@ -82,12 +81,9 @@ const ProfileSettings = () => {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        toast({
-          title: "Error",
-          description: "Image size should be less than 2MB",
-          variant: "destructive",
-        });
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
+        notify("Image size should be less than 2MB", "error");
         return;
       }
 
@@ -99,9 +95,9 @@ const ProfileSettings = () => {
   const handleEditorProcess = (res) => {
     const processedImageUrl = URL.createObjectURL(res.dest);
     setImagePreview(processedImageUrl);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      profilePicture: processedImageUrl
+      profilePicture: processedImageUrl,
     }));
     setIsCropDialogOpen(false);
     setTempImage(null);
@@ -125,33 +121,26 @@ const ProfileSettings = () => {
 
       // Only sends changed fields
       const changedFields = {};
-      if (formData.username !== user.username) changedFields.username = formData.username;
+      if (formData.username !== user.username)
+        changedFields.username = formData.username;
       if (formData.email !== user.email) changedFields.email = formData.email;
-      if (formData.profilePicture !== user.profilePicture) changedFields.profilePicture = formData.profilePicture;
+      if (formData.profilePicture !== user.profilePicture)
+        changedFields.profilePicture = formData.profilePicture;
       if (!user.name && formData.name && formData.name !== user.name) {
         changedFields.name = formData.name;
       }
 
       if (Object.keys(changedFields).length === 0) {
-        toast({
-          description: "No changes to save",
-        });
+        notify("No changes to save", "error");
         return;
       }
 
       await updateProfileMutation.mutateAsync(changedFields);
-      
-      toast({
-        title: "Success",
-        description: "Profile updated successfully",
-      });
+
+      notify("Profile updated successfully", "success");
     } catch (error) {
       setError(error.message);
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      notify(error.message, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -231,7 +220,10 @@ const ProfileSettings = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="name" className={user?.name ? "text-muted-foreground" : ""}>
+              <Label
+                htmlFor="name"
+                className={user?.name ? "text-muted-foreground" : ""}
+              >
                 Name
                 {!user?.name && (
                   <span className="text-sm text-muted-foreground ml-2">
@@ -256,11 +248,7 @@ const ProfileSettings = () => {
               )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
               ) : null}
@@ -275,7 +263,8 @@ const ProfileSettings = () => {
           <DialogHeader>
             <DialogTitle>Edit Profile Picture</DialogTitle>
             <DialogDescription>
-              Edit and crop your profile picture. The image will be cropped to a square.
+              Edit and crop your profile picture. The image will be cropped to a
+              square.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4" style={{ height: "70vh" }}>
