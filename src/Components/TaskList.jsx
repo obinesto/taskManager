@@ -55,7 +55,6 @@ const TaskList = () => {
     isLoading: usersLoading,
     error: usersError,
   } = useUsers();
-  
 
   useEffect(() => {
     const checkToken = localStorage.getItem("token");
@@ -117,12 +116,10 @@ const TaskList = () => {
   const filteredTasks = useMemo(() => {
     if (!tasks || !user) return [];
     
-    // Filter tasks that are either assigned to or by the user
     let filtered = tasks.filter(task => 
       task.assignedTo === user.email || task.assignedBy === user.email
     );
     
-    // Apply status filter if set
     if (filter) {
       filtered = filtered.filter(task => task.status === filter);
     }
@@ -143,13 +140,16 @@ const TaskList = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+  const showPagination = filteredTasks.length > tasksPerPage;
+
   if (userLoading || tasksLoading || usersLoading) {
     return <Loader />;
   }
 
   if (userError || usersError || tasksError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen md:ml-72 mx-auto px-4 py-16 md:py-8 bg-background">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-xl font-semibold">
@@ -211,7 +211,7 @@ const TaskList = () => {
               <TableRow>
                 <TableHead>Task Name</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead>Time Created</TableHead>
+                <TableHead>Date Assigned</TableHead>
                 <TableHead>Assigned To</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
@@ -271,18 +271,20 @@ const TaskList = () => {
             </TableBody>
           </Table>
           
-          {currentTasks.length > 0 && (
+          {showPagination && (
             <Pagination className="mt-4">
               <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={"hidden sm:flex"}
-                  />
-                </PaginationItem>
+                {currentPage > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => paginate(currentPage - 1)}
+                      className="hidden sm:flex"
+                    />
+                  </PaginationItem>
+                )}
+                
                 {Array.from(
-                  { length: Math.ceil(filteredTasks.length / tasksPerPage) },
+                  { length: totalPages },
                   (_, index) => (
                     <PaginationItem key={index}>
                       <PaginationLink
@@ -294,16 +296,15 @@ const TaskList = () => {
                     </PaginationItem>
                   )
                 )}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={
-                      currentPage ===
-                      Math.ceil(filteredTasks.length / tasksPerPage)
-                    }
-                    className={"hidden sm:flex"}
-                  />
-                </PaginationItem>
+
+                {currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => paginate(currentPage + 1)}
+                      className="hidden sm:flex"
+                    />
+                  </PaginationItem>
+                )}
               </PaginationContent>
             </Pagination>
           )}
