@@ -262,7 +262,7 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: async (updatedData) => {
       try {
-        const { data } = await axios.patch('/update-profile', updatedData);
+        const { data } = await axios.put('/update-profile', updatedData);
         return data;
       } catch (error) {
         if (error.response) {
