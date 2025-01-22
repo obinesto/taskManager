@@ -255,6 +255,37 @@ export const useUpdatePassword = () => {
   });
 };
 
+// Update user profile
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (updatedData) => {
+      try {
+        const { data } = await axios.patch('/update-profile', updatedData);
+        return data;
+      } catch (error) {
+        if (error.response) {
+          console.error("Profile update error response:", error.response.data);
+          throw new Error(error.response.data.message || "Failed to update profile");
+        } else if (error.request) {
+          console.error("Profile update error request:", error.request);
+          throw new Error("No response received from server");
+        } else {
+          console.error("Profile update error:", error.message);
+          throw new Error("Error updating profile");
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+    onError: (error) => {
+      console.error("Error updating profile:", error.message);
+    },
+  });
+};
+
 // User logout
 export const useLogout = () => {
   const dispatch = useDispatch();

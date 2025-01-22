@@ -33,7 +33,7 @@ const LandingPage = () => {
           </div>
           <div className="flex space-x-4">
             <NavLink to="/login">Login</NavLink>
-            <NavLink to="/signup">Sign Up</NavLink>
+            <NavLink to="/register">Sign Up</NavLink>
           </div>
         </nav>
 

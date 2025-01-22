@@ -71,7 +71,6 @@ const Sidebar = () => {
       </div>
       <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2">
-          <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {user ? `Welcome, ${user.username}` : "Welcome, Guest"}
           </p>
@@ -91,6 +90,9 @@ const Sidebar = () => {
           </NavItem>
           <NavItem href="/notifications" icon={BellPlus}>
             Notifications
+          </NavItem>
+          <NavItem href="/profile-settings" icon={User}>
+            Profile
           </NavItem>
         </nav>
       </div>

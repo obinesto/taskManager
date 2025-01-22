@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useLogin, useRegister, useGoogleLogin } from "../hooks/useQueries";
 import { Mail, Lock, User, Loader } from "lucide-react";
@@ -36,12 +36,19 @@ const AuthPage = ({ notify }) => {
   const login = useLogin();
   const register = useRegister();
   const googleLogin = useGoogleLogin();
+  const location = useLocation();
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
+
+  useEffect(()=>{
+    if(location.pathname === '/register'){
+      setIsLogin(false)
+      }
+  }, [location])
 
   const clearError = useCallback(() => {
     const timer = setTimeout(() => {
@@ -223,7 +230,7 @@ const AuthPage = ({ notify }) => {
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
                 useOneTap
-                className={"w-full"}
+                className="w-full"
               ></GoogleLogin>
             </CardContent>
             <CardFooter>
