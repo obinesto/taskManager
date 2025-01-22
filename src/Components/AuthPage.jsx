@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useLogin, useRegister, useGoogleLogin } from "../hooks/useQueries";
 import { Mail, Lock, User, Loader } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
+import LoaderTwo from "./loaders/LoaderTwo";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -28,18 +29,26 @@ const AuthPage = ({ notify }) => {
     username: "",
   });
   const [submitLoader, setSubmitLoader] = useState(false);
+  const [submitLoader2, setSubmitLoader2] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const login = useLogin();
   const register = useRegister();
   const googleLogin = useGoogleLogin();
+  const location = useLocation();
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
+
+  useEffect(()=>{
+    if(location.pathname === '/register'){
+      setIsLogin(false)
+      }
+  }, [location])
 
   const clearError = useCallback(() => {
     const timer = setTimeout(() => {
@@ -73,7 +82,10 @@ const AuthPage = ({ notify }) => {
         isLogin ? "Login successful" : "Registration successful",
         "success"
       );
-      navigate("/dashboard");
+      if (!isLogin) {
+        localStorage.setItem("verificationEmail", formData.email);
+      }
+      navigate(isLogin ? "/dashboard" : "/verify");
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage(error.message);
@@ -84,6 +96,7 @@ const AuthPage = ({ notify }) => {
   };
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
+    setSubmitLoader2(true);
     try {
       await googleLogin.mutateAsync(credentialResponse);
       notify("Google login successful", "success");
@@ -92,6 +105,8 @@ const AuthPage = ({ notify }) => {
       console.error("Error:", error);
       setErrorMessage(error.message);
       notify("Google login failed", "error");
+    } finally {
+      setSubmitLoader2(false);
     }
   };
 
@@ -101,7 +116,9 @@ const AuthPage = ({ notify }) => {
     notify("Google login failed", "error");
   };
 
-  return (
+  return submitLoader2 ? (
+    <LoaderTwo />
+  ) : (
     <div className="flex min-h-screen bg-background">
       <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-center h-16 px-4">
@@ -213,9 +230,8 @@ const AuthPage = ({ notify }) => {
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
                 useOneTap
-                className={"w-full"}
-              >
-              </GoogleLogin>
+                className="w-full"
+              ></GoogleLogin>
             </CardContent>
             <CardFooter>
               <p className="text-sm text-muted-foreground">

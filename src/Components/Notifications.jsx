@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Bell, Info, XCircle } from 'lucide-react';
 import { useFetchUserNotification, useUser, useMarkNotificationAsRead } from "../hooks/useQueries";
-import { Loader } from "./Loader";
+import { Loader } from "./loaders/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";

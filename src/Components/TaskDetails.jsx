@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useTasks, useUser, useUpdateTask } from "../hooks/useQueries";
-import { Loader } from "./Loader";
+import { Loader } from "./loaders/Loader";
 import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";

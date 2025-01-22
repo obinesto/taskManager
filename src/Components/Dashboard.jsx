@@ -1,10 +1,10 @@
 import { useMemo, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Plus, Clock, CheckCircle2, AlertCircle, XCircle, Activity } from 'lucide-react';
 import { useUser, useTasks } from "../hooks/useQueries";
-import { Loader } from "./Loader";
+import { Loader } from "./loaders/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Button } from "./ui/button";
@@ -23,6 +23,8 @@ const Dashboard = () => {
 
   const { data: user, isLoading: userLoading } = useUser();
   const { data: tasks, isLoading: tasksLoading } = useTasks();
+  const profilePicture = user?.profilePicture
+  
   
   const taskStats = useMemo(() => {
     if (!tasks) return { inProgress: 0, completed: 0, pending: 0, rejected: 0 };
@@ -141,12 +143,18 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen md:ml-72 mx-auto px-4 py-16 md:py-8 bg-background/50">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Welcome back, {user?.username}
+          <Link to="/profile-settings">
+          <div className="flex gap-2 justify-center items-center">
+            <img src={profilePicture} alt="profile picture" className="rounded-full size-10 md:size-14" />
+          <p className="text-muted-foreground">
+             Hello,<br />{user?.username}
           </p>
+          </div>
+          </Link>
+          
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         </div>
         <Button onClick={() => navigate("/add-task")} size="sm" className="mt-4 md:mt-0">
           <Plus className="mr-2 h-4 w-4" /> Create New Task

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useAddTask, useUser, useUsers } from "../hooks/useQueries";
 import { useNavigate } from "react-router-dom";
-import { Loader } from "./Loader";
+import { Loader } from "./loaders/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
