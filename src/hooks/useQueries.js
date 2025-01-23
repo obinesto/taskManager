@@ -320,6 +320,8 @@ export const useUser = () => {
       try {
         const { data } = await axios.get("/auth/me");
         dispatch(fetchUserSuccess(data));
+        console.log(data);
+        
         return data;
       } catch (error) {
         if (error.response) {
