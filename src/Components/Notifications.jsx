@@ -36,6 +36,9 @@ const Notifications = () => {
   } = useFetchUserNotification(user?.email);
   const markAsReadMutation = useMarkNotificationAsRead();
 
+  console.log(notifications);
+  
+
   const handleMarkAsRead = async (notificationId) => {
     if (!notificationId) {
       console.error("No notification ID provided");

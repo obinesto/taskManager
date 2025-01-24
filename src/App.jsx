@@ -57,7 +57,7 @@ const App = ({ children }) => {
         <main className="overflow-y-auto flex-1">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard notify={notify} />} />
             <Route path="/tasklist" element={<TaskList />} />
             <Route path="/task/:id" element={<TaskDetails notify={notify} />} />
             <Route path="/login" element={<AuthPage notify={notify} />} />

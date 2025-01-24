@@ -3,9 +3,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Camera, Loader2, User } from "lucide-react";
-import { PinturaEditor } from "@pqina/react-pintura";
-import { getEditorDefaults } from "@pqina/pintura";
-import "@pqina/pintura/pintura.css";
 import { useUser, useUpdateProfile } from "../hooks/useQueries";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -109,6 +106,9 @@ const ProfileSettings = ({ notify }) => {
     setIsSubmitting(true);
 
     try {
+      if (user?.isVerified == false){
+        throw new Error ("You need to verify your email to edit your profile");
+      }
       if (!formData.username.trim()) {
         throw new Error("Username is required");
       }
@@ -268,13 +268,11 @@ const ProfileSettings = ({ notify }) => {
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4" style={{ height: "70vh" }}>
-            {tempImage && (
-              <PinturaEditor
-                {...getEditorDefaults()}
+            {/* {tempImage && (
+              
                 src={tempImage}
                 onProcess={handleEditorProcess}
-              />
-            )}
+            )} */}
           </div>
         </DialogContent>
       </Dialog>
