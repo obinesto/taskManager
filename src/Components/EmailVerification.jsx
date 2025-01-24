@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Mail, Loader, ArrowRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import { Mail, Loader, ArrowRight, LayoutDashboard } from "lucide-react";
 import { useVerifyEmail, useResendVerification } from "../hooks/useQueries";
 import { Button } from "./ui/button";
 import {
@@ -14,6 +15,8 @@ import {
 } from "./ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
+import EmailVerifyImg from "../assets/email-verification.png";
+
 
 const EmailVerification = ({ notify }) => {
   const { token } = useParams();
@@ -25,15 +28,18 @@ const EmailVerification = ({ notify }) => {
   const [email, setEmail] = useState("");
   const [submitLoader, setSubmitLoader] = useState(false);
 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const checkToken = localStorage.getItem("token");
+
   const verifyEmail = useVerifyEmail();
   const resendVerification = useResendVerification();
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem("verificationEmail")
+    const storedEmail = localStorage.getItem("verificationEmail");
     if (storedEmail) {
-      setEmail(storedEmail)
+      setEmail(storedEmail);
     }
-  }, [])
+  }, []);
 
   const clearError = useCallback(() => {
     const timer = setTimeout(() => {
@@ -54,7 +60,7 @@ const EmailVerification = ({ notify }) => {
         try {
           await verifyEmail.mutateAsync(token);
           setSuccess(true);
-          localStorage.removeItem("verificationEmail")
+          localStorage.removeItem("verificationEmail");
           let redirectProgress = 0;
           const interval = setInterval(() => {
             redirectProgress += 2;
@@ -84,7 +90,7 @@ const EmailVerification = ({ notify }) => {
   }, [countdown]);
 
   const handleResendVerification = async () => {
-    setSubmitLoader(true)
+    setSubmitLoader(true);
     try {
       await resendVerification.mutateAsync({ email: email });
       setCountdown(180);
@@ -92,8 +98,8 @@ const EmailVerification = ({ notify }) => {
     } catch (error) {
       setError(error.message);
       notify("Failed to send verification email", "error");
-    }finally{
-        setSubmitLoader(false)
+    } finally {
+      setSubmitLoader(false);
     }
   };
 
@@ -121,9 +127,15 @@ const EmailVerification = ({ notify }) => {
                 </Alert>
                 <Progress value={progress} className="w-full" />
                 <Button asChild className="w-full">
-                  <Link to="/login">
-                    Login <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  {checkToken && isAuthenticated ? (
+                    <Link to="/dashboard">
+                      Dashboard <LayoutDashboard className="ml-2 h-4 w-4" />
+                    </Link>
+                  ) : (
+                    <Link to="/login">
+                      Login <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  )}
                 </Button>
               </>
             ) : (
@@ -154,8 +166,8 @@ const EmailVerification = ({ notify }) => {
                 Verify Your Email
               </CardTitle>
               <CardDescription>
-                We&apos;ve sent a verification email to {email}. Please
-                check your inbox and click the verification link.
+                We&apos;ve sent a verification email to {email}. Please check
+                your inbox and click the verification link.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -195,11 +207,22 @@ const EmailVerification = ({ notify }) => {
             </CardContent>
             <CardFooter>
               <Button variant="outline" asChild className="w-full">
-                <Link to="/login">Back to Login</Link>
+                {checkToken && isAuthenticated ? (
+                  <Link to="/dashboard">Back to Dashboard</Link>
+                ) : (
+                  <Link to="/login">Back to Login</Link>
+                )}
               </Button>
             </CardFooter>
           </Card>
         </div>
+      </div>
+      <div className="hidden md:block flex-1 my-auto">
+        <img
+          className="object-cover w-11/12 h-5/6 rounded-md"
+          src={EmailVerifyImg}
+          alt="Background"
+        />
       </div>
     </div>
   );

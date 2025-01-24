@@ -1,16 +1,23 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useUser, useLogout } from "../hooks/useQueries";
+import {
+  useUser,
+  useLogout,
+  useFetchUserNotification,
+} from "../hooks/useQueries";
 import { useSelector } from "react-redux";
-import { LogOut, LayoutDashboard, CheckSquare, User, Menu, BellPlus } from 'lucide-react';
+import {
+  LogOut,
+  LayoutDashboard,
+  CheckSquare,
+  User,
+  Menu,
+  BellPlus,
+} from "lucide-react";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "./ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import {
   Tooltip,
   TooltipContent,
@@ -21,9 +28,11 @@ import {
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: user, isLoading } = useUser();
+  const { data: notifications } = useFetchUserNotification(user?.email);
   const navigate = useNavigate();
   const location = useLocation();
-  const isActive = (path) => new RegExp(`^${path.replace(":id", "[^/]+")}$`).test(location.pathname);
+  const isActive = (path) =>
+    new RegExp(`^${path.replace(":id", "[^/]+")}$`).test(location.pathname);
   const isAnyActive = (paths) => paths.some((path) => isActive(path));
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -40,6 +49,18 @@ const Sidebar = () => {
     navigate("/login");
   };
 
+  const handleNotificationsCounter = () => {
+    if (notifications) {
+      const getUnreadNotifications = notifications.filter(
+        (notification) => !notification.isRead
+        );
+        return getUnreadNotifications.length;
+        }
+        return 0;
+  };
+
+  const unreadNotificationsCount = handleNotificationsCounter();
+
   const NavItem = ({ href, icon: Icon, children, isActiveFunc = isActive }) => (
     <TooltipProvider>
       <Tooltip>
@@ -47,8 +68,9 @@ const Sidebar = () => {
           <Link
             to={href}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
-              isActiveFunc(href) && "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+              "relative flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
+              isActiveFunc(href) &&
+                "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
             )}
           >
             <Icon className="h-4 w-4" />
@@ -81,14 +103,17 @@ const Sidebar = () => {
           <NavItem href="/dashboard" icon={LayoutDashboard}>
             Dashboard
           </NavItem>
-          <NavItem 
-            href="/tasklist" 
+          <NavItem
+            href="/tasklist"
             icon={CheckSquare}
             isActiveFunc={() => isAnyActive(["/tasklist", "/task/:id"])}
           >
             Task List
           </NavItem>
-          <NavItem href="/notifications" icon={BellPlus}>
+          <NavItem href="/notifications" icon={BellPlus} className="relative">
+          <div className="absolute right-0 text-xs md:text-sm text-white bg-red-500 size-fit px-[4px] rounded-[100px]">
+            {unreadNotificationsCount}
+          </div>
             Notifications
           </NavItem>
           <NavItem href="/profile-settings" icon={User}>
@@ -142,4 +167,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
