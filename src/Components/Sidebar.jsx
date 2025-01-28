@@ -53,10 +53,10 @@ const Sidebar = () => {
     if (notifications) {
       const getUnreadNotifications = notifications.filter(
         (notification) => !notification.isRead
-        );
-        return getUnreadNotifications.length;
-        }
-        return 0;
+      );
+      return getUnreadNotifications.length;
+    }
+    return 0;
   };
 
   const unreadNotificationsCount = handleNotificationsCounter();
@@ -111,9 +111,11 @@ const Sidebar = () => {
             Task List
           </NavItem>
           <NavItem href="/notifications" icon={BellPlus} className="relative">
-          <div className="absolute right-0 text-xs md:text-sm text-white bg-red-500 size-fit px-[4px] rounded-[100px]">
-            {unreadNotificationsCount}
-          </div>
+            <div className="absolute right-0">
+              <div className="flex items-center justify-center text-[10px] md:text-sm text-white bg-red-500 w-fit h-4 px-[4px] py-[1px] rounded-[50%]">
+                {unreadNotificationsCount}
+              </div>
+            </div>
             Notifications
           </NavItem>
           <NavItem href="/profile-settings" icon={User}>
