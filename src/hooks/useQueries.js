@@ -140,9 +140,9 @@ export const useGoogleLogin = () => {
 // Verify email with token
 export const useVerifyEmail = () => {
   return useMutation({
-    mutationFn: async (token) => {
+    mutationFn: async ({ token }) => {
       try {
-        const { data } = await axios.post(`/auth/verify/${token}`);
+        const { data } = await axios.get(`/auth/verify/${token}`);
         return data;
       } catch (error) {
         if (error.response) {
@@ -191,6 +191,67 @@ export const useResendVerification = () => {
     },
     onError: (error) => {
       console.error("Error resending verification email:", error.message);
+    },
+  });
+};
+
+// Fetch the authenticated user
+export const useUser = () => {
+  const authState = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      dispatch(fetchUserRequest());
+      const token = localStorage.getItem("token") || authState.token;
+      if (!token) {
+        return null;
+      }
+      try {
+        const { data } = await axios.get("/auth/me");
+        dispatch(fetchUserSuccess(data));
+        return data;
+      } catch (error) {
+        if (error.response) {
+          if (
+            error.response.message === "Unauthorized" ||
+            error.response.message === "Invalid token"
+          ) {
+            dispatch(logoutSuccess());
+          } else {
+            console.error("Error response:", error.response.data);
+          }
+        } else if (error.request) {
+          console.error("No response received:", error.request);
+        } else {
+          console.error("Error setting up the request:", error.message);
+        }
+        dispatch(fetchUserFailure(error.message || "Failed to fetch user"));
+        return null;
+      }
+    },
+    // retry: false,
+    // refetchOnWindowFocus: false,
+    // staleTime: 1000 * 60 * 60 * 12, // Cache data for 12 hours to reduce the number of network requests and improve performance
+  });
+};
+
+// Fetch all users
+export const useUsers = () => {
+  const dispatch = useDispatch();
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      dispatch(fetchUsersRequest());
+      try {
+        const { data } = await axios.get("/auth/users");
+        dispatch(fetchUsersSuccess(data));
+        return data;
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        dispatch(fetchUsersFailure(error.message || "Failed to fetch users"));
+        throw error;
+      }
     },
   });
 };
@@ -303,67 +364,6 @@ export const useLogout = () => {
       }
     }
   };
-};
-
-// Fetch the authenticated user
-export const useUser = () => {
-  const authState = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  return useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      dispatch(fetchUserRequest());
-      const token = localStorage.getItem("token") || authState.token;
-      if (!token) {
-        return null;
-      }
-      try {
-        const { data } = await axios.get("/auth/me");
-        dispatch(fetchUserSuccess(data));
-        return data;
-      } catch (error) {
-        if (error.response) {
-          if (
-            error.response.message === "Unauthorized" ||
-            error.response.message === "Invalid token"
-          ) {
-            dispatch(logoutSuccess());
-          } else {
-            console.error("Error response:", error.response.data);
-          }
-        } else if (error.request) {
-          console.error("No response received:", error.request);
-        } else {
-          console.error("Error setting up the request:", error.message);
-        }
-        dispatch(fetchUserFailure(error.message || "Failed to fetch user"));
-        return null;
-      }
-    },
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 60 * 12, // Cache data for 12 hours to reduce the number of network requests and improve performance
-  });
-};
-
-// Fetch all users
-export const useUsers = () => {
-  const dispatch = useDispatch();
-  return useQuery({
-    queryKey: ["users"],
-    queryFn: async () => {
-      dispatch(fetchUsersRequest());
-      try {
-        const { data } = await axios.get("/auth/users");
-        dispatch(fetchUsersSuccess(data));
-        return data;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        dispatch(fetchUsersFailure(error.message || "Failed to fetch users"));
-        throw error;
-      }
-    },
-  });
 };
 
 // Fetch tasks with optional filter
