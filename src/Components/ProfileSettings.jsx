@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Camera, Loader2, User } from "lucide-react";
+import { Loader2, User } from "lucide-react";
 import { useUser, useUpdateProfile } from "../hooks/useQueries";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import CloudinaryUploadWidget from "./CloudinaryUploadWidget";
 import {
   Card,
   CardContent,
@@ -16,18 +17,18 @@ import {
 } from "./ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import { Loader } from "./loaders/Loader";
 
 const ProfileSettings = ({ notify }) => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  useEffect(() => {
+    const checkToken = localStorage.getItem("token");
+    if (!checkToken && !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [navigate, isAuthenticated]);
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -37,18 +38,19 @@ const ProfileSettings = ({ notify }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [isCropDialogOpen, setIsCropDialogOpen] = useState(false);
-  const [tempImage, setTempImage] = useState(null);
 
   const { data: user, isLoading: userLoading } = useUser();
-  const updateProfileMutation = useUpdateProfile();
-
   useEffect(() => {
-    const checkToken = localStorage.getItem("token");
-    if (!checkToken && !isAuthenticated) {
-      navigate("/login");
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        email: user.email || "",
+        profilePicture: user.profilePicture || "",
+        name: user.name || "",
+      });
+      setImagePreview(user.profilePicture || "");
     }
-  }, [navigate, isAuthenticated]);
+  }, [user]);
 
   const clearError = useCallback(() => {
     const timer = setTimeout(() => {
@@ -63,42 +65,40 @@ const ProfileSettings = ({ notify }) => {
     }
   }, [error, clearError]);
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username || "",
-        email: user.email || "",
-        profilePicture: user.profilePicture || "",
-        name: user.name || "",
-      });
-      setImagePreview(user.profilePicture || "");
-    }
-  }, [user]);
+  // Cloudinary configuration
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const [secureUrl, setSecureUrl] = useState("");
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        // 2MB limit
-        notify("Image size should be less than 2MB", "error");
-        return;
-      }
+  const imgUrl = secureUrl;
 
-      setTempImage(file);
-      setIsCropDialogOpen(true);
-    }
+  // Upload Widget Configuration
+  const uwConfig = {
+    cloudName,
+    uploadPreset,
+    cropping: true,
+    showAdvancedOptions: true,
+    maxImageFileSize: 2000000,
   };
 
-  const handleEditorProcess = (res) => {
-    const processedImageUrl = URL.createObjectURL(res.dest);
-    setImagePreview(processedImageUrl);
+  const handleImageChange = useCallback(() => {
     setFormData((prev) => ({
       ...prev,
-      profilePicture: processedImageUrl,
+      profilePicture: imgUrl,
     }));
-    setIsCropDialogOpen(false);
-    setTempImage(null);
-  };
+    setImagePreview(imgUrl);
+  }, [imgUrl]);
+
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    if (imgUrl && imageRef.current !== imgUrl) {
+      imageRef.current = imgUrl;
+      handleImageChange(imgUrl);
+    }
+  }, [imgUrl, handleImageChange]);
+
+  const updateProfileMutation = useUpdateProfile();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -106,8 +106,8 @@ const ProfileSettings = ({ notify }) => {
     setIsSubmitting(true);
 
     try {
-      if (user?.isVerified == false){
-        throw new Error ("You need to verify your email to edit your profile");
+      if (user?.isVerified == false) {
+        throw new Error("You need to verify your email to edit your profile");
       }
       if (!formData.username.trim()) {
         throw new Error("Username is required");
@@ -119,28 +119,42 @@ const ProfileSettings = ({ notify }) => {
         throw new Error("Invalid email format");
       }
 
-      // Only sends changed fields
+      // Only send changed fields
       const changedFields = {};
-      if (formData.username !== user.username)
+      if (formData.username !== user.username) {
         changedFields.username = formData.username;
-      if (formData.email !== user.email) changedFields.email = formData.email;
-      if (formData.profilePicture !== user.profilePicture)
+      }
+      if (formData.email !== user.email) {
+        changedFields.email = formData.email;
+      }
+      if (formData.profilePicture !== user.profilePicture) {
         changedFields.profilePicture = formData.profilePicture;
+      }
       if (!user.name && formData.name && formData.name !== user.name) {
         changedFields.name = formData.name;
       }
 
+      console.log("Form Data:", formData);
+      console.log("Changed Fields:", changedFields);
+
       if (Object.keys(changedFields).length === 0) {
-        notify("No changes to save", "error");
+        notify("No changes detected", "info");
+        setIsSubmitting(false);
         return;
       }
 
-      await updateProfileMutation.mutateAsync(changedFields);
+      console.log("Updating profile...");
+      console.log((Object.keys(changedFields).length));
+      
+
+      const response = await updateProfileMutation.mutateAsync(changedFields);
+      console.log("Profile update response:", response);
 
       notify("Profile updated successfully", "success");
     } catch (error) {
       setError(error.message);
       notify(error.message, "error");
+      setImagePreview(user?.profilePicture || "");
     } finally {
       setIsSubmitting(false);
     }
@@ -170,24 +184,24 @@ const ProfileSettings = ({ notify }) => {
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={imagePreview} alt={formData.username} />
+                  {imagePreview && (
+                    <AvatarImage src={imagePreview} alt="Profile" />
+                  )}
                   <AvatarFallback>
                     <User className="h-12 w-12" />
                   </AvatarFallback>
                 </Avatar>
-                <Label
-                  htmlFor="picture"
-                  className="absolute bottom-0 right-0 p-1 bg-primary text-primary-foreground rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
-                >
-                  <Camera className="h-4 w-4" />
-                  <Input
-                    id="picture"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </Label>
+                <div>
+                  <Label
+                    htmlFor="picture"
+                    className="absolute bottom-0 right-0 p-1 bg-primary text-primary-foreground rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
+                  >
+                    <CloudinaryUploadWidget
+                      uploadConfig={uwConfig}
+                      getSecureUrl={setSecureUrl}
+                    />
+                  </Label>
+                </div>
               </div>
               <p className="text-sm text-muted-foreground">
                 Click the camera icon to update your profile picture
@@ -257,25 +271,6 @@ const ProfileSettings = ({ notify }) => {
           </form>
         </CardContent>
       </Card>
-
-      <Dialog open={isCropDialogOpen} onOpenChange={setIsCropDialogOpen}>
-        <DialogContent className="max-w-[800px] w-[90vw]">
-          <DialogHeader>
-            <DialogTitle>Edit Profile Picture</DialogTitle>
-            <DialogDescription>
-              Edit and crop your profile picture. The image will be cropped to a
-              square.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-4" style={{ height: "70vh" }}>
-            {/* {tempImage && (
-              
-                src={tempImage}
-                onProcess={handleEditorProcess}
-            )} */}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-# Task Manager
+# TaskManager
 A simple and efficient task management application built with modern web technologies.
 
 ## Features
@@ -8,10 +8,10 @@ A simple and efficient task management application built with modern web technol
 - Responsive design for mobile and desktop use
 
 ## Technologies Used
-- **Frontend:** React.js, Tanstack, Redux
+- **Frontend:** React.js, Tanstack, Redux, Cloudinary, React Router Dom
 - **Backend:** Node.js with Express
 - **Database:** MongoDB
-- **Authentication:** JSON Web Tokens (JWT)
+- **Authentication:** JSON Web Tokens (JWT), Google OAuth 2.0
 - **Styling:** Tailwind CSS
 
 ## Getting Started
@@ -55,7 +55,6 @@ A simple and efficient task management application built with modern web technol
 - Add new tasks using the input field at the top of the page
 - Click on a task to mark it as complete or incomplete
 - Use the filter buttons to view all, active, or completed tasks
-- Edit or delete tasks using the respective buttons
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -64,4 +63,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Project Link
-[Task Manager](https://task-manager-gules-nu.vercel.app/)
+[TaskManager](https://task-manager-gules-nu.vercel.app/)
