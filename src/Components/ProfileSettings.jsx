@@ -130,7 +130,7 @@ const ProfileSettings = ({ notify }) => {
       if (formData.profilePicture !== user.profilePicture) {
         changedFields.profilePicture = formData.profilePicture;
       }
-      if (!user.name && formData.name && formData.name !== user.name) {
+      if (formData.name !== user.name) {
         changedFields.name = formData.name;
       }
 
@@ -144,8 +144,7 @@ const ProfileSettings = ({ notify }) => {
       }
 
       console.log("Updating profile...");
-      console.log((Object.keys(changedFields).length));
-      
+      console.log(Object.keys(changedFields).length);
 
       const response = await updateProfileMutation.mutateAsync(changedFields);
       console.log("Profile update response:", response);
