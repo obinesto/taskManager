@@ -66,8 +66,8 @@ const ProfileSettings = ({ notify }) => {
   }, [error, clearError]);
 
   // Cloudinary configuration
-  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const cloudName = import.meta.env.CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = import.meta.env.CLOUDINARY_UPLOAD_PRESET;
   const [secureUrl, setSecureUrl] = useState("");
 
   const imgUrl = secureUrl;
@@ -77,8 +77,8 @@ const ProfileSettings = ({ notify }) => {
     cloudName,
     uploadPreset,
     cropping: true,
-    showAdvancedOptions: true,
     maxImageFileSize: 2000000,
+    // showAdvancedOptions: true,
   };
 
   const handleImageChange = useCallback(() => {
@@ -134,20 +134,13 @@ const ProfileSettings = ({ notify }) => {
         changedFields.name = formData.name;
       }
 
-      console.log("Form Data:", formData);
-      console.log("Changed Fields:", changedFields);
-
       if (Object.keys(changedFields).length === 0) {
         notify("No changes detected", "info");
         setIsSubmitting(false);
         return;
       }
 
-      console.log("Updating profile...");
-      console.log(Object.keys(changedFields).length);
-
-      const response = await updateProfileMutation.mutateAsync(changedFields);
-      console.log("Profile update response:", response);
+      await updateProfileMutation.mutateAsync(changedFields);
 
       notify("Profile updated successfully", "success");
     } catch (error) {
