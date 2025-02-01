@@ -66,8 +66,8 @@ const ProfileSettings = ({ notify }) => {
   }, [error, clearError]);
 
   // Cloudinary configuration
-  const cloudName = import.meta.env.CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.CLOUDINARY_UPLOAD_PRESET;
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
   const [secureUrl, setSecureUrl] = useState("");
 
   const imgUrl = secureUrl;
