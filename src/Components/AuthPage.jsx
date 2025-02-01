@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useLogin, useRegister, useGoogleLogin } from "../hooks/useQueries";
-import { Mail, Lock, User, Loader } from "lucide-react";
+import { Mail, Lock, User, Loader, TriangleAlert } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import LoaderTwo from "./loaders/LoaderTwo";
 import { Button } from "./ui/button";
@@ -26,6 +26,7 @@ const AuthPage = ({ notify }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
     username: "",
   });
   const [submitLoader, setSubmitLoader] = useState(false);
@@ -44,11 +45,11 @@ const AuthPage = ({ notify }) => {
     }
   }, [isAuthenticated, navigate]);
 
-  useEffect(()=>{
-    if(location.pathname === '/register'){
-      setIsLogin(false)
-      }
-  }, [location])
+  useEffect(() => {
+    if (location.pathname === "/register") {
+      setIsLogin(false);
+    }
+  }, [location]);
 
   const clearError = useCallback(() => {
     const timer = setTimeout(() => {
@@ -67,10 +68,24 @@ const AuthPage = ({ notify }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handlePasswordChange = () => {
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMessage("Passwords do not match");
+    }
+    return;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoader(true);
     setErrorMessage("");
+
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      setSubmitLoader(false);
+      return;
+    }
+
     const mutationFn = isLogin ? login : register;
     const payload = isLogin
       ? { email: formData.email, password: formData.password }
@@ -143,7 +158,12 @@ const AuthPage = ({ notify }) => {
             <CardContent className="grid gap-4">
               {errorMessage && (
                 <Alert variant="destructive">
-                  <AlertDescription>{errorMessage}</AlertDescription>
+                  <AlertDescription className="flex items-center gap-4">
+                    {
+                      <TriangleAlert className="h-4 w-4 text-muted-foreground" />
+                    }
+                    {errorMessage}!
+                  </AlertDescription>
                 </Alert>
               )}
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -197,6 +217,26 @@ const AuthPage = ({ notify }) => {
                     placeholder="••••••••"
                     icon={<Lock className="h-4 w-4 text-muted-foreground" />}
                   />
+                  {!isLogin && (
+                    <>
+                      <Label htmlFor="confirmPassword">Confirm password</Label>
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        required
+                        value={formData.confirmPassword}
+                        onChange={(e) => {
+                          handleChange(e);
+                          handlePasswordChange(e);
+                        }}
+                        placeholder="••••••••"
+                        icon={
+                          <Lock className="h-4 w-4 text-muted-foreground" />
+                        }
+                      />
+                    </>
+                  )}
                 </div>
                 <Button
                   type="submit"
