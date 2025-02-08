@@ -2,7 +2,14 @@
 import { Component } from "react";
 import * as Sentry from "@sentry/react";
 import { motion } from "framer-motion";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "./ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 
 class ErrorBoundary extends Component {
@@ -34,12 +41,18 @@ class ErrorBoundary extends Component {
           transition={{ duration: 0.3 }}
         >
           <div className="max-w-lg bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 text-center">
-            <h2 className="text-2xl font-bold text-red-500 dark:text-red-400">Oops! Something went wrong.</h2>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">An unexpected error occurred. Please try again.</p>
-            
+            <h2 className="text-2xl font-bold text-red-500 dark:text-red-400">
+              Oops! Something went wrong.
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              An unexpected error occurred. Please try again.
+            </p>
+
             <div className="flex justify-center mt-4 space-x-4">
-              <Button variant="outline" onClick={this.handleReload}>Reload App</Button>
-              
+              <Button variant="outline" onClick={this.handleReload}>
+                Reload App
+              </Button>
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">Report Issue</Button>
@@ -49,7 +62,12 @@ class ErrorBoundary extends Component {
                     <AlertDialogTitle>Report an Issue</AlertDialogTitle>
                     <AlertDialogDescription>
                       Please describe what happened before the error occurred.
-                      <br />You can also send an email to <span className="font-semibold">obicyprian180@gmail.com</span>.
+                      <br />
+                      You can also send an email to{" "}
+                      <span className="font-semibold">
+                        obicyprian180@gmail.com
+                      </span>
+                      .
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                 </AlertDialogContent>
@@ -65,5 +83,9 @@ class ErrorBoundary extends Component {
 }
 
 export default Sentry.withErrorBoundary(ErrorBoundary, {
-  fallback: <p className="flex flex-col items-center justify-center font-semibold text-lg">Something went wrong!</p>,
+  fallback: (
+    <p className="flex flex-col items-center justify-center font-semibold text-lg">
+      Something went wrong! <br /> Kindly refresh the page
+    </p>
+  ),
 });

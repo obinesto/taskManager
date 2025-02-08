@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/taskService";
 import { useDispatch, useSelector } from "react-redux";
+import * as Sentry from "@sentry/react";
 import {
   registerSuccess,
   loginSuccess,
@@ -29,9 +30,16 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (loginData) => {
       try {
+        Sentry.addBreadcrumb({
+          category: "auth",
+          message: "User login attempt",
+          level: "info",
+        });
+
         const { data } = await axios.post("/auth/login", loginData);
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
           console.error("Login error response:", error.response.data);
           throw new Error(error.response.data.message || "Login failed");
@@ -63,9 +71,15 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: async (registerData) => {
       try {
+        Sentry.addBreadcrumb({
+          category: "auth",
+          message: "User registration attempt",
+          level: "info",
+          });
         const { data } = await axios.post("/auth/register", registerData);
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
           const status = error.response.status;
           const message = error.response.data.message;
@@ -101,11 +115,17 @@ export const useGoogleLogin = () => {
   return useMutation({
     mutationFn: async (credentialResponse) => {
       try {
+        Sentry.addBreadcrumb({
+          category: "auth",
+          message: "Google sign-in attempt",
+          level: "info",
+          });
         const { data } = await axios.post("/v1/google", {
-          credential:credentialResponse.credential
+          credential: credentialResponse.credential,
         });
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response?.status === 404) {
           console.error(
             "API endpoint not found. Please check your backend routes."
@@ -142,12 +162,23 @@ export const useVerifyEmail = () => {
   return useMutation({
     mutationFn: async ({ token }) => {
       try {
+        Sentry.addBreadcrumb({
+          category: "auth",
+          message: "Verify email attempt",
+          level: "info",
+        })
         const { data } = await axios.get(`/auth/verify/${token}`);
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
-          console.error("Email verification error response:", error.response.data);
-          throw new Error(error.response.data.message || "Email verification failed");
+          console.error(
+            "Email verification error response:",
+            error.response.data
+          );
+          throw new Error(
+            error.response.data.message || "Email verification failed"
+          );
         } else if (error.request) {
           console.error("Email verification error request:", error.request);
           throw new Error("No response received from server");
@@ -171,12 +202,25 @@ export const useResendVerification = () => {
   return useMutation({
     mutationFn: async ({ email }) => {
       try {
-        const { data } = await axios.post("/auth/resend-verification", { email });
+        Sentry.addBreadcrumb({
+          category: "auth",
+          message: "Resend verification email attempt",
+          level: "info",
+          })
+        const { data } = await axios.post("/auth/resend-verification", {
+          email,
+        });
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
-          console.error("Resend verification error response:", error.response.data);
-          throw new Error(error.response.data.message || "Failed to resend verification email");
+          console.error(
+            "Resend verification error response:",
+            error.response.data
+          );
+          throw new Error(
+            error.response.data.message || "Failed to resend verification email"
+          );
         } else if (error.request) {
           console.error("Resend verification error request:", error.request);
           throw new Error("No response received from server");
@@ -208,10 +252,15 @@ export const useUser = () => {
         return null;
       }
       try {
+        Sentry.addBreadcrumb({
+          message: "Fetch user request",
+          level: "info",
+        })
         const { data } = await axios.get("/auth/me");
         dispatch(fetchUserSuccess(data));
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
           if (
             error.response.message === "Unauthorized" ||
@@ -244,10 +293,15 @@ export const useUsers = () => {
     queryFn: async () => {
       dispatch(fetchUsersRequest());
       try {
+        Sentry.addBreadcrumb({
+          message: "Fetch users request",
+          level: "info",
+        })
         const { data } = await axios.get("/auth/users");
         dispatch(fetchUsersSuccess(data));
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         console.error("Error fetching users:", error);
         dispatch(fetchUsersFailure(error.message || "Failed to fetch users"));
         throw error;
@@ -261,9 +315,14 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: async ({ email }) => {
       try {
+        Sentry.addBreadcrumb({
+          message: "Password reset request",
+          level: "info",
+        })
         const { data } = await axios.post("/auth/forgot-password", { email });
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
           console.error("Password reset error response:", error.response.data);
           throw new Error(
@@ -292,12 +351,21 @@ export const useUpdatePassword = () => {
   return useMutation({
     mutationFn: async ({ token, password }) => {
       try {
-        const { data } = await axios.post(`/auth/reset-password/${token}`, { password });
+        Sentry.addBreadcrumb({
+          message: "Update password with reset token",
+          level: "info",
+          })
+        const { data } = await axios.post(`/auth/reset-password/${token}`, {
+          password,
+        });
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
           console.error("Password update error response:", error.response.data);
-          throw new Error(error.response.data.message || "Failed to update password");
+          throw new Error(
+            error.response.data.message || "Failed to update password"
+          );
         } else if (error.request) {
           console.error("Password update error request:", error.request);
           throw new Error("No response received from server");
@@ -323,12 +391,19 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: async (updatedData) => {
       try {
-        const { data } = await axios.put('/auth/update-profile', updatedData);
+        Sentry.addBreadcrumb({
+          message: "Update user profile",
+          level: "info",
+          })
+        const { data } = await axios.put("/auth/update-profile", updatedData);
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         if (error.response) {
           console.error("Profile update error response:", error.response.data);
-          throw new Error(error.response.data.message || "Failed to update profile");
+          throw new Error(
+            error.response.data.message || "Failed to update profile"
+          );
         } else if (error.request) {
           console.error("Profile update error request:", error.request);
           throw new Error("No response received from server");
@@ -339,7 +414,7 @@ export const useUpdateProfile = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error) => {
       console.error("Error updating profile:", error.message);
@@ -374,6 +449,10 @@ export const useTasks = (filterOrId = "") => {
     queryFn: async () => {
       dispatch(fetchTasksRequest());
       try {
+        Sentry.addBreadcrumb({
+          category: "tasks",
+          message: "Fetching tasks",
+        })
         if (
           typeof filterOrId === "string" &&
           filterOrId.match(/^[0-9a-fA-F]{24}$/)
@@ -391,6 +470,7 @@ export const useTasks = (filterOrId = "") => {
           return data;
         }
       } catch (error) {
+        Sentry.captureException(error);
         console.error("Error fetching tasks:", error);
         dispatch(fetchTasksFailure(error.message || "Failed to fetch tasks"));
         throw error;
@@ -408,10 +488,15 @@ export const useAddTask = () => {
     mutationFn: async (newTask) => {
       dispatch(fetchTasksRequest());
       try {
+        Sentry.addBreadcrumb({
+          category: "tasks",
+          message: "Adding new task",
+        })
         const { data } = await axios.post("/tasks", newTask);
         dispatch(fetchTasksSuccess([data]));
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         console.error("Error adding task:", error);
         dispatch(fetchTasksFailure(error.message || "Failed to add task"));
         throw error;
@@ -435,10 +520,15 @@ export const useUpdateTask = () => {
     mutationFn: async ({ id, updatedTask }) => {
       dispatch(fetchTasksRequest());
       try {
+        Sentry.addBreadcrumb({
+          category: "tasks",
+          message: "Updating existing task",
+          })
         const { data } = await axios.patch(`/tasks/${id}`, updatedTask);
         dispatch(fetchTasksSuccess([data]));
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         console.error("Error updating task:", error);
         dispatch(fetchTasksFailure(error.message || "Failed to update task"));
         throw error;
@@ -461,10 +551,15 @@ export const useFetchUserNotification = (userEmail) => {
     queryFn: async () => {
       dispatch(fetchUserNotificationRequest());
       try {
+        Sentry.addBreadcrumb({
+          category: "notifications",
+          message: "Fetching user notifications",
+        })
         const { data } = await axios.get(`/notifications/${userEmail}`);
         dispatch(fetchUserNotificationSuccess(data));
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         console.error("Error fetching user notification:", error);
         dispatch(
           fetchUserNotificationFailure(
@@ -486,12 +581,17 @@ export const useMarkNotificationAsRead = () => {
     mutationFn: async (notificationId) => {
       dispatch(fetchUserNotificationRequest());
       try {
+        Sentry.addBreadcrumb({
+          category: "notifications",
+          message: "Marking notification as read",
+        })
         const { data } = await axios.patch(`/notifications/${notificationId}`, {
           isRead: true,
         });
         dispatch(fetchUserNotificationSuccess(data));
         return data;
       } catch (error) {
+        Sentry.captureException(error);
         console.error("Error marking notification as read:", error);
         dispatch(
           fetchUserNotificationFailure(
