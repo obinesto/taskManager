@@ -78,7 +78,16 @@ const ProfileSettings = ({ notify }) => {
     uploadPreset,
     cropping: true,
     maxImageFileSize: 2000000,
-    // showAdvancedOptions: true,
+    clientAllowedFormats: 'image',
+    croppingCoordinatesMode: 'custom'
+    // showAdvancedOptions: true,  //add advanced options (public_id and tag)
+    // sources: [ "local", "url"], // restrict the upload sources to URL and local files
+    // multiple: false,  //restrict upload to a single file
+    // folder: "user_images", //upload files to the specified folder
+    // tags: ["users", "profile"], //add the given tags to the uploaded files
+    // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
+    // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
+    // theme: "purple", //change to a purple theme
   };
 
   const handleImageChange = useCallback(() => {

@@ -1,10 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useMemo } from "react";
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { store, persistor } from "./redux/store";
+import ErrorBoundary from "./Components/ErrorBoundary";
 import { ThemeProvider } from "./Components/ThemeProvider";
 import { ModeToggle } from "./Components/ToggleMode";
 import Sidebar from "./Components/Sidebar";
@@ -17,7 +23,7 @@ import EmailVerification from "./Components/EmailVerification";
 import PasswordReset from "./Components/PasswordReset";
 import TaskForm from "./Components/TaskForm";
 import Notifications from "./Components/Notifications";
-import ProfileSettings from "./Components/ProfileSettings"
+import ProfileSettings from "./Components/ProfileSettings";
 import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
 import { Toaster } from "./Components/ui/toaster";
@@ -46,8 +52,17 @@ const App = ({ children }) => {
     const location = useLocation();
     const showSidebar = useMemo(
       () =>
-        ["/dashboard", "/tasklist", "/task/:id", "/add-task", "/notifications", "/profile-settings"].some((path) =>
-          location.pathname.match(new RegExp(`^${path.replace((":id", ":token"),"[^/]+")}$`))
+        [
+          "/dashboard",
+          "/tasklist",
+          "/task/:id",
+          "/add-task",
+          "/notifications",
+          "/profile-settings",
+        ].some((path) =>
+          location.pathname.match(
+            new RegExp(`^${path.replace((":id", ":token"), "[^/]+")}$`)
+          )
         ),
       [location.pathname]
     );
@@ -62,13 +77,28 @@ const App = ({ children }) => {
             <Route path="/task/:id" element={<TaskDetails notify={notify} />} />
             <Route path="/login" element={<AuthPage notify={notify} />} />
             <Route path="/register" element={<AuthPage notify={notify} />} />
-            <Route path="/verify" element={<EmailVerification notify={notify} />} />
-            <Route path="/verify/:token" element={<EmailVerification notify={notify} />} />
-            <Route path="/reset-password" element={<PasswordReset notify={notify} />} />
-            <Route path="/reset-password/:token" element={<PasswordReset notify={notify} />} />
+            <Route
+              path="/verify"
+              element={<EmailVerification notify={notify} />}
+            />
+            <Route
+              path="/verify/:token"
+              element={<EmailVerification notify={notify} />}
+            />
+            <Route
+              path="/reset-password"
+              element={<PasswordReset notify={notify} />}
+            />
+            <Route
+              path="/reset-password/:token"
+              element={<PasswordReset notify={notify} />}
+            />
             <Route path="/add-task" element={<TaskForm notify={notify} />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/profile-settings" element={<ProfileSettings notify={notify} />} />
+            <Route
+              path="/profile-settings"
+              element={<ProfileSettings notify={notify} />}
+            />
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </main>
@@ -77,21 +107,23 @@ const App = ({ children }) => {
   };
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <QueryClientProvider client={queryClient}>
-          <Router>
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-              <ModeToggle />
-              <Layout />
-              <Toaster />
-              <ToastContainer />
-              {children}
-            </ThemeProvider>
-          </Router>
-        </QueryClientProvider>
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <QueryClientProvider client={queryClient}>
+            <Router>
+              <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                <ModeToggle />
+                <Layout />
+                <Toaster />
+                <ToastContainer />
+                {children}
+              </ThemeProvider>
+            </Router>
+          </QueryClientProvider>
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
   );
 };
 
