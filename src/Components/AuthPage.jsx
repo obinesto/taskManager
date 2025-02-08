@@ -246,7 +246,10 @@ const AuthPage = ({ notify }) => {
                   }
                 >
                   {submitLoader ? (
-                    <Loader className="h-4 w-4 animate-spin" />
+                    <span className="flex items-center justify-center gap-2 text-xs md:text-base">
+                    <Loader className="h-8 w-8 animate-spin" />
+                    {isLogin? "login in progress..." : "Account creation in progress..."}
+                  </span>
                   ) : isLogin ? (
                     "Sign In"
                   ) : (
