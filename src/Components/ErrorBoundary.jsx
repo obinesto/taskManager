@@ -82,10 +82,14 @@ class ErrorBoundary extends Component {
   }
 }
 
-export default Sentry.withErrorBoundary(ErrorBoundary, {
-  fallback: (
-    <p className="flex flex-col items-center justify-center font-semibold text-lg">
-      Something went wrong! <br /> Kindly refresh the page
-    </p>
-  ),
+const FallbackComponent = () => (
+  <p className="flex flex-col items-center justify-center font-semibold text-lg">
+    Something went wrong! <br /> Kindly refresh the page
+  </p>
+);
+
+const ErrorBoundaryWithSentry = Sentry.withErrorBoundary(ErrorBoundary, {
+  fallback: <FallbackComponent />,
 });
+
+export default ErrorBoundaryWithSentry;
