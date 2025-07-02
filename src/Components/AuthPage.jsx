@@ -146,7 +146,7 @@ const AuthPage = ({ notify }) => {
         <div className="w-full max-w-sm mx-auto lg:w-96">
           <Card>
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold tracking-tight">
+              <CardTitle>
                 {isLogin ? "Sign in to your account" : "Create an account"}
               </CardTitle>
               <CardDescription>

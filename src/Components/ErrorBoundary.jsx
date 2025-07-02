@@ -9,13 +9,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogDescription,
+  AlertDialogCancel,
 } from "./ui/alert-dialog";
+import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
+import { X } from "lucide-react";
 
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, copySuccess: false };
+    this.notificationTimeout = null;
   }
 
   static getDerivedStateFromError(error) {
@@ -27,8 +31,24 @@ class ErrorBoundary extends Component {
     Sentry.captureException(error);
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.notificationTimeout);
+  }
+
   handleReload = () => {
     window.location.reload();
+  };
+
+  handleNotification = () => {
+    clearTimeout(this.notificationTimeout);
+    this.notificationTimeout = setTimeout(() => {
+      this.setState({ copySuccess: false });
+    }, 3000);
+  };
+
+  handleCopyEmail = () => {
+    navigator.clipboard.writeText("obicyprian180@gmail.com");
+    this.setState({ copySuccess: true }, this.handleNotification);
   };
 
   render() {
@@ -41,7 +61,7 @@ class ErrorBoundary extends Component {
           transition={{ duration: 0.3 }}
         >
           <div className="max-w-lg bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 text-center">
-            <h2 className="text-2xl font-bold text-red-500 dark:text-red-400">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Oops! Something went wrong.
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -60,16 +80,38 @@ class ErrorBoundary extends Component {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Report an Issue</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="flex flex-col items-center text-center">
                       Please describe what happened before the error occurred.
                       <br />
-                      You can also send an email to{" "}
-                      <span className="font-semibold">
-                        obicyprian180@gmail.com
+                      You can send an email to{" "}
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        obicyprian180@gmail.com.
                       </span>
-                      .
+                      <Button
+                        variant="outline"
+                        className="mt-2"
+                        onClick={this.handleCopyEmail}
+                      >
+                        copy email
+                      </Button>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
+                  {this.state.copySuccess && (
+                    <Alert className="w-32 p-2 m-auto">
+                      <AlertDescription>Email copied!</AlertDescription>
+                      <button
+                        className="absolute top-1/4  right-0"
+                        onClick={() => {
+                          this.setState({ copySuccess: false });
+                        }}
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </Alert>
+                  )}
+                  <AlertDialogCancel className="absolute top-1 right-1">
+                    <X />
+                  </AlertDialogCancel>
                 </AlertDialogContent>
               </AlertDialog>
             </div>

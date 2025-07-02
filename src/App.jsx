@@ -24,6 +24,7 @@ import PasswordReset from "./Components/PasswordReset";
 import TaskForm from "./Components/TaskForm";
 import Notifications from "./Components/Notifications";
 import ProfileSettings from "./Components/ProfileSettings";
+import Demo from "./Components/Demo";
 import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
 import { Toaster } from "./Components/ui/toaster";
@@ -99,6 +100,7 @@ const App = ({ children }) => {
               path="/profile-settings"
               element={<ProfileSettings notify={notify} />}
             />
+            <Route path="/demo" element={<Demo />} />
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </main>
