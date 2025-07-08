@@ -16,7 +16,7 @@ export default function Demo() {
           </Card>
         </div>
         <iframe
-          src="https://player.cloudinary.com/embed/?cloud_name=obinesto-cloudinary&public_id=samples%2Fdance-2&profile=cld-default"
+          src="https://player.cloudinary.com/embed/?cloud_name=obinesto-cloudinary&public_id=vh5432ve9khj12ojks1t&profile=cld-default"
           allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
           className="min-h-[60vh] w-full mt-4 rounded-md"
         />
