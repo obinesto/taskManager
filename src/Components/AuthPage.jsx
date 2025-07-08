@@ -3,7 +3,15 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useLogin, useRegister, useGoogleLogin } from "../hooks/useQueries";
-import { Mail, Lock, User, Loader, TriangleAlert } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  Loader,
+  TriangleAlert,
+  EyeIcon,
+  EyeOffIcon,
+} from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import LoaderTwo from "./loaders/LoaderTwo";
 import { Button } from "./ui/button";
@@ -33,6 +41,7 @@ const AuthPage = ({ notify }) => {
   const [submitLoader, setSubmitLoader] = useState(false);
   const [submitLoader2, setSubmitLoader2] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const login = useLogin();
@@ -55,7 +64,7 @@ const AuthPage = ({ notify }) => {
   const clearError = useCallback(() => {
     const timer = setTimeout(() => {
       setErrorMessage("");
-    }, 4000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -164,30 +173,35 @@ const AuthPage = ({ notify }) => {
                 {!isLogin && (
                   <div className="space-y-2">
                     <Label htmlFor="username">Username</Label>
-                    <Input
-                      id="username"
-                      name="username"
-                      type="text"
-                      required={!isLogin}
-                      value={formData.username}
-                      onChange={handleChange}
-                      placeholder="JohnDoe"
-                      icon={<User className="h-4 w-4 text-muted-foreground" />}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="username"
+                        name="username"
+                        type="text"
+                        required={!isLogin}
+                        value={formData.username}
+                        onChange={handleChange}
+                        placeholder="JohnDoe"
+                      />
+                      <User className="h-4 w-4 text-muted-foreground absolute right-3 top-1/2 transform -translate-y-1/2" />
+                    </div>
                   </div>
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="john@example.com"
-                    icon={<Mail className="h-4 w-4 text-muted-foreground" />}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      disabled={submitLoader}
+                      placeholder="john@example.com"
+                    />
+                    <Mail className="h-4 w-4 text-muted-foreground absolute right-3 top-1/2 transform -translate-y-1/2" />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -201,33 +215,77 @@ const AuthPage = ({ notify }) => {
                       </Link>
                     )}
                   </div>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    icon={<Lock className="h-4 w-4 text-muted-foreground" />}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={formData.password}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setShowPassword(false);
+                      }}
+                      disabled={submitLoader}
+                      placeholder="Enter Password"
+                    />
+                    <Lock className="h-4 w-4 text-muted-foreground absolute right-3 top-1/2 transform -translate-y-1/2" />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="h-4 w-4 rounded-full absolute right-10 top-1/2 transform -translate-y-1/2"
+                      onClick={() => {
+                        setShowPassword((prev) => !prev);
+                      }}
+                    >
+                      {showPassword ? (
+                        <EyeIcon className="text-muted-foreground" />
+                      ) : (
+                        <EyeOffIcon className="text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
                   {!isLogin && (
                     <>
                       <Label htmlFor="confirmPassword">Confirm password</Label>
-                      <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        required
-                        value={formData.confirmPassword}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
-                        placeholder="••••••••"
-                        icon={
-                          <Lock className="h-4 w-4 text-muted-foreground" />
-                        }
-                      />
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type={showPassword ? "text" : "password"}
+                          required
+                          value={formData.confirmPassword}
+                          onChange={(e) => {
+                            handleChange(e);
+                            setShowPassword(false);
+                          }}
+                          disabled={submitLoader}
+                          placeholder="Confirm Password"
+                        />
+                        <Lock className="h-4 w-4 text-muted-foreground absolute right-3 top-1/2 transform -translate-y-1/2" />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="h-4 w-4 rounded-full absolute right-10 top-1/2 transform -translate-y-1/2"
+                          onClick={() => {
+                            setShowPassword((prev) => !prev);
+                          }}
+                        >
+                          {showPassword ? (
+                            <EyeIcon
+                              className="text-muted-foreground"
+                              aria-hidden="true"
+                            />
+                          ) : (
+                            <EyeOffIcon
+                              className="text-muted-foreground"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </Button>
+                      </div>
                     </>
                   )}
                 </div>
