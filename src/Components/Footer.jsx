@@ -20,7 +20,8 @@ export default function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row justify-between items-center">
           <div className="text-muted-foreground mb-4 sm:mb-0 text-sm sm:text-base">
-            © {new Date().getFullYear()} TaskManager. All rights reserved.
+            © {new Date().getFullYear()} <NavLink to="/">TaskManager</NavLink>.
+            All rights reserved.
           </div>
           <div className="flex flex-wrap justify-center sm:justify-end space-x-4">
             <NavLink

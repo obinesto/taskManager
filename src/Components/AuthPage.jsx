@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
+import Footer from "./Footer";
 import { Separator } from "./ui/separator";
 import BgImage from "../assets/bg-4.jpg";
 
@@ -66,13 +67,6 @@ const AuthPage = ({ notify }) => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handlePasswordChange = () => {
-    if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("Passwords do not match");
-    }
-    return;
   };
 
   const handleSubmit = async (e) => {
@@ -135,7 +129,7 @@ const AuthPage = ({ notify }) => {
     <LoaderTwo />
   ) : (
     <div className="flex min-h-screen bg-background">
-      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 mb-0 md:mb-14">
         <div className="flex justify-center h-16 px-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <span className="text-4xl md:6xl hover:text-gray-700">
@@ -228,7 +222,6 @@ const AuthPage = ({ notify }) => {
                         value={formData.confirmPassword}
                         onChange={(e) => {
                           handleChange(e);
-                          handlePasswordChange(e);
                         }}
                         placeholder="••••••••"
                         icon={
@@ -247,9 +240,11 @@ const AuthPage = ({ notify }) => {
                 >
                   {submitLoader ? (
                     <span className="flex items-center justify-center gap-2 text-xs md:text-base">
-                    <Loader className="h-8 w-8 animate-spin" />
-                    {isLogin? "login in progress..." : "Account creation in progress..."}
-                  </span>
+                      <Loader className="h-8 w-8 animate-spin" />
+                      {isLogin
+                        ? "login in progress..."
+                        : "Account creation in progress..."}
+                    </span>
                   ) : isLogin ? (
                     "Sign In"
                   ) : (
@@ -273,7 +268,12 @@ const AuthPage = ({ notify }) => {
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
                 useOneTap
-                className="w-full"
+                size="large"
+                theme="filled_blue"
+                width={330}
+                shape="pill"
+                type="standard"
+                text={isLogin ? "signin_with" : "signup_with"}
               ></GoogleLogin>
             </CardContent>
             <CardFooter>
@@ -293,13 +293,18 @@ const AuthPage = ({ notify }) => {
           </Card>
         </div>
       </div>
-      <div className="hidden md:block flex-1 my-auto">
+      <div
+        className={`hidden md:block flex-1 my-auto mb-0 ${
+          isLogin ? "md:mb-24" : "md:mb-36"
+        }`}
+      >
         <img
           className="object-cover w-11/12 h-5/6 rounded-md"
           src={BgImage}
           alt="Background"
         />
       </div>
+      <Footer />
     </div>
   );
 };

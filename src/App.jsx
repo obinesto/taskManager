@@ -25,6 +25,9 @@ import TaskForm from "./Components/TaskForm";
 import Notifications from "./Components/Notifications";
 import ProfileSettings from "./Components/ProfileSettings";
 import Demo from "./Components/Demo";
+import ContactUs from "./Components/ContactUs"
+import PrivacyPolicy from "./Components/PrivacyPolicy"
+import TermsOfService from "./Components/TermsOfService"
 import NotFound from "./Components/NotFound";
 import { ToastContainer, toast } from "react-toastify";
 import { Toaster } from "./Components/ui/toaster";
@@ -101,6 +104,9 @@ const App = ({ children }) => {
               element={<ProfileSettings notify={notify} />}
             />
             <Route path="/demo" element={<Demo />} />
+            <Route path="/contact" element={<ContactUs/>}/>
+            <Route path="/privacy" element={<PrivacyPolicy/>}/>
+            <Route path="/terms" element={<TermsOfService/>}/>
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </main>

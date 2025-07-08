@@ -41,8 +41,11 @@ export const useLogin = () => {
       } catch (error) {
         Sentry.captureException(error);
         if (error.response) {
-          console.error("Login error response:", error.response.data);
-          throw new Error(error.response.data.message || "Login failed");
+          const status = error.response.status;
+          const message = error.response.data.message;
+          if (status === 400 || message.includes("Invalid email or password")) {
+            throw new Error("Email does not exist. Kindly register");
+          }
         } else if (error.request) {
           console.error("Login error request:", error.request);
           throw new Error("No response received from server");
@@ -75,7 +78,7 @@ export const useRegister = () => {
           category: "auth",
           message: "User registration attempt",
           level: "info",
-          });
+        });
         const { data } = await axios.post("/auth/register", registerData);
         return data;
       } catch (error) {
@@ -119,7 +122,7 @@ export const useGoogleLogin = () => {
           category: "auth",
           message: "Google sign-in attempt",
           level: "info",
-          });
+        });
         const { data } = await axios.post("/v1/google", {
           credential: credentialResponse.credential,
         });
@@ -166,7 +169,7 @@ export const useVerifyEmail = () => {
           category: "auth",
           message: "Verify email attempt",
           level: "info",
-        })
+        });
         const { data } = await axios.get(`/auth/verify/${token}`);
         return data;
       } catch (error) {
@@ -206,7 +209,7 @@ export const useResendVerification = () => {
           category: "auth",
           message: "Resend verification email attempt",
           level: "info",
-          })
+        });
         const { data } = await axios.post("/auth/resend-verification", {
           email,
         });
@@ -255,7 +258,7 @@ export const useUser = () => {
         Sentry.addBreadcrumb({
           message: "Fetch user request",
           level: "info",
-        })
+        });
         const { data } = await axios.get("/auth/me");
         dispatch(fetchUserSuccess(data));
         return data;
@@ -296,7 +299,7 @@ export const useUsers = () => {
         Sentry.addBreadcrumb({
           message: "Fetch users request",
           level: "info",
-        })
+        });
         const { data } = await axios.get("/auth/users");
         dispatch(fetchUsersSuccess(data));
         return data;
@@ -318,7 +321,7 @@ export const useResetPassword = () => {
         Sentry.addBreadcrumb({
           message: "Password reset request",
           level: "info",
-        })
+        });
         const { data } = await axios.post("/auth/forgot-password", { email });
         return data;
       } catch (error) {
@@ -354,7 +357,7 @@ export const useUpdatePassword = () => {
         Sentry.addBreadcrumb({
           message: "Update password with reset token",
           level: "info",
-          })
+        });
         const { data } = await axios.post(`/auth/reset-password/${token}`, {
           password,
         });
@@ -394,7 +397,7 @@ export const useUpdateProfile = () => {
         Sentry.addBreadcrumb({
           message: "Update user profile",
           level: "info",
-          })
+        });
         const { data } = await axios.put("/auth/update-profile", updatedData);
         return data;
       } catch (error) {
@@ -452,7 +455,7 @@ export const useTasks = (filterOrId = "") => {
         Sentry.addBreadcrumb({
           category: "tasks",
           message: "Fetching tasks",
-        })
+        });
         if (
           typeof filterOrId === "string" &&
           filterOrId.match(/^[0-9a-fA-F]{24}$/)
@@ -491,7 +494,7 @@ export const useAddTask = () => {
         Sentry.addBreadcrumb({
           category: "tasks",
           message: "Adding new task",
-        })
+        });
         const { data } = await axios.post("/tasks", newTask);
         dispatch(fetchTasksSuccess([data]));
         return data;
@@ -523,7 +526,7 @@ export const useUpdateTask = () => {
         Sentry.addBreadcrumb({
           category: "tasks",
           message: "Updating existing task",
-          })
+        });
         const { data } = await axios.patch(`/tasks/${id}`, updatedTask);
         dispatch(fetchTasksSuccess([data]));
         return data;
@@ -554,7 +557,7 @@ export const useFetchUserNotification = (userEmail) => {
         Sentry.addBreadcrumb({
           category: "notifications",
           message: "Fetching user notifications",
-        })
+        });
         const { data } = await axios.get(`/notifications/${userEmail}`);
         dispatch(fetchUserNotificationSuccess(data));
         return data;
@@ -584,7 +587,7 @@ export const useMarkNotificationAsRead = () => {
         Sentry.addBreadcrumb({
           category: "notifications",
           message: "Marking notification as read",
-        })
+        });
         const { data } = await axios.patch(`/notifications/${notificationId}`, {
           isRead: true,
         });
