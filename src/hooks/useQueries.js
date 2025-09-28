@@ -88,7 +88,7 @@ export const useRegister = () => {
           const message = error.response.data.message;
           if (status === 400 || message.includes("Email already exists")) {
             throw new Error(
-              "This email is already registered. Please try a different email."
+              "This email is already registered. Please try a different email"
             );
           }
         } else if (error.request) {
